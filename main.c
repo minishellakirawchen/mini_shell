@@ -17,3 +17,8 @@ int main(void)
 	printf("wchen test");
 	return (0);
 }
+
+int test(void)
+{
+	return (1);
+}

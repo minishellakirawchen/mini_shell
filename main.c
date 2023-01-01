@@ -6,11 +6,14 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 11:18:07 by wchen             #+#    #+#             */
-/*   Updated: 2023/01/01 11:18:42 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/01 11:29:52 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
+
 int main(void)
 {
+	printf("wchen test");
 	return (0);
 }

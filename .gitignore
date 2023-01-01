@@ -1,0 +1,7 @@
+*
+Makefile
+!*.c
+!*.h
+!includes
+!srcs
+!lib

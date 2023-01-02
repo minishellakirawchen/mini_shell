@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 11:18:07 by wchen             #+#    #+#             */
-/*   Updated: 2023/01/01 11:29:52 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/02 16:41:02 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int main(void)
 {
-	printf("wchen test");
+	printf("wchen test2");
 	return (0);
 }
 

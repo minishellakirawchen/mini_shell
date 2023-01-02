@@ -12,11 +12,18 @@
 
 NAME	= minishell
 
+# CC and CFLAGS
 CC		= cc
 CFLAGS	= -Wall -Wextra -Werror -MMD -MP
 
+
+# SRCS and OBJS
 SRC_DIR	= ./srcs
-SRC		= main.c
+SRC		= main.c \
+		  input/input.c \
+		  input/get_env.c \
+		  execution/exexute.c \
+		  exit/exit.c
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
@@ -25,11 +32,22 @@ OBJS	= $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.o))
 
 DEPS	= $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.d))
 
+# LFLAGS
+LIB_DIR				= ./libs
+LIBFT_DIR			= $(LIB_DIR)/libft
+LIBGNL_DIR			= $(LIB_DIR)/libgnl
+LIBFT_PRINTF_DIR	= $(LIB_DIR)/libftprintf
+LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR)
+LFLAGS	= $(addprefix -L, $(LIBS_DIR))
+
+# IFLAGS
 INCLUDE_DIR = ./includes
 IFLAGS = $(addprefix -I, $(INCLUDE_DIR))
 
+
+# RULES
 $(NAME)	: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(LFLAGS) $(IFLAGS) $(OBJS) -o $@
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $$(dirname $@)

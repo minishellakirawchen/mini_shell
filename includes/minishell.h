@@ -32,6 +32,7 @@ struct s_minishell_param
 {
 	int				exit_status;
 	struct	s_list	*env_list;
+	char			*input_line;
 
 
 };

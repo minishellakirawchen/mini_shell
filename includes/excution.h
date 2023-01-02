@@ -1,36 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input.h                                            :+:      :+:    :+:   */
+/*   excution.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/02 21:00:04 by takira            #+#    #+#             */
-/*   Updated: 2023/01/02 21:00:04 by takira           ###   ########.fr       */
+/*   Created: 2023/01/03 08:23:41 by takira            #+#    #+#             */
+/*   Updated: 2023/01/03 08:23:42 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INPUT_H
-# define INPUT_H
+#ifndef EXCUTION_H
+#define EXCUTION_H
 
-# include <stdio.h>
-# include <stdlib.h>
-# include <stdbool.h>
+#include "./../includes/minishell.h"
 
-# include "./../libs/libft/libft.h"
 
-# include <readline/readline.h>
-# include <readline/history.h>
-
-typedef struct s_env_elem	t_env_elem;
-
-struct s_env_elem
-{
-	char *key;
-	char *value;
-};
-
-t_list	*get_env_list(void);
-int		prompt_loop(t_info	*info);
+int	execute(t_info *info);
 
 #endif

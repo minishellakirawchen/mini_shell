@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input.h                                            :+:      :+:    :+:   */
+/*   exit.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/02 21:00:04 by takira            #+#    #+#             */
-/*   Updated: 2023/01/02 21:00:04 by takira           ###   ########.fr       */
+/*   Created: 2023/01/02 21:46:12 by takira            #+#    #+#             */
+/*   Updated: 2023/01/02 21:46:13 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INPUT_H
-# define INPUT_H
+#ifndef EXIT_H
+# define EXIT_H
 
-# include <stdio.h>
-# include <stdlib.h>
-# include <stdbool.h>
+#include "./../includes/minishell.h"
+#include "./../includes/input.h"
 
-# include "./../libs/libft/libft.h"
-
-# include <readline/readline.h>
-# include <readline/history.h>
-
-t_list	*get_env_list(void);
-int		prompt_loop(t_info	*info);
+void	free_alloc(t_info	**info);
+int		free_and_return_no(t_info **info, int exit_status);
 
 #endif

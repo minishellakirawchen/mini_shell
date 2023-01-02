@@ -12,6 +12,7 @@
 
 # include "./../includes/minishell.h"
 # include "./../includes/input.h"
+# include "./../includes/exit.h"
 
 static t_info	*init_minishell_params(void)
 {
@@ -25,46 +26,28 @@ static t_info	*init_minishell_params(void)
 	}
 	// init params
 	info->exit_status = EXIT_SUCCESS;
+	info->env_list = get_env_list();
+	if (!info->env_list)
+	{
+		perror("malloc");
+		return (NULL);
+	}
 
 	return (info);
-}
-
-void	free_alloc(t_info	**info)
-{
-	if (!info || !*info)
-		return ;
-	free(*info);
-	*info = NULL;
 }
 
 int main(void)
 {
 	t_info	*info;
-	char 	*input_line;
 	int		exit_status;
 
 	info = init_minishell_params();
-	exit_status = EXIT_SUCCESS;
-
-	while (true)
+	if (!info)
 	{
-		input_line = readline("minishell >");
-		if (!input_line)
-			break ;
-		// if (input signal == ^C)
-		//		print "" and not add history
-
-		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
-		//		rewrite prompt
-
-		add_history(input_line);
-
-		analysys(input_line, info);
-		expantion(info);
-		exit_status = excution(info);
-		free(input_line);
+		free_alloc(&info);
+		return (EXIT_FAILURE);
 	}
-
+	exit_status = prompt_loop(info);
 	free_alloc(&info);
-	return (exit_status);
+ 	return (exit_status);
 }

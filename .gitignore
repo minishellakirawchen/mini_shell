@@ -2,6 +2,6 @@
 !Makefile
 !*.c
 !*.h
-!includesj
-!srcs
-!libs
+!includes/
+!srcs/
+!libs/

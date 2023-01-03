@@ -20,22 +20,20 @@
 # include <readline/history.h>
 
 # include "./../libs/libft/libft.h"
-//# include "input.h"
-//# include "exit.h"
-//# include "execution.h"
 
+/* typedef struct */
 typedef struct s_minishell_param	t_info;
-
 typedef struct s_env_elem	t_env_elem;
 
+/* typedef enum */
+
+
+/* struct */
 struct s_env_elem
 {
 	char *key;
 	char *value;
 };
-
-t_list	*get_env_list(void);
-int		prompt_loop(t_info	*info);
 
 // builtin needed param
 //  cd		: current path
@@ -44,7 +42,6 @@ int		prompt_loop(t_info	*info);
 //  unset	: env(key, value)
 //	env		: env(key + = + value)
 //  exit	: exit status?
-
 struct s_minishell_param
 {
 	int				exit_status;
@@ -53,7 +50,18 @@ struct s_minishell_param
 
 };
 
+
+/* enum */
+
+
+/* input */
+t_list	*get_env_list(void);
+int		prompt_loop(t_info	*info);
+
+/* execution */
 int		execute(t_info *info);
+
+/* exit */
 void	free_alloc(t_info	**info);
 int		free_and_return_no(t_info **info, int exit_status);
 

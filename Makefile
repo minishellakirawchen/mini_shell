@@ -33,7 +33,7 @@ OBJ_DIR	= ./objs
 OBJS	= $(addprefix $(OBJ_DIR)/, $(SRC:%.c=%.o))
 
 # DEPS	= $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.d))
-DEPS	= $(OBJ:%.o=%.d)
+DEPS	= $(SRC:%.c=%.d)
 
 # LFLAGS
 LIB_DIR				= ./libs

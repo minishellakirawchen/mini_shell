@@ -13,7 +13,7 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
-#include "./../includes/minishell.h"
+#include "minishell.h"
 
 int	execute(t_info *info);
 

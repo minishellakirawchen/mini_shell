@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:45:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/02 21:45:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/03 10:03:19 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "./../includes/minishell.h"
+# include "minishell.h"
 
 void	free_alloc(t_info	**info)
 {

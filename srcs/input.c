@@ -6,13 +6,11 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 09:28:31 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/03 10:03:07 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./../includes/minishell.h"
-#include "./../includes/excution.h"
-#include "./../includes/input.h"
+#include "minishell.h"
 
 int	prompt_loop(t_info	*info)
 {

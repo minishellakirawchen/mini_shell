@@ -1,18 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   excute.c                                           :+:      :+:    :+:   */
+/*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 08:23:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/03 10:50:04 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./../includes/minishell.h"
-#include "./../includes/excution.h"
-#include "./../includes/exit.h"
+#include "minishell.h"
+
+// minishell> ls -l
+//            {"ls", " -l", NULL}
 
 int	execute(t_info *info)
 {
@@ -25,15 +26,16 @@ int	execute(t_info *info)
 		perror("fork");
 		free_and_return_no(&info, EXIT_FAILURE);
 	}
-	if (pid == 0) // child
+	if (pid == 0) // child why 0?
 	{
-		execvp(input_arg[0], input_arg);// tmp test.c.c.c
+		execvp(input_arg[0], input_arg);// tmp test
 
 		// if cmd has path -> execve(PATH, cmd, env);
 		// else            -> ft_execvp(file, cmd); search path and execve
+		perror("execvp");
 		free_and_return_no(&info, EXIT_FAILURE);
 	}
-	// parent
+	// parent pid > 0
 	info->exit_status = waitpid(pid, NULL, 0);
 	return (info->exit_status);
 }

@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_env.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:15:30 by takira            #+#    #+#             */
-/*   Updated: 2023/01/02 21:15:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/03 10:03:13 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./../includes/minishell.h"
-#include "./../includes/input.h"
+#include "minishell.h"
 
 // key-value
 //		"SHELL" : "/bin/bash"

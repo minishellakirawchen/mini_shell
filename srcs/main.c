@@ -6,11 +6,11 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 11:18:07 by wchen             #+#    #+#             */
-/*   Updated: 2023/01/03 09:25:02 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/03 10:27:50 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "./../includes/minishell.h"
+# include "minishell.h"
 
 static t_info	*init_minishell_params(void)
 {

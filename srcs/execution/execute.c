@@ -27,7 +27,7 @@ int	execute(t_info *info)
 	}
 	if (pid == 0) // child
 	{
-		execvp(input_arg[0], input_arg);// tmp test
+		execvp(input_arg[0], input_arg);// tmp test.c.c.c
 
 		// if cmd has path -> execve(PATH, cmd, env);
 		// else            -> ft_execvp(file, cmd); search path and execve

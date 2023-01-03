@@ -24,10 +24,12 @@ int	prompt_loop(t_info	*info)
 			break ;
 
 		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		/* Maybe unnecessary, "^C" and "clear" clear prompt on default */
 		// if (input signal == ^C)
-		//		print "" and not add history
+		//		print "^C" and not add history
+		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
 
+		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+		/* Maybe unnecessary, "clear" clear prompt on default */
 		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
 		//		rewrite prompt
 		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */

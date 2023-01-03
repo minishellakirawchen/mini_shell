@@ -12,30 +12,85 @@
 
 #include "minishell.h"
 
-// minishell> ls -l
-//            {"ls", " -l", NULL}
-
-/*
-bool	is_builin(t_info *info)
+bool	is_builtins(t_info *info)
 {
+	char	*cmd_head;
+	size_t	len;
 
+	if (!info || !info->commands)
+		return (false);
+	cmd_head = info->commands[0];
+	len = ft_strlen_ns(cmd_head);
+	printf("commands[0]:%s, len:%zu\n", cmd_head, len);
+	if (len == 0)
+		return (false);
+	// TODO: implement more simple
+	if (ft_strncmp_ns("echo", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("ECHO", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("cd", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("pwd", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("PWD", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("export", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("unset", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("env", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("ENV", cmd_head, len) == 0)
+		return (true);
+	if (ft_strncmp_ns("exit", cmd_head, len) == 0)
+		return (true);
+	return (false);
 }
 
-int	execute_builtin(t_info *info)
+int	execute_builtins(t_info *info)
 {
+	char	*cmd_head;
+	size_t	len;
 
+	if (!info || !info->commands)
+		return (EXIT_FAILURE);
+	cmd_head = info->commands[0];
+	len = ft_strlen_ns(cmd_head);
+	// TODO:  implement more simple
+	if (ft_strncmp_ns("echo", cmd_head, len) == 0)
+		return (ft_echo(info));
+	if (ft_strncmp_ns("ECHO", cmd_head, len) == 0)
+		return (ft_echo(info));
+	if (ft_strncmp_ns("cd", cmd_head, len) == 0)
+		return (ft_cd(info));
+	if (ft_strncmp_ns("pwd", cmd_head, len) == 0)
+		return (ft_pwd(info));
+	if (ft_strncmp_ns("PWD", cmd_head, len) == 0)
+		return (ft_pwd(info));
+	if (ft_strncmp_ns("export", cmd_head, len) == 0)
+		return (ft_export(info));
+	if (ft_strncmp_ns("unset", cmd_head, len) == 0)
+		return (ft_unset(info));
+	if (ft_strncmp_ns("env", cmd_head, len) == 0)
+		return (ft_env(info));
+	if (ft_strncmp_ns("ENV", cmd_head, len) == 0)
+		return (ft_env(info));
+	if (ft_strncmp_ns("exit", cmd_head, len) == 0)
+		return (ft_exit(info));
+	return (EXIT_FAILURE);
 }
-*/
 
 //** builtins **
-//  cmd		: char **cmds (readline->input func)
+//  cmd		: char **commands (readline->input func->expand_vars)
 //  echo or ECHO
 // 		{"echo", "-n", "foo", NULL}
+// 		{"echo", "-nnnnn", "foo", NULL} -> {"echo", "-n", "foo", NULL} re-shape in analysis
 //		{"echo", "-n", NULL}
 //		{"echo", "bar", NULL}
 //		{"echo", NULL}
-//		{"echo", "-n", "$foo", NULL}
-//		{"echo", "$bar", NULL}
+//		{"echo", "-n", "$foo", NULL} -> {"echo", "-n", "bar", NULL} expand $foo=bar in analysis
+//		{"echo", "$foo", NULL} -> {"echo", "bar", NULL} expand $foo=bar in analysis
 //
 //  cd
 //  	{"cd", "relative path", NULL}
@@ -46,7 +101,7 @@ int	execute_builtin(t_info *info)
 //
 //  export
 //  	{"export", "NULL"}
-//		{"export", $foo, NULL}
+//		{"export", $foo, NULL} -> {"export", bar, NULL} expand $foo=bar in analysis
 //
 //  unset
 //  	{"unset", NULL}
@@ -61,8 +116,8 @@ int	execute(t_info *info)
 {
 	pid_t	pid;
 
-//	if (is_builin(info))
-//		return (execute_builtin(info));
+	if (is_builtins(info))
+		return (execute_builtins(info));
 	pid = fork();
 	if (pid < 0)
 	{
@@ -71,14 +126,14 @@ int	execute(t_info *info)
 	}
 	if (pid == 0) // child why 0?
 	{
-		execvp(info->input_line[0], info->input_line);// tmp test
+		execvp(info->input_line[0], info->input_line);// for tmp test
 
 		// if cmd has path -> execve(PATH, cmd, env);
 		// else            -> ft_execvp(file, cmd); search path and execve
 		perror("execvp");
 		free_and_return_no(&info, EXIT_FAILURE);
 	}
-	// parent pid > 0
+	// parent pid > 0; Process ID
 	info->exit_status = waitpid(pid, NULL, 0);
 	return (info->exit_status);
 }

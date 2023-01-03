@@ -57,7 +57,7 @@ static t_env_elem	*get_env_elem(const char *environ_i)
 	idx = 0;
 	while (environ_i[idx] && environ_i[idx] != '=')
 		idx++;
-	if (environ_i[idx] == '\0') //unknown variable
+	if (environ_i[idx] == '\0') //unknown variable, Errror?
 		return (NULL);
 	elem = (t_env_elem *)malloc(sizeof(t_env_elem));
 	if (!elem)
@@ -99,6 +99,6 @@ t_list	*get_env_list(void)
 		idx++;
 	}
 	printf("print env_list\n");
-	ft_lstiter(env_list_head, print_key_value);
+	ft_lstiter(env_list_head, print_key_value); //test ok but uncheck all unset case
 	return (env_list_head);
 }

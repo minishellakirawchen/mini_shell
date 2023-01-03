@@ -24,8 +24,17 @@ SRC_DIR	= ./srcs
 SRC		= main.c \
 		  input/input.c \
 		  input/get_env.c \
+		  analysis/analysis.c \
+		  expansion/expand_variable.c \
 		  execution/execute.c \
-		  exit/exit.c
+		  exit/exit.c \
+		  builtin/ft_echo.c \
+		  builtin/ft_cd.c \
+		  builtin/ft_pwd.c \
+		  builtin/ft_export.c \
+		  builtin/ft_unset.c \
+		  builtin/ft_env.c \
+		  builtin/ft_exit.c
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 

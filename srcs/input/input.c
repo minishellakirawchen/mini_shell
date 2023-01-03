@@ -22,17 +22,27 @@ int	prompt_loop(t_info	*info)
 		input_line = readline("minishell $> ");
 		if (!input_line)
 			break ;
+
+		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+		/* Maybe unnecessary, "^C" and "clear" clear prompt on default */
 		// if (input signal == ^C)
 		//		print "" and not add history
 
 		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
 		//		rewrite prompt
-		info->input_line = ft_split_set(input_line, ' ', '\'');//tmp
-		;// tmp for execute_test
+		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
 
-		add_history(input_line);
-//		analysys(input_line, info);
-//		expantion(info);
+		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+		/* vvv for demo vvv */
+		// "" '' must not split -> ex)echo "hello world" -> analysis
+		info->input_line = ft_split_set(input_line, ' ', '\'');
+		info->commands = info->input_line;
+		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+
+
+		add_history(input_line);//where?
+		analysis();
+		expand_variable();
 		exit_status = execute(info);
 		free(input_line);
 	}

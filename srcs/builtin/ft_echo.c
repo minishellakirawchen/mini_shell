@@ -12,31 +12,44 @@
 
 #include "minishell.h"
 
-// echo -n XXX
+// 2 cases, with -n or with out -n
+// idx0  1  2  ...
+// echo -n XXX ,   NULL
 // echo XXX
+//
+// $>echo hello world -> $> hello world
+//
 // echo $xxx->expand by expansion part
 // echo just print it
 
-//
+//TODO: implement more simple
 int	ft_echo(t_info *info)
 {
 	int				exit_status;
 	const char		*nl_flg = info->commands[1];
 	const size_t	len = ft_strlen_ns(nl_flg);
+	size_t			i;
 
+	i = 1;
 	if (len == 2 && ft_strncmp_ns(nl_flg, "-n", len) == 0)
 	{
-		if (ft_strlen_ns(info->commands[2]))
-			ft_printf("ft_echo[%s]", info->commands[2]);
-		else
-			ft_printf("ft_echo[]");
+		i++;
+		while (info->commands[i])
+		{
+			ft_printf("%s", info->commands[i++]);
+			if (info->commands[i])
+				ft_printf(" ");
+		}
 	}
 	else
 	{
-		if (len)
-			ft_printf("ft_echo[%s]\n", info->commands[1]);
-		else
-			ft_printf("ft_echo[]\n");
+		while (info->commands[i])
+		{
+			ft_printf("%s", info->commands[i++]);
+			if (info->commands[i])
+				ft_printf(" ");
+		}
+		ft_printf("\n");
 	}
 	exit_status = EXIT_SUCCESS;
 	return (exit_status);

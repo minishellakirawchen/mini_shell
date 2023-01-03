@@ -13,7 +13,7 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
-#include "minishell.h"
+typedef struct s_minishell_param	t_info;
 
 int	execute(t_info *info);
 

@@ -21,7 +21,7 @@
 # include <readline/history.h>
 
 # include "minishell.h"
-
+typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem	t_env_elem;
 
 struct s_env_elem
@@ -31,6 +31,6 @@ struct s_env_elem
 };
 
 t_list	*get_env_list(void);
-int		prompt_loop(t_info	*info);
+int		prompt_loop(struct s_minishell_param	*info);
 
 #endif

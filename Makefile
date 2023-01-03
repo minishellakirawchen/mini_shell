@@ -70,9 +70,15 @@ all	: $(NAME)
 
 clean :
 	rm -rf $(OBJ_DIR)
+	@make clean -C $(LIBFT_DIR)
+	@make clean -C $(LIBGNL_DIR)
+	@make clean -C $(LIBFT_PRINTF_DIR)
 
 fclean : clean
 	rm -f $(NAME)
+	@make fclean -C $(LIBFT_DIR)
+	@make fclean -C $(LIBGNL_DIR)
+	@make fclean -C $(LIBFT_PRINTF_DIR)
 
 re : fclean all
 

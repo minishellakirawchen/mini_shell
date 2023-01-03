@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-# include <readline/readline.h>
-# include <readline/history.h>
-
 int	prompt_loop(t_info	*info)
 {
 	int		exit_status;
@@ -22,7 +19,7 @@ int	prompt_loop(t_info	*info)
 
 	while (true)
 	{
-		input_line = readline("minishell >");
+		input_line = readline("minishell $> ");
 		if (!input_line)
 			break ;
 		// if (input signal == ^C)

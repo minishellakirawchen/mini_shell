@@ -13,7 +13,7 @@
 #ifndef EXIT_H
 # define EXIT_H
 
-#include "minishell.h"
+typedef struct s_minishell_param	t_info;
 
 void	free_alloc(t_info	**info);
 int		free_and_return_no(t_info **info, int exit_status);

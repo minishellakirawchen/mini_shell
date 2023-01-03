@@ -25,12 +25,11 @@ static t_info	*init_minishell_params(void)
 	// init params
 	info->exit_status = EXIT_SUCCESS;
 	info->env_list = get_env_list();
-	if (!info->env_list)
-	{
-		perror("malloc");
-		return (NULL);
-	}
-
+//	if (!info->env_list)
+//	{
+//		perror("malloc");
+//		return (NULL);
+//	}
 	return (info);
 }
 

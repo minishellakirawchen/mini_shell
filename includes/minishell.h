@@ -16,12 +16,26 @@
 # include <errno.h>
 # include <string.h>
 
+# include <readline/readline.h>
+# include <readline/history.h>
+
 # include "./../libs/libft/libft.h"
-# include "input.h"
-# include "exit.h"
-# include "execution.h"
+//# include "input.h"
+//# include "exit.h"
+//# include "execution.h"
 
 typedef struct s_minishell_param	t_info;
+
+typedef struct s_env_elem	t_env_elem;
+
+struct s_env_elem
+{
+	char *key;
+	char *value;
+};
+
+t_list	*get_env_list(void);
+int		prompt_loop(t_info	*info);
 
 // builtin needed param
 //  cd		: current path
@@ -38,5 +52,10 @@ struct s_minishell_param
 	char			*input_line; //tmp
 
 };
+
+int		execute(t_info *info);
+void	free_alloc(t_info	**info);
+int		free_and_return_no(t_info **info, int exit_status);
+
 
 #endif

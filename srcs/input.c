@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+# include <readline/readline.h>
+# include <readline/history.h>
+
 int	prompt_loop(t_info	*info)
 {
 	int		exit_status;

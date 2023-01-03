@@ -20,16 +20,11 @@ static t_info	*init_minishell_params(void)
 	if (!info)
 	{
 		perror("malloc");
-		return (NULL);
+		free_and_return_no(NULL, EXIT_FAILURE);
 	}
 	// init params
 	info->exit_status = EXIT_SUCCESS;
-	info->env_list = get_env_list();
-//	if (!info->env_list)
-//	{
-//		perror("malloc");
-//		return (NULL);
-//	}
+	info->env_list = get_env_list();//if env_list==NULL -> operate with env=NULL
 	return (info);
 }
 
@@ -39,11 +34,6 @@ int main(void)
 	int		exit_status;
 
 	info = init_minishell_params();
-	if (!info)
-	{
-		free_alloc(&info);
-		return (EXIT_FAILURE);
-	}
 	exit_status = prompt_loop(info);
 	free_alloc(&info);
  	return (exit_status);

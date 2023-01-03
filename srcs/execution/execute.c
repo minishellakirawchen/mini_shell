@@ -15,6 +15,7 @@
 // minishell> ls -l
 //            {"ls", " -l", NULL}
 
+/*
 bool	is_builin(t_info *info)
 {
 
@@ -24,16 +25,44 @@ int	execute_builtin(t_info *info)
 {
 
 }
+*/
 
-// builtin
-//   ehoo: {"echo", "-n", NULL}
+//** builtins **
+//  cmd		: char **cmds (readline->input func)
+//  echo or ECHO
+// 		{"echo", "-n", "foo", NULL}
+//		{"echo", "-n", NULL}
+//		{"echo", "bar", NULL}
+//		{"echo", NULL}
+//		{"echo", "-n", "$foo", NULL}
+//		{"echo", "$bar", NULL}
+//
+//  cd
+//  	{"cd", "relative path", NULL}
+//		{"cd", "absolute path", NULL}
+//
+//  pwd or PWD
+// 		{"pwd", "NULL"}
+//
+//  export
+//  	{"export", "NULL"}
+//		{"export", $foo, NULL}
+//
+//  unset
+//  	{"unset", NULL}
+//
+//  env or ENV
+//  	{"env", NULL}
+//
+//	exit
+//		{"exit", NULL}
 
 int	execute(t_info *info)
 {
 	pid_t	pid;
 
-	if (is_builin(info))
-		return (execute_builtin(info));
+//	if (is_builin(info))
+//		return (execute_builtin(info));
 	pid = fork();
 	if (pid < 0)
 	{

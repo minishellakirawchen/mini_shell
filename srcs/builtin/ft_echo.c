@@ -25,7 +25,6 @@
 //TODO: implement more simple
 int	ft_echo(t_info *info)
 {
-	int				exit_status;
 	const char		*nl_flg = info->commands[1];
 	const size_t	len = ft_strlen_ns(nl_flg);
 	size_t			i;
@@ -51,6 +50,5 @@ int	ft_echo(t_info *info)
 		}
 		ft_printf("\n");
 	}
-	exit_status = EXIT_SUCCESS;
-	return (exit_status);
+	return (0);
 }

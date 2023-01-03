@@ -22,10 +22,10 @@ VPATH = $(SRC_DIR)
 
 SRC_DIR	= ./srcs
 SRC		= main.c \
-		  input.c \
-		  get_env.c \
-		  execute.c \
-		  exit.c
+		  input/input.c \
+		  input/get_env.c \
+		  execution/execute.c \
+		  exit/exit.c
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 

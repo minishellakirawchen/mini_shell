@@ -4,5 +4,6 @@
 !*.h
 !includes
 !srcs
+!srcs/*
 !libs
 !libs/*

@@ -15,11 +15,25 @@
 // minishell> ls -l
 //            {"ls", " -l", NULL}
 
+bool	is_builin(t_info *info)
+{
+
+}
+
+int	execute_builtin(t_info *info)
+{
+
+}
+
+// builtin
+//   ehoo: {"echo", "-n", NULL}
+
 int	execute(t_info *info)
 {
 	pid_t	pid;
-	char 	**input_arg = ft_split_set(info->input_line, ' ', '\'');//tmp
 
+	if (is_builin(info))
+		return (execute_builtin(info));
 	pid = fork();
 	if (pid < 0)
 	{
@@ -28,7 +42,7 @@ int	execute(t_info *info)
 	}
 	if (pid == 0) // child why 0?
 	{
-		execvp(input_arg[0], input_arg);// tmp test
+		execvp(info->input_line[0], info->input_line);// tmp test
 
 		// if cmd has path -> execve(PATH, cmd, env);
 		// else            -> ft_execvp(file, cmd); search path and execve

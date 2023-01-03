@@ -27,7 +27,8 @@ int	prompt_loop(t_info	*info)
 
 		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
 		//		rewrite prompt
-		info->input_line = input_line;// tmp for execute_test
+		info->input_line = ft_split_set(input_line, ' ', '\'');//tmp
+		;// tmp for execute_test
 
 		add_history(input_line);
 //		analysys(input_line, info);

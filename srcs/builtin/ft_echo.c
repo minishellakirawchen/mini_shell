@@ -10,3 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
+
+int	ft_echo(t_info *info)
+{
+	int	exit_status;
+
+
+
+
+	return (exit_status);
+}

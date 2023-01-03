@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// 2 cases, with -n or with out -n
+// 2 cases, with -n or without -n
 //
 // idx0  1   2  ..
 // echo -n  XXX YYY ..
@@ -27,8 +27,6 @@ static void	print_echo(char **str, bool is_nl)
 {
 	size_t	i;
 
-	if (!str)
-		return ;
 	i = 0;
 	while (str && str[i])
 		ft_printf("%s", str[i++]);

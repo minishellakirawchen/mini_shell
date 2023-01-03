@@ -3,6 +3,6 @@
 !*.c
 !*.h
 !includes
-!srcs/*
-!libs/*
+!srcs/
+!libs/
 !test/

@@ -22,7 +22,7 @@ SRC_DIR	= ./srcs
 SRC		= main.c \
 		  input/input.c \
 		  input/get_env.c \
-		  execution/exexute.c \
+		  execution/execute.c \
 		  exit/exit.c
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))

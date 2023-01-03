@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/02 21:00:09 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/03 09:26:05 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 # include <errno.h>
 # include <string.h>
 
-#include "./../libs/libft/libft.h"
+# include "./../libs/libft/libft.h"
+# include "./../includes/input.h"
+# include "./../includes/exit.h"
+
 
 typedef struct s_minishell_param	t_info;
 
@@ -32,7 +35,7 @@ struct s_minishell_param
 {
 	int				exit_status;
 	struct	s_list	*env_list;
-	char			*input_line;
+	char			*input_line;//tmp
 
 
 };

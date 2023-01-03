@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:04 by takira            #+#    #+#             */
-/*   Updated: 2023/01/02 21:00:04 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/03 09:21:11 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 # include <stdbool.h>
 
 # include "./../libs/libft/libft.h"
-
 # include <readline/readline.h>
 # include <readline/history.h>
+
 
 typedef struct s_env_elem	t_env_elem;
 

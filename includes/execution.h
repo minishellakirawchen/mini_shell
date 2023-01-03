@@ -10,11 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXCUTION_H
-#define EXCUTION_H
+#ifndef EXECUTION_H
+#define EXECUTION_H
 
 #include "./../includes/minishell.h"
-
 
 int	execute(t_info *info);
 

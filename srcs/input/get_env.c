@@ -49,6 +49,36 @@ char *get_env_value(char *search_key, t_list *env_list_head)
 //  	NULL
 // 		}
 
+int	delete_env_elem(t_list **list_head, char *search_key)
+{
+	const size_t	search_key_len = ft_strlen_ns(search_key);
+	t_env_elem		*elem;
+	t_list			*ptr;
+	t_list			*prev;
+
+	if (search_key_len == 0 || !list_head)
+		return (FAILURE);
+	ptr = *list_head;
+	prev = NULL;
+	while (ptr)
+	{
+		elem = ptr->content;
+		if ((ft_strlen_ns(elem->key) == search_key_len) \
+		&& (ft_strncmp_ns(elem->key, search_key, search_key_len) == 0))
+		{
+			free(elem->value);
+			free(elem->key);
+			free(elem);
+			if (prev)
+				prev->next = ptr->next;
+			free(ptr);
+			return (SUCCESS);
+		}
+		prev = ptr;
+		ptr = ptr->next;
+	}
+	return (FAILURE);
+}
 
 int	overwrite_env_value(t_list **list_head, char *search_key, char *value)
 {

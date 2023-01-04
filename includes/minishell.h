@@ -82,6 +82,7 @@ t_list	*get_env_list(void);
 char	*get_env_value(char *search_key, t_list *env_list_head);
 int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
+int		delete_env_elem(t_list **list_head, char *search_key);
 
 /* analysis */
 int		analysis(void); // tmp

@@ -14,8 +14,18 @@
 
 int ft_unset(t_info *info)
 {
-	if (!info)
+	char	*key;
+	int		ret;
+
+	if (!info || !info->commands || !info->commands[0] || !info->commands[1])//tmp
 		return (1);
-	ft_printf("ft_unset\n");
+	key = info->commands[1]; //tmp
+	if (get_env_value(key, info->env_list))
+	{
+		ret = delete_env_elem(&info->env_list, key);
+		if (ret == FAILURE)
+			return (1);//TODO:exit?
+	}
+//	printf("key:%s, get_val:%s\n", key, get_env_value(key, info->env_list));
 	return (0);
 }

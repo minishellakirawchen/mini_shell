@@ -16,6 +16,7 @@ void	free_alloc(t_info	**info)
 {
 	if (!info || !*info)
 		return ;
+	// TODO: free info members
 	free(*info);
 	*info = NULL;
 }

@@ -22,6 +22,9 @@
 #include "./../libs/libft/libft.h"
 #include "./../libs/libftprintf/ft_printf.h"
 
+#define SUCCESS	0
+#define	FAILURE	1
+
 #define BUFSIZE			1024
 #define CHDIR_FAILURE	1
 
@@ -70,13 +73,15 @@ struct s_minishell_param
 	t_list	*env_list;
 	char	**input_line; // tmp
 	char	**commands;   // tmp
-	char 	*pwd;
 	t_list	*execute_cmds;
 };
 
 /* input */
-t_list	*get_env_list(void);
 int		prompt_loop(t_info *info);
+t_list	*get_env_list(void);
+char	*get_env_value(char *search_key, t_list *env_list_head);
+int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
+int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 
 /* analysis */
 int		analysis(void); // tmp

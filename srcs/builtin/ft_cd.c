@@ -33,26 +33,28 @@ char	*get_new_path(char *current_path, char *move_to)
 
 int ft_cd(t_info *info)
 {
-	int		ret;
+	int		chdir_ret;
 	char 	*new_path;
 	char 	*move_to;
+	char 	*current_path;
 
 	if (!info || !info->commands[1])
 		return (1); //TODO: exit?
 	move_to = info->commands[1];
-	new_path = get_new_path(info->pwd, move_to);
+	current_path = get_current_path();
+	new_path = get_new_path(current_path, move_to);
 	if (!new_path)
 	{
+//		free(current_path);
 		perror("malloc");
 		return (1); //TODO: exit?
 	}
-	ret = chdir(new_path);
-	if (ret < 0)
+	chdir_ret = chdir(new_path);
+	if (chdir_ret < 0)
 	{
 		ft_printf("cd: no such file or directory: %s", move_to);//TODO: STDERROR
 		return (CHDIR_FAILURE);
 	}
-	info->pwd = new_path; //TODO: free(info->pwd)
 	// TODO: search env PWD and change it.
 	return (0);
 }

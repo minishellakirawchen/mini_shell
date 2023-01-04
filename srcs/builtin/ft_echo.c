@@ -29,7 +29,11 @@ static void	print_echo(char **str, bool is_nl)
 
 	i = 0;
 	while (str && str[i])
+	{
 		ft_printf("%s", str[i++]);
+		if (str[i])
+			ft_printf(" ");
+	}
 	if (is_nl)
 		ft_printf("\n");
 }

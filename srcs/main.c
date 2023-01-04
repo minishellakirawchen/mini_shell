@@ -25,6 +25,7 @@ static t_info	*init_minishell_params(void)
 	// init params
 	info->exit_status = EXIT_SUCCESS;
 	info->env_list = get_env_list();//if env_list==NULL -> operate with env=NULL
+	info->pwd = get_current_path();
 	return (info);
 }
 

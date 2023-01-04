@@ -99,5 +99,7 @@ int		ft_export(t_info *info);
 int		ft_unset(t_info *info);
 int		ft_env(t_info *info);
 int		ft_exit(t_info *info);
+// builtin helper
+char	*get_current_path(void);
 
 #endif

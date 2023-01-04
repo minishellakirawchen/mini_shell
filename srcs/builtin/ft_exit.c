@@ -14,8 +14,11 @@
 
 int ft_exit(t_info *info)
 {
-	if (!info)
-		return (1);
-	ft_printf("ft_exit\n");
-	return (0);
+	int	exit_status;
+
+	exit_status = EXIT_SUCCESS;
+	if (info)
+		exit_status = info->exit_status;
+	free_alloc(&info);
+	exit(exit_status);
 }

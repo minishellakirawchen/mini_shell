@@ -11,7 +11,7 @@ int main(void)
 
 
 	printf("cd\n");
-	ret = chdir("/bin");//absolute path
+	ret = chdir("/Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell/minishell/../");//absolute path
 	if (ret < 0)
 		perror("chdir");
 
@@ -20,7 +20,6 @@ int main(void)
 
 	char *cmd[5] = {"ls", NULL};
 	printf("ls\n");
-	execvp("ls", cmd);
-
+	execve("/bin/ls", cmd, NULL);
 	return (0);
 }

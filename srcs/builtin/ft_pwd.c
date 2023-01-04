@@ -18,6 +18,10 @@ int ft_pwd(t_info *info)
 
 	if (!info)
 		return (1);
+// TODO: implement like official
+//	current_path = (char *)ft_calloc(sizeof(char), BUFSIZE);
+//	while (!getcwd(current_path, BUFSIZE))
+		// realloc
 	current_path = getcwd(NULL, 0);
 	ft_printf("%s\n", current_path);
 	return (0);

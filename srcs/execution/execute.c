@@ -24,26 +24,26 @@ bool	is_builtins(t_info *info)
 	printf("#[DEBUG]commands[0]:%s, len:%zu\n", cmd_head, len);
 	if (len == 0)
 		return (false);
-	// TODO: implement more simple
-	if (ft_strncmp_ns("echo", cmd_head, len) == 0)
+	// TODO: implement more simple, for debug, ft_**
+	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("ECHO", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("cd", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_cd", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("pwd", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("PWD", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("export", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_export", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("unset", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_unset", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("env", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("ENV", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("exit", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_exit", cmd_head, len) == 0)
 		return (true);
 	return (false);
 }
@@ -58,25 +58,25 @@ int	execute_builtins(t_info *info)
 	cmd_head = info->commands[0];
 	len = ft_strlen_ns(cmd_head);
 	// TODO:  implement more simple
-	if (ft_strncmp_ns("echo", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0)
 		return (ft_echo(info));
-	if (ft_strncmp_ns("ECHO", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0)
 		return (ft_echo(info));
-	if (ft_strncmp_ns("cd", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_cd", cmd_head, len) == 0)
 		return (ft_cd(info));
-	if (ft_strncmp_ns("pwd", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0)
 		return (ft_pwd(info));
-	if (ft_strncmp_ns("PWD", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0)
 		return (ft_pwd(info));
-	if (ft_strncmp_ns("export", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_export", cmd_head, len) == 0)
 		return (ft_export(info));
-	if (ft_strncmp_ns("unset", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_unset", cmd_head, len) == 0)
 		return (ft_unset(info));
-	if (ft_strncmp_ns("env", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0)
 		return (ft_env(info));
-	if (ft_strncmp_ns("ENV", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0)
 		return (ft_env(info));
-	if (ft_strncmp_ns("exit", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_exit", cmd_head, len) == 0)
 		return (ft_exit(info));
 	return (EXIT_FAILURE);
 }

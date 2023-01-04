@@ -22,6 +22,8 @@
 #include "./../libs/libft/libft.h"
 #include "./../libs/libftprintf/ft_printf.h"
 
+#define BUFSIZE	1024
+
 /* typedef struct */
 typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
@@ -67,6 +69,7 @@ struct s_minishell_param
 	t_list	*env_list;
 	char	**input_line; // tmp
 	char	**commands;   // tmp
+	char 	*pwd;
 	t_list	*execute_cmds;
 };
 

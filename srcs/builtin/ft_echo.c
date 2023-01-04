@@ -40,14 +40,20 @@ static void	print_echo(char **str, bool is_nl)
 
 int	ft_echo(t_info *info)
 {
-	const char		*nl_flg = info->commands[1];
-	const size_t	len = ft_strlen_ns(nl_flg);
-	size_t			i;
-	bool			is_nl;
+	char	*nl_flg;
+	size_t	next_echo_chr_len;
+	size_t	i;
+	bool	is_nl;
+	int		strcmp_res;
 
+	if (!info || !info->commands || !info->commands[0])
+		return (1); //TODO: exit?
+	nl_flg = info->commands[1];
+	next_echo_chr_len = ft_strlen_ns(nl_flg);
 	i = 1;
 	is_nl = true;
-	if (len == 2 && ft_strncmp_ns(nl_flg, "-n", len) == 0)
+	strcmp_res = ft_strncmp_ns(nl_flg, "-n", next_echo_chr_len);
+	if (next_echo_chr_len == 2 &&  strcmp_res == 0)
 	{
 		i++;
 		is_nl = false;

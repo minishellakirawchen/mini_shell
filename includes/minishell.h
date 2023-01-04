@@ -22,7 +22,8 @@
 #include "./../libs/libft/libft.h"
 #include "./../libs/libftprintf/ft_printf.h"
 
-#define BUFSIZE	1024
+#define BUFSIZE			1024
+#define CHDIR_FAILURE	1
 
 /* typedef struct */
 typedef struct s_minishell_param	t_info;

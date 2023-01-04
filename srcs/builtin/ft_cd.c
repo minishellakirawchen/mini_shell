@@ -38,7 +38,7 @@ int ft_cd(t_info *info)
 	char 	*move_to;
 
 	if (!info || !info->commands[1])
-		return (1);
+		return (1); //TODO: exit?
 	move_to = info->commands[1];
 	new_path = get_new_path(info->pwd, move_to);
 	if (!new_path)
@@ -50,7 +50,7 @@ int ft_cd(t_info *info)
 	if (ret < 0)
 	{
 		ft_printf("cd: no such file or directory: %s", move_to);//TODO: STDERROR
-		return (EXIT_FAILURE);
+		return (CHDIR_FAILURE);
 	}
 	info->pwd = new_path; //TODO: free(info->pwd)
 	// TODO: search env PWD and change it.

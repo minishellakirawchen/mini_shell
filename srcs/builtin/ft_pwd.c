@@ -14,8 +14,11 @@
 
 int ft_pwd(t_info *info)
 {
+	char	*current_path;
+
 	if (!info)
 		return (1);
-	ft_printf("ft_pwd\n");
+	current_path = getcwd(NULL, 0);
+	ft_printf("%s\n", current_path);
 	return (0);
 }

@@ -98,7 +98,7 @@ t_list	*get_env_list(void)
 		ft_lstadd_back(&env_list_head, new_node);
 		idx++;
 	}
-	printf("print env_list\n");
-	ft_lstiter(env_list_head, print_key_value); //test ok but uncheck all unset case
+//	printf("print env_list\n");
+//	ft_lstiter(env_list_head, print_key_value); //test ok but uncheck all unset case
 	return (env_list_head);
 }

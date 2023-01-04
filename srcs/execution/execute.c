@@ -21,7 +21,7 @@ bool	is_builtins(t_info *info)
 		return (false);
 	cmd_head = info->commands[0];
 	len = ft_strlen_ns(cmd_head);
-	printf("commands[0]:%s, len:%zu\n", cmd_head, len);
+	printf("#[DEBUG]commands[0]:%s, len:%zu\n", cmd_head, len);
 	if (len == 0)
 		return (false);
 	// TODO: implement more simple

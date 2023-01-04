@@ -25,7 +25,9 @@
 
 /* typedef struct */
 typedef struct s_minishell_param	t_info;
-typedef struct s_env_elem	t_env_elem;
+typedef struct s_env_elem			t_env_elem;
+typedef struct s_execute_cmds		t_cmds;
+typedef enum e_
 
 /* typedef enum */
 
@@ -37,6 +39,11 @@ struct s_env_elem
 	char *value;
 };
 
+struct s_execute_cmds
+{
+
+};
+
 // builtin needed param
 //  cd		: current path
 //  pwd		: current path
@@ -44,12 +51,15 @@ struct s_env_elem
 //  unset	: env(key, value)
 //	env		: env(key + = + value)
 //  exit	: exit status?
+
+
 struct s_minishell_param
 {
 	int				exit_status;
 	struct	s_list	*env_list;
 	char			**input_line; //tmp
-	char			**commands;
+	char			**commands;//tmp
+
 
 };
 

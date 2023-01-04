@@ -12,15 +12,6 @@
 
 #include "minishell.h"
 
-void	print_key_value(void *content)
-{
-	t_env_elem	*elem;
-
-	elem = content;
-	printf(" key[%s], value:[%s]\n", elem->key, elem->value);
-
-}
-
 // key-value
 //		"SHELL" : "/bin/bash"
 //		"PATH" : ""
@@ -98,7 +89,5 @@ t_list	*get_env_list(void)
 		ft_lstadd_back(&env_list_head, new_node);
 		idx++;
 	}
-//	printf("print env_list\n");
-//	ft_lstiter(env_list_head, print_key_value); //test ok but uncheck all unset case
 	return (env_list_head);
 }

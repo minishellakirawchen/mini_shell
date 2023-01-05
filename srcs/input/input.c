@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 10:03:07 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/04 18:32:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,14 @@ int	prompt_loop(t_info	*info)
 		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
 
 		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		/* vvv for demo vvv */
+		/*  for demo  */
 		// "" '' must not split -> ex)echo "hello world" -> analysis
 		info->input_line = ft_split_set(input_line, ' ', '\'');
 		info->commands = info->input_line;
 		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
 
-
 		add_history(input_line);//where?
-		analysis();
+		analysis(info);
 		expand_variable();
 		exit_status = execute(info);
 		free(input_line);

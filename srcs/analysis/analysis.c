@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	analysis(void)
+int	analysis(t_info *info)
 {
 
 	return (true);

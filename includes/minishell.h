@@ -15,6 +15,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <limits.h>
 
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -25,7 +26,6 @@
 #define SUCCESS	0
 #define	FAILURE	1
 
-#define BUFSIZE			1024
 #define CHDIR_FAILURE	1
 
 /* typedef struct */

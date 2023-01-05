@@ -4,11 +4,9 @@ int main(void)
 {
 	char	*current_path;
 	int		ret;
-
 	printf("### cd test ###\n");
 	current_path = getcwd(NULL, 0);
 	printf(" current:%s\n", current_path);
-
 
 	printf("cd\n");
 	ret = chdir("/Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell/minishell/../");//absolute path

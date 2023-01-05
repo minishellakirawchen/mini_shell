@@ -33,7 +33,7 @@ char *get_current_path(void)
 	char	*path;
 	size_t	size;
 
-	size = BUFSIZE;
+	size = PATH_MAX;
 	path = (char *)malloc(sizeof(char) * size);
 	if (!path)
 	{
@@ -42,14 +42,16 @@ char *get_current_path(void)
 	}
 	while (!getcwd(path, size))
 	{
-		size += BUFSIZE;
+		size++;
 		path = (char *)ft_realloc(path, size);
+//		printf("path:%s, size:%zu, len:%zu\n", path, size, ft_strlen_ns(path));
 		if (!path)
 		{
 			perror("malloc");
 			return (NULL);
 		}
 	}
+//	printf("path:%s, size:%zu, len:%zu\n", path, size, ft_strlen_ns(path));
 	return (path);
 }
 

@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// TODO: input "key=value" -> separate to key, value
 int ft_export(t_info *info)
 {
 	char	*key;

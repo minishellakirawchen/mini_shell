@@ -12,16 +12,45 @@
 
 #include "minishell.h"
 
+// Free src inside ft_realloc
+// If len(src) > newsize, terminating of new_ptr is undefined
+void	*ft_realloc(void *src, size_t newsize)
+{
+	void	*new_ptr;
+	size_t	size;
+
+	size = ft_strlen_ns(src);
+	if (size == newsize)
+		return (src);
+	new_ptr = (void *)malloc(sizeof(void) * newsize);
+	ft_memcpy(new_ptr, src, newsize);
+	free(src);
+	return (new_ptr);
+}
+
 char *get_current_path(void)
 {
-	char *current_path;
+	char	*path;
+	size_t	size;
 
-// TODO: implement like official
-//	current_path = (char *)ft_calloc(sizeof(char), BUFSIZE);
-//	while (!getcwd(current_path, BUFSIZE))
-		// realloc
-	current_path = getcwd(NULL, 0);
-	return (current_path);
+	size = BUFSIZE;
+	path = (char *)malloc(sizeof(char) * size);
+	if (!path)
+	{
+		perror("malloc");
+		return (NULL);
+	}
+	while (!getcwd(path, size))
+	{
+		size += BUFSIZE;
+		path = (char *)ft_realloc(path, size);
+		if (!path)
+		{
+			perror("malloc");
+			return (NULL);
+		}
+	}
+	return (path);
 }
 
 int ft_pwd(t_info *info)

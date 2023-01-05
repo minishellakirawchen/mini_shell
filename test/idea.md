@@ -81,6 +81,56 @@ $> minishell > "hello " ' world '-> input=["hello " ' world ']
    pipe[2]        {"grep", "a", NULL}
 // () は && 無しだと有り難みがない？
 
+or
+-> {"cd",  "/bin", NULL}, {"cat Makefile", NULL}, {"grep a", NULL}, NULL // ()単独なら展開できる？
+-> pipe[0] {"cd /bin", NULL},
+   pipe[1] {"cat", "Makefile", NULL},
+   pipe[2] {"grep", "a", NULL}
+
+```
+
+### 木構造にすると良さそう？
+```c
+[echo hello]
+{"echo", "hello", NULL}
+
+
+[echo hello | grep o]
+[pipe]
+ |________________________________
+ |                               |
+{"echo", "hello", NULL}       {"grep", "o", NULL}
+
+
+[cat Makefile | grep a | grep b | grep c]
+[pipe]
+ |_______________________________________________________________________________________
+ |                               |                           |                          |
+{"echo", "hello", NULL}       {"grep", "a", NULL}           {"grep", "b", NULL}       {"grep", "c", NULL}
+
+
+[cat Makefile | grep a && echo hello]
+[and]
+ |________________________________________________________________
+ |                                                               |
+[pipe]                                                          {"echo", "hello", NULL}
+ |________________________________
+ |                               |
+{"cat", "Makefile", NULL}       {"grep", "a", NULL}
+
+
+[pwd && (cd /bin && pwd) && pwd | cat -e]
+[and]
+ |___________________________________________________________
+ |                   |                                      |
+ {"pwd", NULL}      [sub]                                  [pipe]
+                     |                                      |__________________________
+                    [and]                                   |                         |
+                     |____________________________         {"pwd", NULL}             {"cat", "-e", NULL}
+					 |                           |
+                    {"cd", "/bin", NULL}        {"pwd", NULL}
+
+
 ```
 
 
@@ -88,10 +138,9 @@ $> minishell > "hello " ' world '-> input=["hello " ' world ']
 
 
 
+<br>
 
-
-
-
+以下、草案
 
 ### &&, ||のあるケース -> 一旦 pipe & ()のみ考える
 ```c

@@ -13,17 +13,17 @@ $> minishell > "hello " ' world '-> input=["hello " ' world ']
 * ()
 * &&, ||
 
-### わからないこと
-* 分割する順番と粒度
-* 適切なparameterの持ち方
-* 実行方法と実行順序
+### わからないこと（多分解決）
+* 分割する順番と粒度 -> 木構造で対応できそう
+* 適切なparameterの持ち方 -> 木構造で対応できそう？
+* 実行方法と実行順序 -> 木構造で対応できそう
 
 ### わかっていること
 * pipe単独であれば | で分割して、順番にfork, 実行すればOK
-* &&, ||はpipeの前段階で分割してグルーピングする -> もう一段階階層が必要か？
-* () 実行時にForkして、その中で上記の実行をすれば良い、ただし実行順序の整合性は自信なし
-* pipe, ()が混在した時の実行順が曖昧？
-* <, >がある時の処理の流れが曖昧？
+* &&, ||はpipeの前段階で分割してグルーピングする -> もう一段階階層が必要か？ -> 木構造で対応できそう
+* () 実行時にForkして、その中で上記の実行をすれば良い、ただし実行順序の整合性は自信なし -> 木構造で対応できそう
+* pipe, ()が混在した時の実行順が曖昧？ -> 木構造で対応できそう
+* <, >がある時の処理の流れが曖昧？ -> TODO
 
 ### Separate
 ```c
@@ -89,8 +89,12 @@ or
 
 ```
 
-### 木構造にすると良さそう？
+### 木構造にすると良さそう？ -> 実装方法を調べる
+* root = group : and, or > pipe > subshell(内部のgroupも同様に展開) -> and, orはstackに入れる？このままでよさそう。ORの中断をどうする？？これはStackがやりやすい
+* leaf = command : char **cmds = {"cmd", "op",.., NULL}
+* edge = 展開順
 ```c
+# 木構造とする場合
 [echo hello]
 {"echo", "hello", NULL}
 
@@ -101,9 +105,8 @@ or
  |                               |
 {"echo", "hello", NULL}       {"grep", "o", NULL}
 
-
 [cat Makefile | grep a | grep b | grep c]
-[pipe]
+[pipe] |で結合する4要素を以下のように持ちたい
  |_______________________________________________________________________________________
  |                               |                           |                          |
 {"echo", "hello", NULL}       {"grep", "a", NULL}           {"grep", "b", NULL}       {"grep", "c", NULL}
@@ -130,8 +133,28 @@ or
 					 |                           |
                     {"cd", "/bin", NULL}        {"pwd", NULL}
 
+# Stackに積む場合
+input[echo hello]
+stack[{echo hello}]
+
+input[echo hello | grep a]
+stack[{echo hello | grep a}]
+
+input[echo hello | (cat Makefile | grep a)]
+stack[{echo hello | (cat Makefile | grep a)}]
+
+input[pwd && (cd /bin && pwd) && pwd]
+stack[{pwd}, {(cd /bin && pwd)}, pwd] //()内の&&はいつ分解する？？
+
+# AND, ORの実行
+flg=ANDの場合:DFSで実行して成否判定をANDしていき, 全てtrueで終了 or AND=0になったときにreturnする
+flg=ORの場合 :DFSで実行して成否判定をORしていき, OR=1になったとき or 全てfalseで終了でreturnする
+
+
 
 ```
+線形リストでも類似の実装ができそう
+void *contentを工夫する
 
 
 

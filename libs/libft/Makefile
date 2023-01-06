@@ -60,7 +60,9 @@ SRCS		= ft_strlen.c \
 				ft_lstclear.c \
 				ft_lstiter.c \
 				ft_lstmap.c \
-				ft_math.c
+				ft_math.c \
+				ft_stack_operation.c \
+				ft_stack_helper.c
 
 OBJS		= $(SRCS:.c=.o)
 

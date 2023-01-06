@@ -28,10 +28,14 @@
 
 #define CHDIR_FAILURE	1
 
+#define	ISSPACE	"\t\n\v\f\r "
+
+
 /* typedef struct */
 typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_execute_cmds_info	t_cmds;
+typedef struct s_exe_stack			t_exe_stk;
 
 /* typedef enum */
 typedef enum e_cmd_group	t_group;
@@ -59,6 +63,12 @@ struct s_execute_cmds_info
 	char	**cmds;
 };
 
+struct s_exe_stack
+{
+	t_group exe_type;
+	char 	**cmds;
+};
+
 // builtin needed param
 //  cd		: current path
 //  pwd		: current path
@@ -74,6 +84,7 @@ struct s_minishell_param
 	char	**input_line; // tmp
 	char	**commands;   // tmp
 	t_list	*execute_cmds;
+	t_stack	*exe_stack;
 };
 
 /* input */

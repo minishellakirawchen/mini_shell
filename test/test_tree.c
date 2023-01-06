@@ -1,26 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   analysis.c                                         :+:      :+:    :+:   */
+/*   test_tree.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 20:12:54 by takira           ###   ########.fr       */
+/*   Created: 2023/01/05 21:34:43 by takira            #+#    #+#             */
+/*   Updated: 2023/01/06 08:56:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "test.h"
 
-int	analysis(t_info *info)
+typedef enum e_group
 {
-	t_exe_stk	*exe_stk;
+	e_pipe,
+	e_subshell,
+	e_and,
+	e_or,
+}	t_group;
 
-	exe_stk = NULL;
+typedef struct s_tree
+{
+	t_group			group;
+	char			**commands;
+	struct s_tree	*left;
+	struct s_tree	*right;
+}					t_tree;
 
-	// split space
-	// split &&, ||
-	// split |, ()
+int main(void)
+{
+ `
 
-	return (true);
+	return (0);
 }

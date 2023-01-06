@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:40:35 by takira            #+#    #+#             */
-/*   Updated: 2022/10/17 10:40:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 12:02:13 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,23 @@ void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 
 int		ft_lstsize(t_list *lst);
+
+/* stack */
+typedef struct s_stack_elem	t_stack;
+struct s_stack_elem
+{
+	void				*content;
+	struct s_stack_elem	*prev;
+	struct s_stack_elem	*next;
+};
+
+void	add_left(t_stack *elem, t_stack **stk);
+void	add_right(t_stack *elem, t_stack **stk);
+t_stack	*pop_left(t_stack **stk);
+t_stack	*pop_right(t_stack **stk);
+t_stack	*create_stack_elem(void *content);
+t_stack	*get_last_elem(t_stack *elem);
+void	ft_stack_clear(t_stack **stk);
+size_t	get_stack_size(t_stack *stk);
 
 #endif

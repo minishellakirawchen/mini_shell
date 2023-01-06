@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 10:13:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 13:43:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 16:50:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,34 +35,165 @@ static char	**free_array(char **array)
 	return (NULL);
 }
 
-static void	get_strs_size(const char *str, char delim, char set, size_t *cnt)
-{
-	size_t	set_cnt;
-	size_t	i;
+// update ?
+// while delim i++
+// while !delim i++
+//   if set -> while set i++
 
-	set_cnt = 0;
+static size_t	get_strs_size(const char *str, char delim, char set)
+{
+	size_t	size;
+	size_t	i;
+	bool	is_str_exit;
+
+//	printf("# get_strs_size  str:[%s]\n", str);
+	size = 0;
 	i = 0;
 	while (str[i])
 	{
+		is_str_exit = false;
 		while (str[i] && str[i] == delim)
 			i++;
-		if (str[i] && str[i] != set)
+//		printf("1. after while(delim)         : i:%zu, str[i]:%c\n", i, str[i]);
+		while (str[i] && str[i] != delim && str[i] != set)
 		{
-			if (set_cnt % 2 == 0)
-				*cnt += 1;
-			while (str[i] && str[i] != delim && str[i] != set)
-				i++;
+			i++;
+			is_str_exit = true;
 		}
+//		printf("2. after while(!delim && !set): i:%zu, str[i]:%c\n", i, str[i]);
 		if (str[i] && str[i] == set)
 		{
-			set_cnt++;
-			if (set_cnt % 2 == 1)
-				*cnt += 1;
+			is_str_exit = true;
 			i++;
+			while (str[i] && str[i] != set)
+				i++;
+			if (str[i] && str[i] == set)
+				i++;
 		}
+//		printf("3. if(set)                    : i:%zu, str[i]:%c\n", i, str[i]);
+		if ((!str[i] || str[i] == delim) && is_str_exit)
+		{
+			size++;
+//			printf(" # str[i]==delim  i:%zu, str[i]:[%c], size:%zu\n", i, str[i], size);
+		}
+//		printf("4. before i++                 : i:%zu, str[i]:%c\n", i, str[i]);
+		if (str[i])
+			i++;
+//		printf("5. after i++                  : i:%zu, str[i]:%c\n\n", i, str[i]);
 	}
+//	printf("size:%zu\n\n", size);
+	return (size);
 }
 
+
+
+//static void	get_strs_size(const char *str, char delim, char set, size_t *cnt)
+//{
+//	size_t	set_cnt;
+//	size_t	i;
+//
+//	set_cnt = 0;
+//	i = 0;
+//	while (str[i])
+//	{
+//		while (str[i] && str[i] == delim)
+//			i++;
+//		if (str[i] && str[i] != set)
+//		{
+//			if (set_cnt % 2 == 0)
+//				*cnt += 1;
+//			while (str[i] && str[i] != delim && str[i] != set)
+//				i++;
+//		}
+//		if (str[i] && str[i] == set)
+//		{
+//			set_cnt++;
+//			if (set_cnt % 2 == 1)
+//				*cnt += 1;
+//			i++;
+//		}
+//	}
+//}
+
+
+
+static size_t	get_substr_size(const char *str, char delim, char set, size_t head)
+{
+	size_t	size;
+
+	size = 0;
+	while (str[head + size])
+	{
+		while (str[head + size] && str[head + size] != delim && str[head + size] != set)
+			size++;
+		if (str[head + size] && str[head + size] == set)
+		{
+			size++;
+			while (str[head + size] && str[head + size] != set)
+				size++;
+			if (str[head + size] && str[head + size] == set)
+				size++;
+		}
+		if (str[head + size] && str[head + size] == delim)
+			return (size);
+		if (str[head + size])
+			size++;
+	}
+	return (size);
+}
+
+
+
+//static size_t	get_split_size(const char *str, char delim, char set, size_t head)
+//{
+//	size_t	size;
+//
+//	size = 0;
+//	while (str[head + size])
+//	{
+//		while (str[head + size] && str[head + size] != set && str[head + size] != delim)
+//			size++;
+//		if (!str[head + size] || str[head + size] == delim)
+//			return (size);
+//		while (str[head + size] && str[head + size] == set)
+//			size++;
+//	}
+//	return (size);
+//}
+
+// delim=_, set='
+// str="aaa___bb'b___'__c"
+// ->aaa,bb'b___',c
+
+//head is start to get
+//tail is next char in the string to get(= delim or '\0')
+static char	**get_split_strs(char ***strs, const char *str, char delim, char set)
+{
+	size_t	i;
+	size_t	head_idx;
+	size_t	size;
+
+	i = 0;
+	head_idx = 0;
+	while (str[head_idx])
+	{
+		while (str[head_idx] && str[head_idx] == delim)
+			head_idx++;
+		if (!str[head_idx])
+			break ;
+		size = get_substr_size(str, delim, set, head_idx);
+		(*strs)[i] = ft_substr(str, head_idx, size);
+		if (!(*strs)[i])
+			return (free_array(*strs));
+		printf("i:%zu, str:%s\n", i, (*strs)[i]);
+		i++;
+		head_idx += size;
+	}
+	return (*strs);
+}
+
+
+/*
 static size_t	get_split_idx(const char *str, char dlm, char set, size_t *head)
 {
 	size_t	tail;
@@ -84,6 +215,7 @@ static size_t	get_split_idx(const char *str, char dlm, char set, size_t *head)
 			tail++;
 	return (tail);
 }
+
 
 static char	**get_split_strs(char **strs, const char *str, char delim, char set)
 {
@@ -113,6 +245,7 @@ static char	**get_split_strs(char **strs, const char *str, char delim, char set)
 	}
 	return (strs);
 }
+*/
 
 char	**ft_split_set(const char *str, char delim, char set)
 {
@@ -123,11 +256,12 @@ char	**ft_split_set(const char *str, char delim, char set)
 		return (NULL);
 	strs_size = 0;
 	if (delim)
-		get_strs_size(str, delim, set, &strs_size);
+		strs_size = get_strs_size(str, delim, set);
+//		get_strs_size(str, delim, set, &strs_size);
 	strs = (char **)ft_calloc(sizeof(char *), strs_size + 1);
 	if (!strs)
 		return (NULL);
-	get_split_strs(strs, str, delim, set);
+	get_split_strs(&strs, str, delim, set);
 	if (!strs)
 		return (NULL);
 	strs[strs_size] = NULL;
@@ -136,12 +270,13 @@ char	**ft_split_set(const char *str, char delim, char set)
 
 static void	test(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
 {
-	size_t	strs_size = 0;
-	get_strs_size(str, delim, set, &strs_size);
+	size_t	strs_size = get_strs_size(str, delim, set);
+	size_t	str_len = ft_strlen_ns(str);
+//	get_strs_size(str, delim, set, &strs_size);
 
-	char	*ans_size = (strs_size == exp_size) ? "AC" : "WA";
+	char	*ans_size = (strs_size == exp_size) ? "\x1b[32mAC\x1b[0m" : "\x1b[31mWA\x1b[0m";
 	char	**split = ft_split_set(str, delim, set);
-	printf("[%02d]\n str  :[%s], delim:[%c], set:[%c] -> strs_size:%zu ;size:%s, \n", no, str, delim, set, strs_size, ans_size);
+	printf("[%02d]\n str  :[%s], len:%zu, delim:[%c], set:[%c] -> strs_size:%zu ;size:%s, \n", no, str, str_len, delim, set, strs_size, ans_size);
 	if (!split)
 		printf(" split: NULL\n");
 	else
@@ -170,11 +305,11 @@ static void	test(int no, const char *str, const char delim, const char set, size
 		size_t	ng = 0;
 		while (exp_arr[i])
 		{
-			if (exp_arr[i] && split[i] && ft_strncmp(exp_arr[i], split[i], ft_strlen_ns(exp_arr[i])) != 0)
+			if (exp_arr[i] && ft_strncmp_ns(exp_arr[i], split[i], ft_strlen_ns(exp_arr[i])) != 0)
 				ng++;
 			i++;
 		}
-		printf("  >> result:%s\n\n", (ng == 0) ? "AC" : "WA");
+		printf("  >> result:%s\n\n", (ng == 0) ? "\x1b[32mAC\x1b[0m" : "\x1b[31mWA\x1b[0m");
 	}
 }
 
@@ -190,28 +325,28 @@ int main(void)
 	char *ans2[] = {"111 222"," 33"," 44 555", NULL};
 	test(no++, "111 222, 33, 44 555", ',', '\0', 3, ans2);
 
-	char *ans3[] = {"111","222","33","44","555", NULL};
-	test(no++, "111 222 33'44'555", ' ', '\'', 5, ans3);
+	char *ans3[] = {"111", "222", "33'44'555", NULL};
+	test(no++, "111 222 33'44'555", ' ', '\'', 3, ans3);
 
-	char *ans4[] = {"111 222 33 44 555", NULL};
+	char *ans4[] = {"'111 222 33 44 555'", NULL};
 	test(no++, "'111 222 33 44 555'", '\0', '\'', 1, ans4);
 
 	char *ans5[] = {"111","222","33","44","555", NULL};
 	test(no++, " 111 222 33 44 555 ", ' ', '\'', 5, ans5);
 
-	char *ans6[] = {"   ","222","33","44","555", NULL};
-	test(no++, "   1   1222 33 44 555  ", ' ', '1', 5, ans6);
+	char *ans6[] = {"1   1222", "33", "44", "555", NULL};
+	test(no++, "   1   1222 33 44 555  ", ' ', '1', 4, ans6);
 
-	char *ans7[] = {"111","222","33","44","555","", NULL};
-	test(no++, " 111 222 33 44 555** ", ' ', '*', 6, ans7);
+	char *ans7[] = {"111", "222", "33", "44", "555**", NULL};
+	test(no++, " 111 222 33 44 555** ", ' ', '*', 5, ans7);
 
-	char *ans8[] = {"111 222 33 44 555", NULL};
+	char *ans8[] = {"*111 222 33 44 555", NULL};
 	test(no++, "*111 222 33 44 555", ' ', '*', 1, ans8);
 
-	char *ans9[] = {"11","1 2","22","33", " 44 555  ", NULL};
-	test(no++, "11'1 2'22 33 ' 44 555  '  ", ' ', '\'', 5, ans9);
+	char *ans9[] = {"11'1 2'22", "33", "' 44 555  '", NULL};
+	test(no++, "11'1 2'22 33 ' 44 555  '  ", ' ', '\'', 3, ans9);
 
-	char *ans10[] = {"", NULL};
+	char *ans10[] = {"'", NULL};
 	test(no++, "'", ' ', '\'', 1, ans10);
 
 	char *ans11[] = {"", NULL};

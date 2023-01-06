@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 13:34:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 18:27:46 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 
 // 先にsplitせず、まず|でsplitしたものをexec_stackに入れていく
 
-t_stack	*create_root(void)
+t_stack	*create_root_node(void)
 {
-	t_exe_stk	*exe_elem;
-	t_stack		*root;
+	t_exe_elem	*exe_elem;
+	t_stack		*root_node;
 
-	exe_elem = (t_exe_stk *)malloc(sizeof(t_exe_stk));
+	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
 	if (!exe_elem)
 	{
 		perror("malloc");
@@ -30,6 +30,50 @@ t_stack	*create_root(void)
 	}
 	exe_elem->exe_type = E_ROOT;
 	exe_elem->cmds = NULL;
+	root_node = create_stack_elem(exe_elem);
+	if (!root_node)
+	{
+		perror("malloc");
+		return (NULL);
+	}
+	return (root_node);
+}
+
+t_stack	*create_pipe_node(void)
+{
+	t_exe_elem	*exe_elem;
+	t_stack		*pipe_node;
+
+	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
+	if (!exe_elem)
+	{
+		perror("malloc");
+		return (NULL);
+	}
+	exe_elem->exe_type = E_PIPE;
+	exe_elem->cmds = NULL;
+	pipe_node = create_stack_elem(exe_elem);
+	if (!pipe_node)
+	{
+		perror("malloc");
+		return (NULL);
+	}
+	return (pipe_node);
+}
+
+t_stack	*create_pipe_elem(char *cmd)
+{
+	t_exe_elem	*exe_elem;
+	t_stack		*root;
+
+	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
+	if (!exe_elem)
+	{
+		perror("malloc");
+		return (NULL);
+	}
+	exe_elem->exe_type = E_PIPE;
+	exe_elem->cmds = ft_split_set(cmd, ' ', '"');
 	root = create_stack_elem(exe_elem);
 	if (!root)
 	{
@@ -39,24 +83,53 @@ t_stack	*create_root(void)
 	return (root);
 }
 
+// First try, create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
 int	analysis(t_info *info)
 {
-//	t_exe_stk	*exe_stk;
-	char 		**split_char;
+	t_stack		*exe_stack;
+	char 		**split_by_pipe;
+	size_t		i;
 
-//	exe_stk = NULL;
 	if (!info)
-		return (false);
-	info->exe_root = create_root();
-	if (!info->exe_root)
-		return (false);
-//	split_char = ft_split(info->input_line, '|');//""は残す？
-	split_char = ft_split_set(info->input_line, '|', '"');
-	debug_print_2d_arr(split_char, "split by pipe");
+		return (FAILURE);
 
-	// split space
-	// split &&, ||
-	// split |, ()
+	// create exe-elem "root"
+	exe_stack = create_root_node();
+	if (!exe_stack)
+		return (FAILURE); // TODO:free
+	stk_add_to_bottom(&info->exe_root, exe_stack);
 
-	return (true);
+	// create exec-elem "pipe" and create edge to root
+	exe_stack = create_pipe_node();
+	info->exe_root->next = exe_stack;
+
+	// create exe-elem "commands" which connected same level pipes
+
+	// root
+	//  |
+	// pipe
+	//  |_______ .. _
+	//  |     |     |
+	// cmd1  cmd2  cmdn
+
+	split_by_pipe = ft_split_set(info->input_line, '|', '"');
+	if (!split_by_pipe)
+		return (FAILURE); // TODO:free
+	debug_print_2d_arr(split_by_pipe, "split by pipe");
+
+	i = 0;
+	while (split_by_pipe[i])
+	{
+		exe_stack = create_pipe_elem(split_by_pipe[i]);
+		if (!exe_stack)
+			return (FAILURE); // TODO:free
+	}
+
+
+	// while (true)
+	//  split &&, ||
+	//  split space
+	//  split |, ()
+
+	return (SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 17:19:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 19:30:20 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,9 @@ typedef enum e_cmd_group	t_group;
 enum e_cmd_group
 {
 	E_ROOT,
-	E_SHELL,
 	E_PIPE,
+	E_CMD,
+	E_SHELL,
 	E_SUBSHELL,
 	E_AND,
 	E_OR
@@ -111,6 +112,7 @@ int		expand_variable(void); // tmp
 /* exit */
 void	free_alloc(t_info **info);
 int		free_and_return_no(t_info **info, int exit_status);
+char	**free_array(char **array);
 
 /* builtin */
 // return exit_status

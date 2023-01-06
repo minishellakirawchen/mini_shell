@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 10:13:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 17:10:53 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 20:03:06 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,16 +75,19 @@ static size_t	get_strs_size(const char *str, char delim, char set)
 		{
 			size++;
 			is_include_str = false;
-//			printf(" # str[i]==delim  i:%zu, str[i]:[%c], size:%zu\n", i, str[i], size);
+//			printf("# str[i]==delim  i:%zu, str[i]:[%c], size:%zu\n", i, str[i], size);
 		}
 //		printf("4. before i++                 : i:%zu, str[i]:%c\n", i, str[i]);
-		if (str[i])
-			i++;
+//		if (str[i])
+//			i++;
 //		printf("5. after i++                  : i:%zu, str[i]:%c\n\n", i, str[i]);
 	}
 	if (is_include_str)
+	{
 		size++;
-//	printf("size:%zu\n\n", size);
+//		printf("6. !str[i] && is_include_str  : i:%zu, str[i]:%c\n\n", i, str[i]);
+	}
+//	printf("# size:%zu\n\n", size);
 	return (size);
 }
 
@@ -107,8 +110,8 @@ static size_t	get_substr_size(const char *str, char delim, char set, size_t head
 		}
 		if (str[head + size] && str[head + size] == delim)
 			return (size);
-		if (str[head + size])
-			size++;
+//		if (str[head + size])
+//			size++;
 	}
 	return (size);
 }
@@ -135,6 +138,7 @@ static char	**get_split_strs(char ***strs, const char *str, char delim, char set
 			break ;
 		size = get_substr_size(str, delim, set, head_idx);
 		(*strs)[i] = ft_substr(str, head_idx, size);
+//		printf("substr:%s\n", (*strs)[i]);
 		if (!(*strs)[i])
 			return (free_array(*strs));
 		i++;
@@ -159,18 +163,20 @@ char	**ft_split_set(const char *str, char delim, char set)
 	get_split_strs(&strs, str, delim, set);
 	if (!strs)
 		return (NULL);
-	strs[strs_size] = NULL;
 	return (strs);
 }
 
-/*
-static void	test(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
+
+static int	test(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
 {
+	int		test_wa = 0;
 	size_t	strs_size = get_strs_size(str, delim, set);
 	size_t	str_len = ft_strlen_ns(str);
 //	get_strs_size(str, delim, set, &strs_size);
 
 	char	*ans_size = (strs_size == exp_size) ? "\x1b[32mAC\x1b[0m" : "\x1b[31mWA\x1b[0m";
+	if (strs_size != exp_size)
+		test_wa = 1;
 	char	**split = ft_split_set(str, delim, set);
 	printf("[%02d]\n str  :[%s], len:%zu, delim:[%c], set:[%c] -> strs_size:%zu ;size:%s, \n", no, str, str_len, delim, set, strs_size, ans_size);
 	if (!split)
@@ -201,62 +207,76 @@ static void	test(int no, const char *str, const char delim, const char set, size
 		size_t	ng = 0;
 		while (exp_arr[i])
 		{
-			if (exp_arr[i] && ft_strncmp_ns(exp_arr[i], split[i], ft_strlen_ns(exp_arr[i])) != 0)
+			if (ft_strlen_ns(exp_arr[i]) != ft_strlen_ns(split[i]))
+				ng++;
+			else if (ft_strncmp_ns(exp_arr[i], split[i], ft_strlen_ns(exp_arr[i])) != 0)
 				ng++;
 			i++;
 		}
 		printf("  >> result:%s\n\n", (ng == 0) ? "\x1b[32mAC\x1b[0m" : "\x1b[31mWA\x1b[0m");
+		if (ng)
+			test_wa = 1;
 	}
+	return (test_wa);
 }
 
 int main(void)
 {
 	int 	no = 1;
+	int 	ng = 0;
 
 	printf("\n\n     ##### SPLIT TEST START #####\n\n");
 
+
 	char *ans1[] = {"111","222","33","44","555", NULL};
-	test(no++, "111 222 33 44 555", ' ', '\0', 5, ans1);
+	ng += test(no++, "111 222 33 44 555", ' ', '\0', 5, ans1);
 
 	char *ans2[] = {"111 222"," 33"," 44 555", NULL};
-	test(no++, "111 222, 33, 44 555", ',', '\0', 3, ans2);
+	ng += test(no++, "111 222, 33, 44 555", ',', '\0', 3, ans2);
 
 	char *ans3[] = {"111", "222", "33'44'555", NULL};
-	test(no++, "111 222 33'44'555", ' ', '\'', 3, ans3);
+	ng += test(no++, "111 222 33'44'555", ' ', '\'', 3, ans3);
 
 	char *ans4[] = {"'111 222 33 44 555'", NULL};
-	test(no++, "'111 222 33 44 555'", '\0', '\'', 1, ans4);
+	ng += test(no++, "'111 222 33 44 555'", '\0', '\'', 1, ans4);
 
 	char *ans5[] = {"111","222","33","44","555", NULL};
-	test(no++, " 111 222 33 44 555 ", ' ', '\'', 5, ans5);
+	ng += test(no++, " 111 222 33 44 555 ", ' ', '\'', 5, ans5);
 
 	char *ans6[] = {"1   1222", "33", "44", "555", NULL};
-	test(no++, "   1   1222 33 44 555  ", ' ', '1', 4, ans6);
+	ng += test(no++, "   1   1222 33 44 555  ", ' ', '1', 4, ans6);
 
 	char *ans7[] = {"111", "222", "33", "44", "555**", NULL};
-	test(no++, " 111 222 33 44 555** ", ' ', '*', 5, ans7);
+	ng += test(no++, " 111 222 33 44 555** ", ' ', '*', 5, ans7);
 
 	char *ans8[] = {"*111 222 33 44 555", NULL};
-	test(no++, "*111 222 33 44 555", ' ', '*', 1, ans8);
+	ng += test(no++, "*111 222 33 44 555", ' ', '*', 1, ans8);
 
 	char *ans9[] = {"11'1 2'22", "33", "' 44 555  '", NULL};
-	test(no++, "11'1 2'22 33 ' 44 555  '  ", ' ', '\'', 3, ans9);
+	ng += test(no++, "11'1 2'22 33 ' 44 555  '  ", ' ', '\'', 3, ans9);
 
 	char *ans10[] = {"'", NULL};
-	test(no++, "'", ' ', '\'', 1, ans10);
+	ng += test(no++, "'", ' ', '\'', 1, ans10);
 
 	char *ans11[] = {"", NULL};
-	test(no++, "", ' ', '\'', 0, ans11);
+	ng += test(no++, "", ' ', '\'', 0, ans11);
 
 	char *ans12[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test '", NULL};
-	test(no++, "echo hello world | cat Makefile | echo 'test | test | test '", '|', '\'', 3, ans12);
+	ng += test(no++, "echo hello world | cat Makefile | echo 'test | test | test '", '|', '\'', 3, ans12);
 
 	char *ans13[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test ''", NULL};
-	test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''", '|', '\'', 3, ans13);
+	ng += test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''", '|', '\'', 3, ans13);
 
 	char *ans14[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test ''''", NULL};
-	test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''''", '|', '\'', 3, ans14);
+	ng += test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''''", '|', '\'', 3, ans14);
 
+	char *ans15[] = {"echo hello world ", " 'test | test ' ", " cat -e out", NULL};
+	ng += test(no++, "echo hello world | 'test | test ' | cat -e out", '|', '\'', 3, ans15);
+
+	char *ans16[] = {"echo ", " 'test || test| hoge|' ", " cat -e ", " gre", "p", NULL};
+	ng += test(no++, "echo | 'test || test| hoge|' ||| cat -e | gre|p", '|', '\'', 5, ans16);
+
+
+	printf("RESULT: %s\n", ng == 0 ? "\x1b[32mAC\x1b[0m" : "\x1b[31mWA\x1b[0m");
 	printf("     ##### SPLIT TEST END #####\n\n");
 }
-*/

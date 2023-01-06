@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 10:13:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 16:50:36 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 17:09:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,30 +40,30 @@ static char	**free_array(char **array)
 // while !delim i++
 //   if set -> while set i++
 
+// delim-'\0' : not count
+// !delim-'\0': count
 static size_t	get_strs_size(const char *str, char delim, char set)
 {
 	size_t	size;
 	size_t	i;
-	bool	is_str_exit;
+	bool	is_include_str;
 
 //	printf("# get_strs_size  str:[%s]\n", str);
 	size = 0;
 	i = 0;
 	while (str[i])
 	{
-		is_str_exit = false;
+		is_include_str = false;
 		while (str[i] && str[i] == delim)
 			i++;
 //		printf("1. after while(delim)         : i:%zu, str[i]:%c\n", i, str[i]);
+		if (str[i] && str[i] != delim)
+			is_include_str = true;
 		while (str[i] && str[i] != delim && str[i] != set)
-		{
 			i++;
-			is_str_exit = true;
-		}
 //		printf("2. after while(!delim && !set): i:%zu, str[i]:%c\n", i, str[i]);
 		if (str[i] && str[i] == set)
 		{
-			is_str_exit = true;
 			i++;
 			while (str[i] && str[i] != set)
 				i++;
@@ -71,9 +71,10 @@ static size_t	get_strs_size(const char *str, char delim, char set)
 				i++;
 		}
 //		printf("3. if(set)                    : i:%zu, str[i]:%c\n", i, str[i]);
-		if ((!str[i] || str[i] == delim) && is_str_exit)
+		if (str[i] == delim && is_include_str)
 		{
 			size++;
+			is_include_str = false;
 //			printf(" # str[i]==delim  i:%zu, str[i]:[%c], size:%zu\n", i, str[i], size);
 		}
 //		printf("4. before i++                 : i:%zu, str[i]:%c\n", i, str[i]);
@@ -81,41 +82,11 @@ static size_t	get_strs_size(const char *str, char delim, char set)
 			i++;
 //		printf("5. after i++                  : i:%zu, str[i]:%c\n\n", i, str[i]);
 	}
+	if (is_include_str)
+		size++;
 //	printf("size:%zu\n\n", size);
 	return (size);
 }
-
-
-
-//static void	get_strs_size(const char *str, char delim, char set, size_t *cnt)
-//{
-//	size_t	set_cnt;
-//	size_t	i;
-//
-//	set_cnt = 0;
-//	i = 0;
-//	while (str[i])
-//	{
-//		while (str[i] && str[i] == delim)
-//			i++;
-//		if (str[i] && str[i] != set)
-//		{
-//			if (set_cnt % 2 == 0)
-//				*cnt += 1;
-//			while (str[i] && str[i] != delim && str[i] != set)
-//				i++;
-//		}
-//		if (str[i] && str[i] == set)
-//		{
-//			set_cnt++;
-//			if (set_cnt % 2 == 1)
-//				*cnt += 1;
-//			i++;
-//		}
-//	}
-//}
-
-
 
 static size_t	get_substr_size(const char *str, char delim, char set, size_t head)
 {
@@ -142,25 +113,6 @@ static size_t	get_substr_size(const char *str, char delim, char set, size_t head
 	return (size);
 }
 
-
-
-//static size_t	get_split_size(const char *str, char delim, char set, size_t head)
-//{
-//	size_t	size;
-//
-//	size = 0;
-//	while (str[head + size])
-//	{
-//		while (str[head + size] && str[head + size] != set && str[head + size] != delim)
-//			size++;
-//		if (!str[head + size] || str[head + size] == delim)
-//			return (size);
-//		while (str[head + size] && str[head + size] == set)
-//			size++;
-//	}
-//	return (size);
-//}
-
 // delim=_, set='
 // str="aaa___bb'b___'__c"
 // ->aaa,bb'b___',c
@@ -185,67 +137,11 @@ static char	**get_split_strs(char ***strs, const char *str, char delim, char set
 		(*strs)[i] = ft_substr(str, head_idx, size);
 		if (!(*strs)[i])
 			return (free_array(*strs));
-		printf("i:%zu, str:%s\n", i, (*strs)[i]);
 		i++;
 		head_idx += size;
 	}
 	return (*strs);
 }
-
-
-/*
-static size_t	get_split_idx(const char *str, char dlm, char set, size_t *head)
-{
-	size_t	tail;
-	bool	is_in_set;
-
-	while (str[*head] && str[*head] == dlm)
-		*head += 1;
-	is_in_set = false;
-	if (str[*head] == set)
-		is_in_set = true;
-	tail = *head;
-	if (is_in_set)
-		tail++;
-	if (is_in_set)
-		while (str[tail] && str[tail] != set)
-			tail++;
-	else
-		while (str[tail] && str[tail] != dlm && str[tail] != set)
-			tail++;
-	return (tail);
-}
-
-
-static char	**get_split_strs(char **strs, const char *str, char delim, char set)
-{
-	size_t	i;
-	size_t	head_idx;
-	size_t	tail_idx;
-	size_t	head_shift;
-
-	i = 0;
-	head_idx = 0;
-	while (str[head_idx])
-	{
-		head_shift = 0;
-		tail_idx = get_split_idx(str, delim, set, &head_idx);
-		if (head_idx >= tail_idx || (str[head_idx] == delim && !str[tail_idx]))
-			break ;
-		if (str[head_idx] == set)
-			head_shift = 1;
-		head_idx += head_shift;
-		strs[i] = ft_substr(str, head_idx, tail_idx - head_idx);
-		if (!strs[i])
-			return (free_array(strs));
-		i++;
-		head_idx = tail_idx;
-		if (str[tail_idx])
-			head_idx += head_shift;
-	}
-	return (strs);
-}
-*/
 
 char	**ft_split_set(const char *str, char delim, char set)
 {
@@ -257,7 +153,6 @@ char	**ft_split_set(const char *str, char delim, char set)
 	strs_size = 0;
 	if (delim)
 		strs_size = get_strs_size(str, delim, set);
-//		get_strs_size(str, delim, set, &strs_size);
 	strs = (char **)ft_calloc(sizeof(char *), strs_size + 1);
 	if (!strs)
 		return (NULL);
@@ -267,6 +162,7 @@ char	**ft_split_set(const char *str, char delim, char set)
 	strs[strs_size] = NULL;
 	return (strs);
 }
+
 
 static void	test(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
 {
@@ -355,6 +251,11 @@ int main(void)
 	char *ans12[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test '", NULL};
 	test(no++, "echo hello world | cat Makefile | echo 'test | test | test '", '|', '\'', 3, ans12);
 
+	char *ans13[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test ''", NULL};
+	test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''", '|', '\'', 3, ans13);
+
+	char *ans14[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test ''''", NULL};
+	test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''''", '|', '\'', 3, ans14);
 
 	printf("     ##### SPLIT TEST END #####\n\n");
 }

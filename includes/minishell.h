@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 19:30:20 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 20:35:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@
 #define SUCCESS	0
 #define	FAILURE	1
 
+#define READ	0
+#define WRITE	1
+
 #define CHDIR_FAILURE	1
+#define CMD_NOT_FOUND	127
 
 #define	ISSPACE	"\t\n\v\f\r "
 

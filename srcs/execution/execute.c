@@ -6,21 +6,16 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 13:28:08 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 21:56:59 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	is_builtins(t_info *info)
+bool	is_builtins(char *cmd_head)
 {
-	char	*cmd_head;
-	size_t	len;
+	const size_t	len = ft_strlen_ns(cmd_head);
 
-	if (!info || !info->commands)
-		return (false);
-	cmd_head = info->commands[0];
-	len = ft_strlen_ns(cmd_head);
 //	printf("#[DEBUG]commands[0]:%s, len:%zu\n", cmd_head, len);
 	if (len == 0)
 		return (false);
@@ -48,15 +43,10 @@ bool	is_builtins(t_info *info)
 	return (false);
 }
 
-int	execute_builtins(t_info *info)
+int	execute_builtins(char *cmd_head, t_info *info)
 {
-	char	*cmd_head;
-	size_t	len;
+	const size_t	len = ft_strlen_ns(cmd_head);
 
-	if (!info || !info->commands)
-		return (EXIT_FAILURE);
-	cmd_head = info->commands[0];
-	len = ft_strlen_ns(cmd_head);
 	// TODO:  implement more simple
 	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0)
 		return (ft_echo(info));
@@ -112,28 +102,82 @@ int	execute_builtins(t_info *info)
 //	exit
 //		{"exit", NULL}
 
+
+// child  -> parent
+// stdout -> stdin
+
+int execute_pipe_recursion(t_stack *stk, t_info *info)
+{
+
+	pid_t		pid;
+	int			pipe_fd[2];
+	t_exe_elem	*elem;
+
+	elem = NULL;
+	if (stk->prev)
+		elem = stk->prev->content;
+	if (elem && elem->exe_type == E_CMD)
+	{
+		pipe(pipe_fd);
+		pid = fork();
+		if (pid == 0) // child why 0?
+		{
+			close(pipe_fd[READ]);
+			close(STDOUT_FILENO);
+			dup2(pipe_fd[WRITE], STDOUT_FILENO);
+			close(pipe_fd[WRITE]);
+			execute_pipe_recursion(stk->prev, info);
+		}
+
+		close(pipe_fd[WRITE]);
+		close(STDIN_FILENO);
+		dup2(pipe_fd[READ], STDIN_FILENO);
+		close(pipe_fd[READ]);
+	}
+	elem = stk->content;
+	if (!elem || !elem->cmds)
+		return (EXIT_FAILURE);
+//	debug_print_2d_arr(elem->cmds, "cmds");
+	/*
+	if (is_builtins(elem->cmds[0]))
+		info->exit_status = execute_builtins(elem->cmds[0], info);
+	else
+	{
+//		execve(elem->cmds[0], elem->cmds, NULL);
+		execvp(elem->cmds[0], elem->cmds);//TODO:exeve
+		perror("execvp");
+		printf("command not found: %s\n", elem->cmds[0]);
+		info->exit_status = 127;
+	}
+	*/
+
+	execvp(elem->cmds[0], elem->cmds);//TODO:exeve
+	perror("execvp");
+	printf("command not found: %s\n", elem->cmds[0]);
+	exit (CMD_NOT_FOUND);
+}
+
 int	execute(t_info *info)
 {
 	pid_t	pid;
+	t_stack	*pipe_last;
+	size_t	i;
+	int		status;
 
-	if (is_builtins(info))
-		return (execute_builtins(info));
 	pid = fork();
-	if (pid < 0)
+	if (pid == 0)
 	{
-		perror("fork");
-		free_and_return_no(&info, EXIT_FAILURE);
-	}
-	if (pid == 0) // child why 0?
-	{
-		execvp(info->commands[0], info->commands);// for tmp test
-
-		// if cmd has path -> execve(PATH, cmd, env);
-		// else            -> ft_execvp(file, cmd); search path and execve
-		perror("execvp");
-		free_and_return_no(&info, EXIT_FAILURE);
+		pipe_last = get_last_elem(info->exe_root->next);
+		execute_pipe_recursion(pipe_last, info);
 	}
 	// parent pid > 0; Process ID
-	info->exit_status = waitpid(pid, NULL, 0);
+	i = 0;
+	while (i < get_stack_size(info->exe_root->next) + 1)
+	{
+		wait(&status);
+		i++;
+	}
+	info->exit_status = WEXITSTATUS(status);
+//	info->exit_status = waitpid(pid, NULL, 0);
 	return (info->exit_status);
 }

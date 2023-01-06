@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 13:28:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 20:16:23 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ void debug_print_2d_arr(char **arr, char *str)
 	if (!arr)
 		return ;
 	i = 0;
-	printf("%s:", str);
+	if (str)
+		printf("%s:", str);
 	while (arr[i])
 	{
 		printf("[%s]", arr[i++]);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 19:36:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 21:56:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ char **splitset_and_trim(char *src, char delim, char set, char *trimchar)
 		free(trimmed_str);
 		i++;
 	}
-	debug_print_2d_arr(splitted_strs, "splited_str[i]");
+//	debug_print_2d_arr(splitted_strs, "splited_str[i]");
 	return (splitted_strs);
 }
 
@@ -116,11 +116,43 @@ t_stack	*create_cmd_elem(char *cmd)
 	return (root);
 }
 
+void	debug_print_stack(t_stack *root, char *str)
+{
+	t_stack		*ptr;
+	t_exe_elem	*elem;
+
+	printf("\n");
+	if (str)
+		printf("#DEBUG[print_stack : %s]\n", str);
+	ptr = root;
+	while (ptr)
+	{
+		elem = ptr->content;
+		if (elem->exe_type == E_ROOT)
+		{
+			printf(" [root]\n");
+			printf("  |    \n");
+		}
+		else if (elem->exe_type == E_PIPE)
+		{
+			printf(" [pipe]\n");
+			printf("  |    \n");
+		}
+		else if (elem->exe_type == E_CMD)
+		{
+			printf(" [cmd]--");
+			debug_print_2d_arr(elem->cmds, NULL);
+		}
+		ptr = ptr->next;
+	}
+	printf("\n");
+}
+
 // First try, create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
 int	analysis(t_info *info)
 {
 	t_stack		*exe_stack;
-	t_stack		*prev;
+//	t_stack		*prev;
 	char 		**split_by_pipe;
 	size_t		i;
 
@@ -131,7 +163,7 @@ int	analysis(t_info *info)
 	exe_stack = create_root_node();
 	if (!exe_stack)
 		return (FAILURE); // TODO:free
-	stk_add_to_bottom(&info->exe_root, exe_stack);
+	add_to_bottom(&info->exe_root, exe_stack);
 
 	// create exec-elem "pipe" and create edge to root
 	exe_stack = create_pipe_node();
@@ -149,20 +181,53 @@ int	analysis(t_info *info)
 	split_by_pipe = ft_split_set(info->input_line, '|', '"');
 	if (!split_by_pipe)
 		return (FAILURE); // TODO:free
-	debug_print_2d_arr(split_by_pipe, "split by pipe");
-
+//	debug_print_2d_arr(split_by_pipe, "split by pipe");
 
 	i = 0;
-	prev = info->exe_root->next;
+//	prev = info->exe_root->next;
 	while (split_by_pipe[i])
 	{
 		exe_stack = create_cmd_elem(split_by_pipe[i]);
 		if (!exe_stack)
 			return (FAILURE); // TODO:free
-		prev->next = exe_stack;
-		prev = exe_stack;
+		add_to_bottom(&info->exe_root, exe_stack);
+//		prev->next = exe_stack;
+//		prev = exe_stack;
 		i++;
 	}
+	debug_print_stack(info->exe_root, "print stack");
+
+	/*
+	printf("check prev\n");
+	t_stack *pipe_last = get_last_elem(info->exe_root);
+
+	t_exe_elem *elem = pipe_last->content;
+	if (elem->exe_type == E_CMD)
+	{
+		printf("last:COM\n");
+		debug_print_2d_arr(elem->cmds, "last");
+	}
+	else if (elem->exe_type == E_PIPE)
+	{
+		printf("last:PIPE\n");
+	}
+
+	if (!pipe_last->prev)
+		printf("last->prev=NULL\n");
+	else
+	{
+		elem = pipe_last->prev->content;
+		if (elem->exe_type == E_CMD)
+		{
+			printf("last->prev:COM\n");
+			debug_print_2d_arr(elem->cmds, "last->prev");
+		}
+		else if (elem->exe_type == E_PIPE)
+		{
+			printf("last->prev:PIPE\n");
+		}
+	}
+	*/
 
 	// while (true)
 	//  split &&, ||

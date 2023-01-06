@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:40:35 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 17:24:47 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 21:51:16 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,10 @@ struct s_stack_elem
 	struct s_stack_elem	*next;
 };
 
-void	stk_add_to_top(t_stack **stk, t_stack *elem);
-void	stk_add_to_bottom(t_stack **stk, t_stack *elem);
-t_stack	*pop_left(t_stack **stk);
-t_stack	*pop_right(t_stack **stk);
+void	add_to_top(t_stack **stk, t_stack *elem);
+void	add_to_bottom(t_stack **stk, t_stack *elem);
+t_stack	*pop_from_top(t_stack **stk);
+t_stack	*pop_from_bottom(t_stack **stk);
 t_stack	*create_stack_elem(void *content);
 t_stack	*get_last_elem(t_stack *elem);
 void	ft_stack_clear(t_stack **stk);

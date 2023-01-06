@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 10:13:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 17:09:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/06 17:10:53 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ char	**ft_split_set(const char *str, char delim, char set)
 	return (strs);
 }
 
-
+/*
 static void	test(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
 {
 	size_t	strs_size = get_strs_size(str, delim, set);
@@ -259,3 +259,4 @@ int main(void)
 
 	printf("     ##### SPLIT TEST END #####\n\n");
 }
+*/

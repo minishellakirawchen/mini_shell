@@ -13,6 +13,7 @@
 #include "minishell.h"
 
 // TODO: input "key=value" -> separate to key, value
+// TODO; implement "key+=add_velue"
 int ft_export(t_info *info)
 {
 	char	*key;

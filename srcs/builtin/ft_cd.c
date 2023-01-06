@@ -30,7 +30,7 @@ char	*get_new_path(char *current_path, char *move_to)
 	ft_strlcat(new_path, move_to, current_len + move_len + 2);
 	return (new_path);
 }
-
+// ft_cd ..
 int ft_cd(t_info *info)
 {
 	int		chdir_ret;

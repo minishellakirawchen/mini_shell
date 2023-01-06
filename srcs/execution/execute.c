@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 10:50:04 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/06 13:28:08 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int	execute(t_info *info)
 	}
 	if (pid == 0) // child why 0?
 	{
-		execvp(info->input_line[0], info->input_line);// for tmp test
+		execvp(info->commands[0], info->commands);// for tmp test
 
 		// if cmd has path -> execve(PATH, cmd, env);
 		// else            -> ft_execvp(file, cmd); search path and execve

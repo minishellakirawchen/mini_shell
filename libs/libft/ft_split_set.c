@@ -1,6 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
+/*   ft_split_set.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/03 10:13:26 by takira            #+#    #+#             */
+/*   Updated: 2023/01/06 13:43:43 by takira           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
 /*   ft_split_set.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
@@ -120,4 +132,94 @@ char	**ft_split_set(const char *str, char delim, char set)
 		return (NULL);
 	strs[strs_size] = NULL;
 	return (strs);
+}
+
+static void	test(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
+{
+	size_t	strs_size = 0;
+	get_strs_size(str, delim, set, &strs_size);
+
+	char	*ans_size = (strs_size == exp_size) ? "AC" : "WA";
+	char	**split = ft_split_set(str, delim, set);
+	printf("[%02d]\n str  :[%s], delim:[%c], set:[%c] -> strs_size:%zu ;size:%s, \n", no, str, delim, set, strs_size, ans_size);
+	if (!split)
+		printf(" split: NULL\n");
+	else
+	{
+		size_t	i = 0;
+		printf(" split:[");
+		while (split[i])
+		{
+			if (i != 0)
+				printf(",");
+			printf("%s", split[i++]);
+		}
+		printf("]\n");
+
+		printf(" expec:[");
+		i = 0;
+		while (exp_arr[i])
+		{
+			if (i != 0)
+				printf(",");
+			printf("%s", exp_arr[i++]);
+		}
+		printf("]\n");
+
+		i = 0;
+		size_t	ng = 0;
+		while (exp_arr[i])
+		{
+			if (exp_arr[i] && split[i] && ft_strncmp(exp_arr[i], split[i], ft_strlen_ns(exp_arr[i])) != 0)
+				ng++;
+			i++;
+		}
+		printf("  >> result:%s\n\n", (ng == 0) ? "AC" : "WA");
+	}
+}
+
+int main(void)
+{
+	int 	no = 1;
+
+	printf("\n\n     ##### SPLIT TEST START #####\n\n");
+
+	char *ans1[] = {"111","222","33","44","555", NULL};
+	test(no++, "111 222 33 44 555", ' ', '\0', 5, ans1);
+
+	char *ans2[] = {"111 222"," 33"," 44 555", NULL};
+	test(no++, "111 222, 33, 44 555", ',', '\0', 3, ans2);
+
+	char *ans3[] = {"111","222","33","44","555", NULL};
+	test(no++, "111 222 33'44'555", ' ', '\'', 5, ans3);
+
+	char *ans4[] = {"111 222 33 44 555", NULL};
+	test(no++, "'111 222 33 44 555'", '\0', '\'', 1, ans4);
+
+	char *ans5[] = {"111","222","33","44","555", NULL};
+	test(no++, " 111 222 33 44 555 ", ' ', '\'', 5, ans5);
+
+	char *ans6[] = {"   ","222","33","44","555", NULL};
+	test(no++, "   1   1222 33 44 555  ", ' ', '1', 5, ans6);
+
+	char *ans7[] = {"111","222","33","44","555","", NULL};
+	test(no++, " 111 222 33 44 555** ", ' ', '*', 6, ans7);
+
+	char *ans8[] = {"111 222 33 44 555", NULL};
+	test(no++, "*111 222 33 44 555", ' ', '*', 1, ans8);
+
+	char *ans9[] = {"11","1 2","22","33", " 44 555  ", NULL};
+	test(no++, "11'1 2'22 33 ' 44 555  '  ", ' ', '\'', 5, ans9);
+
+	char *ans10[] = {"", NULL};
+	test(no++, "'", ' ', '\'', 1, ans10);
+
+	char *ans11[] = {"", NULL};
+	test(no++, "", ' ', '\'', 0, ans11);
+
+	char *ans12[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test '", NULL};
+	test(no++, "echo hello world | cat Makefile | echo 'test | test | test '", '|', '\'', 3, ans12);
+
+
+	printf("     ##### SPLIT TEST END #####\n\n");
 }

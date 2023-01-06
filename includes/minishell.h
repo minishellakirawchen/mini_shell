@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/04 16:49:41 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/06 13:27:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef enum e_cmd_group	t_group;
 /* enum */
 enum e_cmd_group
 {
+	E_ROOT,
 	E_SHELL,
 	E_PIPE,
 	E_SUBSHELL,
@@ -81,10 +82,11 @@ struct s_minishell_param
 {
 	int		exit_status;
 	t_list	*env_list;
-	char	**input_line; // tmp
-	char	**commands;   // tmp
+	char	*input_line;
+	char	**commands;   // for demo
 	t_list	*execute_cmds;
 	t_stack	*exe_stack;
+	t_stack	*exe_root;
 };
 
 /* input */
@@ -119,5 +121,8 @@ int		ft_env(t_info *info);
 int		ft_exit(t_info *info);
 // builtin helper
 char	*get_current_path(void);
+
+/* */
+void debug_print_2d_arr(char **arr, char *str);
 
 #endif

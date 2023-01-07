@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:51:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:58:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,9 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 
 	if (is_builtins(right_elem->cmds[0]))
 		return (execute_builtins(info, right_elem->cmds));
+//	TODO:
+//	 if (is_redirections(right_elem->cmds[0]))
+
 	if (right_elem->cmds[0] && (right_elem->cmds[0][0] == '/' || right_elem->cmds[0][0] == '.'))
 		execve(right_elem->cmds[0], right_elem->cmds, NULL);
 	else

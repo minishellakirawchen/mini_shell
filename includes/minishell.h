@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 13:10:20 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 13:49:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ struct s_minishell_param
 /* ------- */
 /*  input  */
 /* ------- */
+/* input.c */
 int		prompt_loop(t_info *info);
 t_list	*get_env_list(void);
 char	*get_env_value(char *search_key, t_list *env_list_head);
@@ -137,21 +138,30 @@ int		delete_env_elem(t_list **list_head, char *search_key);
 /* ---------- */
 /*  analysis  */
 /* ---------- */
+/* analysis.c */
 int		analysis(t_info *info); // tmp
 
 /* ----------- */
 /*  execution  */
 /* ----------- */
+/* execute.c */
 int		execute_command_line(t_info *info);
+
+/* execute_builtin */
+bool	is_builtins(char *cmd_head);
+int		execute_builtins(t_info *info, char **cmds);
+
 
 /* ----------- */
 /*  expansion  */
 /* ----------- */
+/* expansion.c */
 int		expand_variable(void); // tmp
 
 /* ------ */
 /*  exit  */
 /* ------ */
+/* exit.c */
 void	free_alloc(t_info **info);
 int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
@@ -160,7 +170,7 @@ int		perror_and_return_int(char *err, int ret_value);
 /* --------- */
 /*  builtin  */
 /* --------- */
-// return exit_status
+/* builtin.c */
 int		ft_echo(t_info *info, char **cmds);
 int		ft_cd(t_info *info, char **cmds);
 int		ft_pwd(t_info *info);
@@ -168,13 +178,13 @@ int		ft_export(t_info *info, char **cmds);
 int		ft_unset(t_info *info, char **cmds);
 int		ft_env(t_info *info, char **cmds);
 int		ft_exit(t_info *info, char **cmds);
-// builtin helper
+/* builtin helper.c */
 char	*get_current_path(void);
 
 /* -------- */
 /*  helper  */
 /* -------- */
-/* tree_operation */
+/* tree_operation.c */
 t_tree	*pop_tree_elem_from_top(t_tree **root);
 t_tree	*pop_tree_elem_from_bottom(t_tree **root);
 void	add_top_of_tree(t_tree **root, t_tree *elem);

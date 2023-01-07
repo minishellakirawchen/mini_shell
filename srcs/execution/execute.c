@@ -6,64 +6,11 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 11:27:55 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:07:58 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	is_builtins(char *cmd_head)
-{
-	const size_t	len = ft_strlen_ns(cmd_head);
-
-	if (len == 0)
-		return (false);
-	// TODO: implement more simple, for debug, ft_**
-	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0 \
-	|| (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0))
-		return (true);
-	if (ft_strncmp_ns("ft_cd", cmd_head, len) == 0)
-		return (true);
-	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0 \
-	|| (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0))
-		return (true);
-	if (ft_strncmp_ns("ft_export", cmd_head, len) == 0)
-		return (true);
-	if (ft_strncmp_ns("ft_unset", cmd_head, len) == 0)
-		return (true);
-	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0 \
-	|| (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0))
-		return (true);
-	if (ft_strncmp_ns("ft_exit", cmd_head, len) == 0)
-		return (true);
-	return (false);
-}
-
-int	execute_builtins(t_info *info, char **cmds)
-{
-	const char		*cmd_head = cmds[0];
-	const size_t	len = ft_strlen_ns(cmd_head);
-
-	// TODO:  implement more simple
-	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0 \
-	|| (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0))
-		return (ft_echo(info, cmds));
-	if (ft_strncmp_ns("ft_cd", cmd_head, len) == 0)
-		return (ft_cd(info, cmds));
-	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0 \
-	|| (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0))
-		return (ft_pwd(info));
-	if (ft_strncmp_ns("ft_export", cmd_head, len) == 0)
-		return (ft_export(info, cmds));
-	if (ft_strncmp_ns("ft_unset", cmd_head, len) == 0)
-		return (ft_unset(info, cmds));
-	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0 \
-	|| (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0))
-		return (ft_env(info, cmds));
-	if (ft_strncmp_ns("ft_exit", cmd_head, len) == 0)
-		return (ft_exit(info, cmds));
-	return (EXIT_FAILURE);
-}
 
 char	*get_execute_path(char *path, char *file)
 {
@@ -90,19 +37,9 @@ char	*get_execute_path(char *path, char *file)
 	return (execute_path);
 }
 
-/*
-char **create_environ(t_list *env_list)
-{
-	char **environ;
-
-
-	return (environ);
-}
-*/
-
 int	ft_execvp(char *file, char **cmds, char *env_paths)
 {
-	extern char	**environ;
+//	extern char	**environ;
 	char		**splitted_paths;
 	size_t		idx;
 	char 		*path;
@@ -123,7 +60,7 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 			perror("malloc");
 			return (EXIT_FAILURE);
 		}
-		execve(path, cmds, environ);
+		execve(path, cmds, NULL);
 		free(path);
 		idx++;
 	}
@@ -133,7 +70,7 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 
 int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 {
-	extern char	**environ;
+//	extern char	**environ;
 	pid_t		pid;
 	int			pipe_fd[2];
 	t_exe_elem	*elem;
@@ -145,15 +82,16 @@ int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 	{
 		pipe(pipe_fd);
 		pid = fork();
-		if (pid == 0) // child why 0?
+		if (pid == 0)
 		{
+			//TODO: error handling
 			close(pipe_fd[READ]);
 			close(STDOUT_FILENO);
 			dup2(pipe_fd[WRITE], STDOUT_FILENO);
 			close(pipe_fd[WRITE]);
 			execute_pipe_recursion(root->left, info);
 		}
-
+		//TODO: error handling
 		close(pipe_fd[WRITE]);
 		close(STDIN_FILENO);
 		dup2(pipe_fd[READ], STDIN_FILENO);
@@ -167,7 +105,7 @@ int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 	if (is_builtins(elem->cmds[0]))
 		return (execute_builtins(info, elem->cmds));
 	if (elem->cmds[0] && (elem->cmds[0][0] == '/' || elem->cmds[0][0] == '.'))
-		execve(elem->cmds[0], elem->cmds, environ);
+		execve(elem->cmds[0], elem->cmds, NULL);
 	else
 	{
 		ft_execvp(elem->cmds[0], elem->cmds, get_env_value(PATH, info->env_list));
@@ -176,17 +114,34 @@ int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 	exit (CMD_NOT_FOUND);
 }
 
-int	execute_command_line(t_info *info)//tmp
+// TODO: implement handler
+// nodeを辿りながらflagに応じた実行をしていく
+// node中にflagがあった場合、内部でhandlerを実行することで、実行順の整合性が取れる（はず）
+/*
+int execute_handler()
+{
+	if pipe -> exec_pipe
+	if subshell -> exec_subshell
+	if and -> exec_and
+	if or -> exec_or
+}
+*/
+
+int	execute_command_line(t_info *info)
 {
 	pid_t	pid;
 	t_tree	*pipe_last;
 	size_t	i;
 	int		status;
 
+	//TODO: only command; no pipe
+	//  cd     -> no fork
+	//  others -> fork
 	pid = fork();
 	if (pid == 0)
 	{
 		pipe_last = get_last_elem(info->exe_root->right);
+		//TODO: execute_handler()
 		execute_pipe_recursion(pipe_last, info);
 	}
 	// parent pid > 0; Process ID

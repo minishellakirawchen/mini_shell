@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 08:52:33 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 19:01:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,6 @@ int	prompt_loop(t_info	*info)
 		/* Maybe unnecessary, "clear" clear prompt on default */
 		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
 		//		rewrite prompt
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		/*  for demo  */
-		// "" '' must not split -> ex)echo "hello world" -> analysis
-//		info->input_line = ft_split_set(input_line, ' ', '\'');
-		info->commands = ft_split_set(input_line, ' ', '\"'); // for demo
 		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
 
 //		info->input_line = ft_split_set(input_line, ' ', '"'); //temp, for feature, update group flag set; char set -> char *set={'"} ()も

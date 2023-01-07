@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:58:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 19:38:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,7 @@ char	*get_execute_path(char *path, char *file)
 	len++;
 	execute_path = (char *)ft_calloc(sizeof(char), len);
 	if (!execute_path)
-	{
-		perror("malloc");
-		return (NULL);
-	}
+		return (perror_and_return_null("malloc"));
 	ft_strlcat(execute_path, path, len);
 	if (path_len > 0 && path[path_len - 1] != '/')
 		ft_strlcat(execute_path, "/", len);
@@ -46,20 +43,14 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 
 	splitted_paths = ft_split(env_paths, PATH_DELIMITER);
 	if (!splitted_paths)
-	{
-		perror("malloc");
-		return (EXIT_FAILURE);
-	}
+		return (perror_and_return_int("malloc", EXIT_FAILURE));
 //	debug_print_2d_arr(splitted_paths, "splitted_paths"); // check
 	idx = 0;
 	while (splitted_paths[idx])
 	{
 		path = get_execute_path(splitted_paths[idx], file);
 		if (!path)
-		{
-			perror("malloc");
-			return (EXIT_FAILURE);
-		}
+			return (perror_and_return_int("malloc", EXIT_FAILURE));
 		execve(path, cmds, NULL);
 		free(path);
 		idx++;
@@ -68,6 +59,35 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 	return (CMD_NOT_FOUND);
 }
 
+int	close_fd_for_child(int pipe_fd[2])
+{
+	if (close(pipe_fd[READ]))
+		return (perror_and_return_int("close", EXIT_FAILURE));
+	if (close(STDOUT_FILENO))
+		return (perror_and_return_int("close", EXIT_FAILURE));
+	if (dup2(pipe_fd[WRITE], STDOUT_FILENO) < 0)
+		return (perror_and_return_int("dup2", EXIT_FAILURE));
+	if (close(pipe_fd[WRITE]) < 0)
+		return (perror_and_return_int("close", EXIT_FAILURE));
+	return (SUCCESS);
+}
+
+int	close_fd_for_parent(int pipe_fd[2])
+{
+	if (close(pipe_fd[WRITE]))
+		return (perror_and_return_int("close", EXIT_FAILURE));
+	if (close(STDIN_FILENO))
+		return (perror_and_return_int("close", EXIT_FAILURE));
+	if (dup2(pipe_fd[READ], STDIN_FILENO) < 0)
+		return (perror_and_return_int("dup2", EXIT_FAILURE));
+	if (close(pipe_fd[READ]) < 0)
+		return (perror_and_return_int("close", EXIT_FAILURE));
+	return (SUCCESS);
+}
+
+// cmd1 | cmd2 |..|cmdn-1| cmdn
+// childn   ...    child2  child1
+//   out->in  ->       out->in
 int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 {
 //	extern char	**environ;
@@ -78,30 +98,23 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 	{
 		pipe(pipe_fd);
 		pid = fork();
-		if (pid == 0)
+		if (pid == CHILD_PROCESS)
 		{
-			//TODO: error handling
-			close(pipe_fd[READ]);
-			close(STDOUT_FILENO);
-			dup2(pipe_fd[WRITE], STDOUT_FILENO);
-			close(pipe_fd[WRITE]);
+			if (close_fd_for_child(pipe_fd))
+				exit (EXIT_FAILURE);
 			execute_pipe_recursion(right_elem->left, info);
 		}
-		//TODO: error handling
-		close(pipe_fd[WRITE]);
-		close(STDIN_FILENO);
-		dup2(pipe_fd[READ], STDIN_FILENO);
-		close(pipe_fd[READ]);
+		if (close_fd_for_parent(pipe_fd))
+			exit (EXIT_FAILURE);
 	}
 	if (!right_elem || !right_elem->cmds)
 		return (EXIT_FAILURE);
-//	debug_print_2d_arr(elem->cmds, "cmds");
+	debug_print_2d_arr(right_elem->cmds, "cmds");
 
-	if (is_builtins(right_elem->cmds[0]))
-		return (execute_builtins(info, right_elem->cmds));
 //	TODO:
 //	 if (is_redirections(right_elem->cmds[0]))
-
+	if (is_builtins(right_elem->cmds[0]))
+		exit (execute_builtins(info, right_elem->cmds));//exitしないとblocking ??
 	if (right_elem->cmds[0] && (right_elem->cmds[0][0] == '/' || right_elem->cmds[0][0] == '.'))
 		execve(right_elem->cmds[0], right_elem->cmds, NULL);
 	else
@@ -128,7 +141,7 @@ int execute_handler()
 int	execute_command_line(t_info *info)
 {
 	pid_t	pid;
-	t_tree	*pipe_last;
+	t_tree	*end_of_pipe_elem;
 	size_t	i;
 	int		status;
 
@@ -138,17 +151,12 @@ int	execute_command_line(t_info *info)
 	pid = fork();
 	if (pid == 0)
 	{
-		pipe_last = get_last_elem(info->exe_root->right);
+		end_of_pipe_elem = get_last_elem(info->exe_root->right);
 		//TODO: execute_handler()
-		execute_pipe_recursion(pipe_last, info);
+		execute_pipe_recursion(end_of_pipe_elem, info);
 	}
-	//TODO: wait良くわかっていない
 	i = 0;
-	while (i < get_tree_size(info->exe_root->right) + 1)
-	{
-		wait(&status);
-		i++;
-	}
-	info->exit_status = WEXITSTATUS(status);
-	return (info->exit_status);
+	while (i++ < get_tree_size(info->exe_root->right) + 1)
+		wait(&status); //TODO: check wait operation
+	return (WEXITSTATUS(status));
 }

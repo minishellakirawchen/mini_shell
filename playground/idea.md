@@ -240,6 +240,7 @@ cmd < infile1 < infile2 < infile3   : cmd < infile3
     -> exec_redirect(cmds, file, flg);
 
 ```
+
 ```c
 int main(void)
 {
@@ -315,6 +316,77 @@ total 144
 
 ```
 
+#### 多段redirect
+```c
+int main(void)
+{
+	// test cmd > via1 > via2 > out
+	char *ls[10] = {"ls", "-l", NULL};
+	char *via1 = "via1";
+	char *via2 = "via2";
+	char *out = "out";
+	int fd_via1, fd_via2, fd_out;
+
+	fd_via1 = open(via1, O_CREAT | O_WRONLY | O_TRUNC, 0666);
+	fd_via2 = open(via2, O_CREAT | O_WRONLY | O_TRUNC, 0666);
+	fd_out = open(out, O_CREAT | O_WRONLY | O_TRUNC, 0666);
+
+	dup2(fd_via1, STDOUT_FILENO);
+	close(fd_via1);
+	dup2(fd_via2, STDOUT_FILENO);
+	close(fd_via2);
+	dup2(fd_out, STDOUT_FILENO);
+	close(fd_out);
+
+	execvp(ls[0], ls);
+
+	return (0);
+}
+// output
+% gcc test_exec.c 
+% ./a.out
+% cat via1
+% cat via2
+% cat out
+total 176
+-rwxr-xr-x  1 akira  staff  33682 Jan  7 18:41 a.out
+-rw-r--r--  1 akira  staff  12557 Jan  7 17:48 idea.md
+-rw-r--r--  1 akira  staff     36 Jan  7 16:50 infile
+-rw-r--r--  1 akira  staff      8 Jan  7 17:23 infile2
+-rw-r--r--  1 akira  staff      8 Jan  7 17:23 infile3
+-rw-r--r--  1 akira  staff      0 Jan  7 18:41 out
+-rw-r--r--  1 akira  staff    571 Jan  7 16:54 outfile
+-rw-r--r--  1 akira  staff    391 Jan  4 18:32 test.h
+-rw-r--r--  1 akira  staff    514 Jan  7 16:38 test_cd.c
+-rw-r--r--  1 akira  staff   1815 Jan  7 18:41 test_exec.c
+-rw-r--r--  1 akira  staff   2238 Jan  7 16:38 test_fork.c
+-rw-r--r--  1 akira  staff   1140 Jan  7 11:33 test_tree.c
+-rw-r--r--  1 akira  staff      0 Jan  5 14:44 testfile
+-rw-r--r--  1 akira  staff      0 Jan  7 18:41 via1
+-rw-r--r--  1 akira  staff      0 Jan  7 18:41 via2
+
+```
+```c
+$> < infile cat -e test1 test2 test3
+//test1$ (cat -e test1)
+//test2$ (cat -e test2)
+//test3$ (cat -e test3)
+
+$> cat -e test1 test2 test3 < infile
+//test1$ (cat -e test1)
+//test2$ (cat -e test2)
+//test3$ (cat -e test3)
+//infileは無視される？
+//redirectはコマンド行から消すからOK
+cat redirect < 引数jec
+```
+
+```c
+< infile = <infile
+> outfile = >outfile
+
+分割が必要
+```
 
 
 

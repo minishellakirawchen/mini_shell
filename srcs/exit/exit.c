@@ -43,3 +43,9 @@ int	perror_and_return_int(char *err, int ret_value)
 	perror(err);
 	return (ret_value);
 }
+
+void	*perror_and_return_null(char *err)
+{
+	perror(err);
+	return (NULL);
+}

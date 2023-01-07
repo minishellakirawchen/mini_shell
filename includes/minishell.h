@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:20:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 18:59:20 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@
 # define SUCCESS	0
 # define	FAILURE	1
 
-# define READ	0
-# define WRITE	1
+# define READ			0
+# define WRITE			1
+# define CHILD_PROCESS	0
 
 # define CHDIR_FAILURE				1
 # define CMD_NOT_FOUND				127
@@ -86,29 +87,19 @@ struct s_tree
 {
 	t_exe_type		exe_type;
 	char 			**cmds;
+	bool			redirect_in;
+	bool			redirect_out;
+	char			**files;
 	struct s_tree	*left;
 	struct s_tree	*right;
 };
-
-// builtin needed param
-//  cd		: current path
-//  pwd		: current path
-//  export	: env(key, value)
-//  unset	: env(key, value)
-//	env		: env(key + = + value)
-//  exit	: exit status?
 
 struct s_minishell_param
 {
 	int		exit_status;
 	t_list	*env_list;
 	char	*input_line;
-	char	**commands;   // for demo
-
 	t_tree	*exe_root;
-
-//	t_tree	*exe_stack;
-//	t_list	*exe_root;
 };
 
 /* ------- */
@@ -153,6 +144,7 @@ void	free_alloc(t_info **info);
 int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
 int		perror_and_return_int(char *err, int ret_value);
+void	*perror_and_return_null(char *err);
 
 /* --------- */
 /*  builtin  */
@@ -171,6 +163,11 @@ char	*get_current_path(void);
 /* -------- */
 /*  helper  */
 /* -------- */
+/* tree_create.c */
+char	**splitset_and_trim(char *src, char delim, char set, char *trimchar);
+t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str);
+t_tree	*create_tree_elem(t_exe_type type, char ***cmds);
+
 /* tree_operation.c */
 t_tree	*pop_tree_elem_from_top(t_tree **root);
 t_tree	*pop_tree_elem_from_bottom(t_tree **root);
@@ -178,7 +175,6 @@ void	add_top_of_tree(t_tree **root, t_tree *elem);
 void	add_bottom_of_tree(t_tree **root, t_tree *elem);
 
 /* tree_helper */
-t_tree	*create_tree_elem(t_exe_type type, char ***cmds);
 t_tree	*get_last_elem(t_tree *elem);
 void	tree_clear(t_tree **root);
 size_t	get_tree_size(t_tree *root);

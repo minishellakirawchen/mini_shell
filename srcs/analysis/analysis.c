@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:52:19 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 18:57:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,56 +17,6 @@
 
 // 先にsplitせず、まずpipeでsplitしたものをexec_stackに入れていく
 // その際にsplie(space), trim(space)して整形する
-
-char **splitset_and_trim(char *src, char delim, char set, char *trimchar)
-{
-	char	**splitted_strs;
-	char	*trimmed_str;
-	size_t	i;
-
-	splitted_strs = ft_split_set(src, delim, set);
-	if (!splitted_strs)
-		return (NULL);
-	i = 0;
-	while (splitted_strs[i])
-	{
-		trimmed_str = ft_strtrim(splitted_strs[i], trimchar);
-		if (!trimmed_str)
-			return (free_array(splitted_strs));
-		free(splitted_strs[i]);
-		splitted_strs[i] = ft_strdup(trimmed_str);
-		free(trimmed_str);
-		i++;
-	}
-//	debug_print_2d_arr(splitted_strs, "splited_str[i]");
-	return (splitted_strs);
-}
-
-t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
-{
-	t_tree		*new_node;
-
-	new_node= (t_tree *)malloc(sizeof(t_tree));
-	if (!new_node)
-	{
-		perror("malloc");
-		return (NULL);
-	}
-	new_node->exe_type = type;
-	if (!raw_cmd_str)
-	{
-		new_node->cmds = NULL;
-		return (new_node);
-	}
-	new_node->cmds = splitset_and_trim(raw_cmd_str, ' ', '"', ISSPACE);
-	if (!new_node->cmds)
-	{
-		perror("malloc");
-		free(new_node);
-		return (NULL);
-	}
-	return (new_node);
-}
 
 // First try, create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
 int	analysis(t_info *info)

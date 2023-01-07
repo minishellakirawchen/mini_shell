@@ -12,20 +12,6 @@
 
 #include "minishell.h"
 
-t_tree	*create_tree_elem(t_exe_type type, char ***cmds)
-{
-	t_tree	*new_elem;
-
-	new_elem = (t_tree *)malloc(sizeof(t_tree));
-	if (!new_elem)
-		return (NULL);
-	new_elem->exe_type = type;
-	new_elem->cmds = *cmds;
-	new_elem->left = NULL;
-	new_elem->right = NULL;
-	return (new_elem);
-}
-
 t_tree	*get_last_elem(t_tree *elem)
 {
 	if (!elem)

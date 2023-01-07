@@ -36,6 +36,7 @@ SRC		= main.c \
 		  builtin/ft_unset.c \
 		  builtin/ft_env.c \
 		  builtin/ft_exit.c \
+		  helper/tree_create.c \
 		  helper/tree_operation.c \
 		  helper/tree_helper.c \
 		  helper/debug_print.c \

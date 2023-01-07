@@ -178,7 +178,7 @@ void	add_top_of_tree(t_tree **root, t_tree *elem);
 void	add_bottom_of_tree(t_tree **root, t_tree *elem);
 
 /* tree_helper */
-t_tree	*create_tree_elem(void *content);
+t_tree	*create_tree_elem(t_exe_type type, char ***cmds);
 t_tree	*get_last_elem(t_tree *elem);
 void	tree_clear(t_tree **root);
 size_t	get_tree_size(t_tree *root);

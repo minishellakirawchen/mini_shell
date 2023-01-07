@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:25:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:51:23 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*get_execute_path(char *path, char *file)
 	if (path_len > 0 && path[path_len - 1] != '/')
 		ft_strlcat(execute_path, "/", len);
 	ft_strlcat(execute_path, file, len);
-	printf("create path:[%s]\n", execute_path);
+//	printf("create path:[%s]\n", execute_path); // check
 	return (execute_path);
 }
 
@@ -50,7 +50,7 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 		perror("malloc");
 		return (EXIT_FAILURE);
 	}
-	debug_print_2d_arr(splitted_paths, "splitted_paths");
+//	debug_print_2d_arr(splitted_paths, "splitted_paths"); // check
 	idx = 0;
 	while (splitted_paths[idx])
 	{
@@ -74,7 +74,7 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 	pid_t		pid;
 	int			pipe_fd[2];
 
-	if (right_elem->left && right_elem->left->exe_type == E_CMD)
+	if (right_elem && right_elem->left && right_elem->left->exe_type == E_CMD)
 	{
 		pipe(pipe_fd);
 		pid = fork();
@@ -139,7 +139,7 @@ int	execute_command_line(t_info *info)
 		//TODO: execute_handler()
 		execute_pipe_recursion(pipe_last, info);
 	}
-	// parent pid > 0; Process ID
+	//TODO: wait良くわかっていない
 	i = 0;
 	while (i < get_tree_size(info->exe_root->right) + 1)
 	{

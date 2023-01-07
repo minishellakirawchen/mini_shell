@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:39:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:52:18 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ int	analysis(t_info *info)
 
 	if (!info)
 		return (FAILURE);
-
 	// create exe-elem "root"
 	root_node = create_tree_node(E_ROOT, NULL);
 	if (!root_node)
@@ -98,7 +97,6 @@ int	analysis(t_info *info)
 	//  |_______ .. _
 	//  |     |     |
 	// cmd1  cmd2  cmdn
-
 	split_by_pipe = ft_split_set(info->input_line, '|', '"');
 	if (!split_by_pipe)
 		return (FAILURE); // TODO:free
@@ -116,7 +114,7 @@ int	analysis(t_info *info)
 		add_bottom_of_tree(&info->exe_root, cmd_node);
 		i++;
 	}
-	debug_print_stack(info->exe_root, "print stack");
+	debug_print_stack(info->exe_root, "check pipe case");
 	// TODO: 任意のnodeにぶら下げるには...?
 	return (SUCCESS);
 }

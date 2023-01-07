@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 09:21:33 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 10:01:49 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:49:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,32 +33,30 @@ void debug_print_2d_arr(char **arr, char *str)
 
 void	debug_print_stack(t_tree *root, char *str)
 {
-	t_tree		*ptr;
-	t_exe_elem	*elem;
+	t_tree		*tree;
 
 	ft_printf("\n");
 	if (str)
 		ft_printf("#DEBUG[print_stack : %s]\n", str);
-	ptr = root;
-	while (ptr)
+	tree = root;
+	while (tree)
 	{
-		elem = ptr->content;
-		if (elem->exe_type == E_ROOT)
+		if (tree->exe_type == E_ROOT)
 		{
 			ft_printf(" [root]\n");
 			ft_printf("  |    \n");
 		}
-		else if (elem->exe_type == E_PIPE)
+		else if (tree->exe_type == E_PIPE)
 		{
 			ft_printf(" [pipe]\n");
 			ft_printf("  |    \n");
 		}
-		else if (elem->exe_type == E_CMD)
+		else if (tree->exe_type == E_CMD)
 		{
 			ft_printf(" [cmd]--");
-			debug_print_2d_arr(elem->cmds, NULL);
+			debug_print_2d_arr(tree->cmds, NULL);
 		}
-		ptr = ptr->right;
+		tree = tree->right;
 	}
 	ft_printf("\n");
 }

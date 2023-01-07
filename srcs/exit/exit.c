@@ -37,3 +37,9 @@ char	**free_array(char **array)
 	free(array);
 	return (NULL);
 }
+
+int	perror_and_return_int(char *err, int ret_value)
+{
+	perror(err);
+	return (ret_value);
+}

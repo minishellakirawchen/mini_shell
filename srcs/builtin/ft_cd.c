@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 12:34:54 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 12:37:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 		return (current_path);
 	if (move_to[0] == '/')
 		return (move_to);
-	trimmed_move_to = ft_strtrim(move_to, "/");// /bin + hoge/ -> /bin + hoge
+	trimmed_move_to = ft_strtrim(move_to, "/"); // /bin + hoge/ -> /bin + hoge
 	if (!trimmed_move_to)
 	{
 		perror("malloc");
@@ -36,7 +36,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 	ft_strlcat(new_path, current_path, current_len + 1);
 	ft_strlcat(new_path, "/", current_len + 2);
 	ft_strlcat(new_path, trimmed_move_to, current_len + move_to_len + 2);
-	free(trimmed_move_to);// memcpy in strlcat
+	free(trimmed_move_to); // memcpy in strlcat
 	return (new_path);
 }
 
@@ -61,7 +61,7 @@ int ft_cd(t_info *info, char **cmds)
 	chdir_ret = chdir(new_path);
 	if (chdir_ret < 0)
 	{
-		ft_printf("cd: no such file or directory: %s", move_to);//TODO: STDERROR
+		ft_printf("cd: no such file or directory: %s", move_to);//TODO: STDERROR or make fprintf
 		return (CHDIR_FAILURE);
 	}
 	if (overwrite_env_value(&info->env_list, PWD, new_path) == FAILURE)
@@ -69,6 +69,6 @@ int ft_cd(t_info *info, char **cmds)
 		free(new_path);
 		return (EXIT_FAILURE);
 	}
-	free(new_path);
+	free(new_path); //strdup in env func
 	return (EXIT_SUCCESS);
 }

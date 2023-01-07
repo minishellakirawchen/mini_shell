@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 12:32:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 13:10:20 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct s_tree				t_tree;
 /*  typedef enum  */
 /* -------------- */
 typedef enum e_cmd_group	t_group;
+typedef enum e_export_type	t_export_type;
 
 /* -------*/
 /*  enum  */
@@ -65,7 +66,13 @@ enum e_cmd_group
 	E_SHELL,
 	E_SUBSHELL,
 	E_AND,
-	E_OR
+	E_OR,
+};
+
+enum e_export_type
+{
+	E_NEW,
+	E_ADD,
 };
 
 /* -------- */
@@ -148,6 +155,7 @@ int		expand_variable(void); // tmp
 void	free_alloc(t_info **info);
 int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
+int		perror_and_return_int(char *err, int ret_value);
 
 /* --------- */
 /*  builtin  */
@@ -186,6 +194,7 @@ void	debug_print_2d_arr(char **arr, char *str);
 int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
+int		append_env_value(t_list **list_head, char *search_key, char *append_value);
 char	*get_env_value(char *search_key, t_list *env_list_head);
 
 

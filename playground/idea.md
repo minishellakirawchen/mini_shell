@@ -212,21 +212,111 @@ split[cat,Makefile,|,grep,a,|,grep,b,&&,pwd,&&,(cd /bin && touch file),&&,echo,"
 * あとは cmd > via1 > via2 > outなど、複数処理への対応
 * redirectへの渡し方、実行方法、関数
 
+#### redirect in
 ```c
+$> < file cmd
+$> cmd < file // file -> cmd
+ 1. fd = open(file, READ)
+ 2. dup2(fd, STDOUT)
+ 3. exec cmd
+// check in playground/test_redirect.c
 
-< file cmd, cmd < file // file -> cmd
-1. fd = open(file, READ)
-2. dup2(fd, STDOUT)
-3. exec cmd
+input[<,file,cmd] or [cmd,<,file]
+analysisで<をチェック,redirect_in/out flgをつける && ファイル名を取得
+file < or < file
 
-cmd > file, > file cmd
-1. fd = open(file, WRITE)
-2. dup2(fd, STDIN)
-3. exec cmd
+< infile1 cmd < infile2             : cmd < infile2
+< infile1 cmd < infile2 < infile3   : cmd < infile3
+cmd < infile1 < infile2 < infile3   : cmd < infile3
+いずれもfileがなければerror
 
-
+1. cmd[i] == "<", cmd[i+1] == "file" を探す
+2. redirect_in flg
+3. filenameを記録
+4. char **cmdsからredirect部分を削除する or command_head_idxを持っておく?
+    -> command < "<"の時にexecveに渡されると, invalid opsionになりそう
+	-> redirect部分を削除する
+5. command実行時にfile_open, etcを実行する
+    -> exec_redirect(cmds, file, flg);
 
 ```
+```c
+int main(void)
+{
+    // test cmd < infile
+	char *cat[10] = {"cat", "-e", NULL};
+	char *file = "infile";
+	int	file_fd[2];
+
+	file_fd[READ] = open(file, O_RDONLY);
+	dup2(file_fd[READ], STDIN_FILENO);
+	execvp(cat[0], cat);
+
+	return (0);
+}
+
+//output
+% cat infile 
+this is testfile
+hoge
+foo
+
+next EOF
+% ./a.out
+this is testfile$
+hoge$
+foo$
+$
+next EOF$
+```
+<br>
+
+#### redirect out
+
+```c
+$> cmd > file
+$> > file cmd
+ 1. fd = open(file, WRITE)
+ 2. dup2(fd, STDIN)
+ 3. exec cmd
+// check in playground/test_redirect.c
+```
+
+```c
+int main(void)
+{
+	// test cmd > outfile
+	char *ls[10] = {"ls", "-l", NULL};
+	char *file = "outfile";
+	int	file_fd[2];
+
+	file_fd[WRITE] = open(file, O_WRONLY);
+	dup2(file_fd[WRITE], STDOUT_FILENO);
+	execvp(ls[0], ls);
+
+	return (0);
+}
+
+//output
+% cat outfile
+% ./a.out
+% cat outfile
+total 144
+-rwxr-xr-x  1 akira  staff  33682 Jan  7 16:54 a.out
+-rw-r--r--  1 akira  staff  10909 Jan  7 16:52 idea.md
+-rw-r--r--  1 akira  staff     36 Jan  7 16:50 infile
+-rw-r--r--  1 akira  staff      0 Jan  7 16:52 outfile
+-rw-r--r--  1 akira  staff    391 Jan  4 18:32 test.h
+-rw-r--r--  1 akira  staff    514 Jan  7 16:38 test_cd.c
+-rw-r--r--  1 akira  staff   1352 Jan  7 16:54 test_exec.c
+-rw-r--r--  1 akira  staff   2238 Jan  7 16:38 test_fork.c
+-rw-r--r--  1 akira  staff   1140 Jan  7 11:33 test_tree.c
+-rw-r--r--  1 akira  staff      0 Jan  5 14:44 testfile
+
+```
+
+
+
 
 <br>
 <br>

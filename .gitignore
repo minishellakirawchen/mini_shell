@@ -1,10 +1,11 @@
 *
+
+!.gitignore
 !Makefile
 !*.c
 !*.h
-!includes
-!srcs/
-!libs/
-!playground/
-!helper/
+!includes/**
+!srcs/**
+!libs/**
+!playground/**
 !*.md

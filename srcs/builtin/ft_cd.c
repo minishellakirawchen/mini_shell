@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 12:01:12 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 12:34:54 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int ft_cd(t_info *info, char **cmds)
 	char 	*current_path;
 
 	if (!info || !cmds || !cmds[1])
-		return (1); //TODO: exit?
+		return (EXIT_FAILURE); //TODO: exit?
 	move_to = cmds[1];
 	current_path = get_current_path();
 	new_path = get_chdir_path(current_path, move_to);
@@ -56,7 +56,7 @@ int ft_cd(t_info *info, char **cmds)
 	{
 //		free(current_path);
 		perror("malloc");
-		return (1); //TODO: exit?
+		return (EXIT_FAILURE); //TODO: exit?
 	}
 	chdir_ret = chdir(new_path);
 	if (chdir_ret < 0)
@@ -64,6 +64,11 @@ int ft_cd(t_info *info, char **cmds)
 		ft_printf("cd: no such file or directory: %s", move_to);//TODO: STDERROR
 		return (CHDIR_FAILURE);
 	}
-	// TODO: search env PWD and change it.
-	return (0);
+	if (overwrite_env_value(&info->env_list, PWD, new_path) == FAILURE)
+	{
+		free(new_path);
+		return (EXIT_FAILURE);
+	}
+	free(new_path);
+	return (EXIT_SUCCESS);
 }

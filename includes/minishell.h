@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 11:20:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 12:32:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,21 +35,28 @@
 # define EXIT_NUMERIC_ARGS_REQUIRED	255
 
 # define	PATH			"PATH"
+# define	PWD				"PWD"
 # define 	PATH_DELIMITER	':'
 # define	ISSPACE			"\t\n\v\f\r "
 
 
-/* typedef struct */
+/* ---------------- */
+/*  typedef struct  */
+/* ---------------- */
 typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_execute_cmds_info	t_cmds;
 typedef struct s_exe_elem			t_exe_elem;
 typedef struct s_tree				t_tree;
 
-/* typedef enum */
+/* -------------- */
+/*  typedef enum  */
+/* -------------- */
 typedef enum e_cmd_group	t_group;
 
-/* enum */
+/* -------*/
+/*  enum  */
+/* ------ */
 enum e_cmd_group
 {
 	E_ROOT,
@@ -61,7 +68,9 @@ enum e_cmd_group
 	E_OR
 };
 
-/* struct */
+/* -------- */
+/*  struct  */
+/* -------- */
 struct s_env_elem
 {
 	char	*key;
@@ -108,7 +117,9 @@ struct s_minishell_param
 //	t_list	*exe_root;
 };
 
-/* input */
+/* ------- */
+/*  input  */
+/* ------- */
 int		prompt_loop(t_info *info);
 t_list	*get_env_list(void);
 char	*get_env_value(char *search_key, t_list *env_list_head);
@@ -116,21 +127,31 @@ int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
 
-/* analysis */
+/* ---------- */
+/*  analysis  */
+/* ---------- */
 int		analysis(t_info *info); // tmp
 
-/* execution */
+/* ----------- */
+/*  execution  */
+/* ----------- */
 int		execute_command_line(t_info *info);
 
-/* expansion */
+/* ----------- */
+/*  expansion  */
+/* ----------- */
 int		expand_variable(void); // tmp
 
-/* exit */
+/* ------ */
+/*  exit  */
+/* ------ */
 void	free_alloc(t_info **info);
 int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
 
-/* builtin */
+/* --------- */
+/*  builtin  */
+/* --------- */
 // return exit_status
 int		ft_echo(t_info *info, char **cmds);
 int		ft_cd(t_info *info, char **cmds);
@@ -142,8 +163,9 @@ int		ft_exit(t_info *info, char **cmds);
 // builtin helper
 char	*get_current_path(void);
 
-/* helper */
-
+/* -------- */
+/*  helper  */
+/* -------- */
 /* tree_operation */
 t_tree	*pop_tree_elem_from_top(t_tree **root);
 t_tree	*pop_tree_elem_from_bottom(t_tree **root);
@@ -159,5 +181,13 @@ size_t	get_tree_size(t_tree *root);
 /* debug print */
 void	debug_print_stack(t_tree *root, char *str);
 void	debug_print_2d_arr(char **arr, char *str);
+
+/* env_list */
+int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
+int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
+int		delete_env_elem(t_list **list_head, char *search_key);
+char	*get_env_value(char *search_key, t_list *env_list_head);
+
+
 
 #endif

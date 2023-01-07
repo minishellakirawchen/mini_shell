@@ -38,6 +38,8 @@ SRC		= main.c \
 		  helper/tree_operation.c \
 		  helper/tree_helper.c \
 		  helper/debug_print.c \
+		  helper/env_list.c \
+
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 18:59:20 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 20:03:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,24 @@
 # include "./../libs/libft/libft.h"
 # include "./../libs/libftprintf/ft_printf.h"
 
+/* func return value */
 # define SUCCESS	0
-# define	FAILURE	1
+# define FAILURE	1
 
+/* fd */
 # define READ			0
 # define WRITE			1
+
+/* pid */
 # define CHILD_PROCESS	0
 
+/* exit_status */
 # define CHDIR_FAILURE				1
-# define CMD_NOT_FOUND				127
 # define EXIT_TOO_MANY_ARGS			1
+# define CMD_NOT_FOUND				127
 # define EXIT_NUMERIC_ARGS_REQUIRED	255
 
+/* string */
 # define	PATH			"PATH"
 # define	PWD				"PWD"
 # define 	PATH_DELIMITER	':'
@@ -48,11 +54,13 @@ typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_tree				t_tree;
 
+
 /* -------------- */
 /*  typedef enum  */
 /* -------------- */
 typedef enum e_cmd_group	t_exe_type;
 typedef enum e_export_type	t_export_type;
+
 
 /* -------*/
 /*  enum  */
@@ -73,6 +81,7 @@ enum e_export_type
 	E_NEW,
 	E_ADD,
 };
+
 
 /* -------- */
 /*  struct  */
@@ -102,6 +111,7 @@ struct s_minishell_param
 	t_tree	*exe_root;
 };
 
+
 /* ------- */
 /*  input  */
 /* ------- */
@@ -113,11 +123,13 @@ int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
 
+
 /* ---------- */
 /*  analysis  */
 /* ---------- */
 /* analysis.c */
 int		analysis(t_info *info); // tmp
+
 
 /* ----------- */
 /*  execution  */
@@ -136,6 +148,7 @@ int		execute_builtins(t_info *info, char **cmds);
 /* expansion.c */
 int		expand_variable(void); // tmp
 
+
 /* ------ */
 /*  exit  */
 /* ------ */
@@ -145,6 +158,7 @@ int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
 int		perror_and_return_int(char *err, int ret_value);
 void	*perror_and_return_null(char *err);
+
 
 /* --------- */
 /*  builtin  */
@@ -159,6 +173,7 @@ int		ft_env(t_info *info, char **cmds);
 int		ft_exit(t_info *info, char **cmds);
 /* builtin helper.c */
 char	*get_current_path(void);
+
 
 /* -------- */
 /*  helper  */

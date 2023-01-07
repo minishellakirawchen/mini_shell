@@ -389,7 +389,6 @@ cat redirect < 引数jec
 ```
 
 
-
 <br>
 <br>
 <br>

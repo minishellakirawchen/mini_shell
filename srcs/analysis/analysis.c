@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 10:02:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:39:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,51 +17,6 @@
 
 // 先にsplitせず、まずpipeでsplitしたものをexec_stackに入れていく
 // その際にsplie(space), trim(space)して整形する
-t_tree	*create_root_node(void)
-{
-	t_exe_elem	*exe_elem;
-	t_tree		*root_node;
-
-	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
-	if (!exe_elem)
-	{
-		perror("malloc");
-		return (NULL);
-	}
-	exe_elem->exe_type = E_ROOT;
-	exe_elem->cmds = NULL;
-	root_node = create_tree_elem(exe_elem);
-	if (!root_node)
-	{
-		perror("malloc");
-		free(exe_elem);
-		return (NULL);
-	}
-	return (root_node);
-}
-
-t_tree	*create_pipe_node(void)
-{
-	t_exe_elem	*exe_elem;
-	t_tree		*pipe_node;
-
-	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
-	if (!exe_elem)
-	{
-		perror("malloc");
-		return (NULL);
-	}
-	exe_elem->exe_type = E_PIPE;
-	exe_elem->cmds = NULL;
-	pipe_node = create_tree_elem(exe_elem);
-	if (!pipe_node)
-	{
-		perror("malloc");
-		free(exe_elem);
-		return (NULL);
-	}
-	return (pipe_node);
-}
 
 char **splitset_and_trim(char *src, char delim, char set, char *trimchar)
 {
@@ -87,55 +42,53 @@ char **splitset_and_trim(char *src, char delim, char set, char *trimchar)
 	return (splitted_strs);
 }
 
-t_tree	*create_cmd_elem(char *cmd)
+t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 {
-	t_exe_elem	*exe_elem;
-	t_tree		*root;
+	t_tree		*new_node;
 
-	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
-	if (!exe_elem)
+	new_node= (t_tree *)malloc(sizeof(t_tree));
+	if (!new_node)
 	{
 		perror("malloc");
 		return (NULL);
 	}
-	exe_elem->exe_type = E_CMD;
-	exe_elem->cmds = splitset_and_trim(cmd, ' ', '"', ISSPACE);
-	if (!exe_elem->cmds)
+	new_node->exe_type = type;
+	if (!raw_cmd_str)
+	{
+		new_node->cmds = NULL;
+		return (new_node);
+	}
+	new_node->cmds = splitset_and_trim(raw_cmd_str, ' ', '"', ISSPACE);
+	if (!new_node->cmds)
 	{
 		perror("malloc");
-		free(exe_elem);
+		free(new_node);
 		return (NULL);
 	}
-	root = create_tree_elem(exe_elem);
-	if (!root)
-	{
-		perror("malloc");
-		free(exe_elem);
-		return (NULL);
-	}
-	return (root);
+	return (new_node);
 }
 
 // First try, create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
 int	analysis(t_info *info)
 {
-	t_tree		*exe_stack;
-//	t_tree		*prev;
-	char 		**split_by_pipe;
-	size_t		i;
+	t_tree	*root_node;
+	t_tree 	*pipe_node;
+	t_tree	*cmd_node;
+	char 	**split_by_pipe;
+	size_t	i;
 
 	if (!info)
 		return (FAILURE);
 
 	// create exe-elem "root"
-	exe_stack = create_root_node();
-	if (!exe_stack)
+	root_node = create_tree_node(E_ROOT, NULL);
+	if (!root_node)
 		return (FAILURE); // TODO:free
-	add_bottom_of_tree(&info->exe_root, exe_stack);
+	add_bottom_of_tree(&info->exe_root, root_node);
 
 	// create exec-elem "pipe" and create edge to root
-	exe_stack = create_pipe_node();
-	info->exe_root->right = exe_stack;
+	pipe_node = create_tree_node(E_PIPE, NULL);
+	add_bottom_of_tree(&info->exe_root, pipe_node); //root, pipe共通のelemを代入すると...?
 
 	// create exe-elem "commands" which connected same level pipes
 
@@ -154,55 +107,16 @@ int	analysis(t_info *info)
 	i = 0;
 	while (split_by_pipe[i])
 	{
-		exe_stack = create_cmd_elem(split_by_pipe[i]);
-		if (!exe_stack)
-			return (FAILURE); // TODO:free
-		add_bottom_of_tree(&info->exe_root, exe_stack);
+		cmd_node = create_tree_node(E_CMD, split_by_pipe[i]);
+		if (!cmd_node)
+		{
+			tree_clear(&info->exe_root);
+			return (FAILURE);
+		}
+		add_bottom_of_tree(&info->exe_root, cmd_node);
 		i++;
 	}
 	debug_print_stack(info->exe_root, "print stack");
-
 	// TODO: 任意のnodeにぶら下げるには...?
-	// make *node
-	// add_bottom(&node, *new)
-	// add_bottom(&root, *node)
-
-	/*
-	printf("check prev\n");
-	t_tree *pipe_last = get_last_elem(info->exe_root);
-
-	t_exe_elem *elem = pipe_last->content;
-	if (elem->exe_type == E_CMD)
-	{
-		printf("last:COM\n");
-		debug_print_2d_arr(elem->cmds, "last");
-	}
-	else if (elem->exe_type == E_PIPE)
-	{
-		printf("last:PIPE\n");
-	}
-
-	if (!pipe_last->prev)
-		printf("last->prev=NULL\n");
-	else
-	{
-		elem = pipe_last->prev->content;
-		if (elem->exe_type == E_CMD)
-		{
-			printf("last->prev:COM\n");
-			debug_print_2d_arr(elem->cmds, "last->prev");
-		}
-		else if (elem->exe_type == E_PIPE)
-		{
-			printf("last->prev:PIPE\n");
-		}
-	}
-	*/
-
-	// while (true)
-	//  split &&, ||
-	//  split space
-	//  split |, ()
-
 	return (SUCCESS);
 }

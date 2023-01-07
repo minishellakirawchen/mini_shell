@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:07:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:25:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,17 +68,13 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 	return (CMD_NOT_FOUND);
 }
 
-int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
+int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 {
 //	extern char	**environ;
 	pid_t		pid;
 	int			pipe_fd[2];
-	t_exe_elem	*elem;
 
-	elem = NULL;
-	if (root->left)
-		elem = root->left->content;
-	if (elem && elem->exe_type == E_CMD)
+	if (right_elem->left && right_elem->left->exe_type == E_CMD)
 	{
 		pipe(pipe_fd);
 		pid = fork();
@@ -89,7 +85,7 @@ int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 			close(STDOUT_FILENO);
 			dup2(pipe_fd[WRITE], STDOUT_FILENO);
 			close(pipe_fd[WRITE]);
-			execute_pipe_recursion(root->left, info);
+			execute_pipe_recursion(right_elem->left, info);
 		}
 		//TODO: error handling
 		close(pipe_fd[WRITE]);
@@ -97,19 +93,18 @@ int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 		dup2(pipe_fd[READ], STDIN_FILENO);
 		close(pipe_fd[READ]);
 	}
-	elem = root->content;
-	if (!elem || !elem->cmds)
+	if (!right_elem || !right_elem->cmds)
 		return (EXIT_FAILURE);
 //	debug_print_2d_arr(elem->cmds, "cmds");
 
-	if (is_builtins(elem->cmds[0]))
-		return (execute_builtins(info, elem->cmds));
-	if (elem->cmds[0] && (elem->cmds[0][0] == '/' || elem->cmds[0][0] == '.'))
-		execve(elem->cmds[0], elem->cmds, NULL);
+	if (is_builtins(right_elem->cmds[0]))
+		return (execute_builtins(info, right_elem->cmds));
+	if (right_elem->cmds[0] && (right_elem->cmds[0][0] == '/' || right_elem->cmds[0][0] == '.'))
+		execve(right_elem->cmds[0], right_elem->cmds, NULL);
 	else
 	{
-		ft_execvp(elem->cmds[0], elem->cmds, get_env_value(PATH, info->env_list));
-		printf("command not found: %s\n", elem->cmds[0]);
+		ft_execvp(right_elem->cmds[0], right_elem->cmds, get_env_value(PATH, info->env_list));
+		printf("command not found: %s\n", right_elem->cmds[0]);
 	}
 	exit (CMD_NOT_FOUND);
 }

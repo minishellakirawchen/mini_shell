@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 13:49:57 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 14:20:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,12 @@
 /* ---------------- */
 typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
-typedef struct s_execute_cmds_info	t_cmds;
-typedef struct s_exe_elem			t_exe_elem;
 typedef struct s_tree				t_tree;
 
 /* -------------- */
 /*  typedef enum  */
 /* -------------- */
-typedef enum e_cmd_group	t_group;
+typedef enum e_cmd_group	t_exe_type;
 typedef enum e_export_type	t_export_type;
 
 /* -------*/
@@ -84,21 +82,10 @@ struct s_env_elem
 	char	*value;
 };
 
-struct s_execute_cmds_info
-{
-	t_group	type;
-	char	**cmds;
-};
-
-struct s_exe_elem
-{
-	t_group exe_type;
-	char 	**cmds;
-};
-
 struct s_tree
 {
-	void			*content;
+	t_exe_type		exe_type;
+	char 			**cmds;
 	struct s_tree	*left;
 	struct s_tree	*right;
 };

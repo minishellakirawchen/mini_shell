@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 13:12:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 13:24:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	get_export_param(char *cmd, char **key, char **value, t_export_type *type)
 		return (FAILURE);
 	if (idx == 0)
 	{
+		//TODO: make ft_fprintf or like func use ft_putstr_fd
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 		ft_putstr_fd(cmd, STDERR_FILENO);
 		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
@@ -64,12 +65,13 @@ int ft_export(t_info *info, char **cmds)
 		return (EXIT_FAILURE);
 	if (get_export_param(cmds[1], &key, &value, &type) == FAILURE)
 		return (EXIT_FAILURE); //TODO: key only, bash returns 0
+	/*
 	printf("key:%s,value:%s, cmd:%s, flag:", key, value, cmds[1]);
 	if (type == E_NEW)
 		printf("NEW\n");
 	else
 		printf("ADD\n");
-
+	*/
 	if (!get_env_value(key, info->env_list))
 		ret = add_env_elem_to_list(&info->env_list, key, value);
 	else if (type == E_NEW)
@@ -80,7 +82,7 @@ int ft_export(t_info *info, char **cmds)
 	if (ret == FAILURE)
 		return (1);//TODO: exit?
 
-	printf("key:%s,get_value:%s\n", key, get_env_value(key, info->env_list));
+//	printf("key:%s,get_value:%s\n", key, get_env_value(key, info->env_list));
 	free(key);
 	free(value);
 	return (0);

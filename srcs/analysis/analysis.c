@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 21:56:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 10:02:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 
 // 先にsplitせず、まずpipeでsplitしたものをexec_stackに入れていく
 // その際にsplie(space), trim(space)して整形する
-t_stack	*create_root_node(void)
+t_tree	*create_root_node(void)
 {
 	t_exe_elem	*exe_elem;
-	t_stack		*root_node;
+	t_tree		*root_node;
 
 	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
 	if (!exe_elem)
@@ -30,7 +30,7 @@ t_stack	*create_root_node(void)
 	}
 	exe_elem->exe_type = E_ROOT;
 	exe_elem->cmds = NULL;
-	root_node = create_stack_elem(exe_elem);
+	root_node = create_tree_elem(exe_elem);
 	if (!root_node)
 	{
 		perror("malloc");
@@ -40,10 +40,10 @@ t_stack	*create_root_node(void)
 	return (root_node);
 }
 
-t_stack	*create_pipe_node(void)
+t_tree	*create_pipe_node(void)
 {
 	t_exe_elem	*exe_elem;
-	t_stack		*pipe_node;
+	t_tree		*pipe_node;
 
 	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
 	if (!exe_elem)
@@ -53,7 +53,7 @@ t_stack	*create_pipe_node(void)
 	}
 	exe_elem->exe_type = E_PIPE;
 	exe_elem->cmds = NULL;
-	pipe_node = create_stack_elem(exe_elem);
+	pipe_node = create_tree_elem(exe_elem);
 	if (!pipe_node)
 	{
 		perror("malloc");
@@ -87,10 +87,10 @@ char **splitset_and_trim(char *src, char delim, char set, char *trimchar)
 	return (splitted_strs);
 }
 
-t_stack	*create_cmd_elem(char *cmd)
+t_tree	*create_cmd_elem(char *cmd)
 {
 	t_exe_elem	*exe_elem;
-	t_stack		*root;
+	t_tree		*root;
 
 	exe_elem = (t_exe_elem *)malloc(sizeof(t_exe_elem));
 	if (!exe_elem)
@@ -106,7 +106,7 @@ t_stack	*create_cmd_elem(char *cmd)
 		free(exe_elem);
 		return (NULL);
 	}
-	root = create_stack_elem(exe_elem);
+	root = create_tree_elem(exe_elem);
 	if (!root)
 	{
 		perror("malloc");
@@ -116,43 +116,11 @@ t_stack	*create_cmd_elem(char *cmd)
 	return (root);
 }
 
-void	debug_print_stack(t_stack *root, char *str)
-{
-	t_stack		*ptr;
-	t_exe_elem	*elem;
-
-	printf("\n");
-	if (str)
-		printf("#DEBUG[print_stack : %s]\n", str);
-	ptr = root;
-	while (ptr)
-	{
-		elem = ptr->content;
-		if (elem->exe_type == E_ROOT)
-		{
-			printf(" [root]\n");
-			printf("  |    \n");
-		}
-		else if (elem->exe_type == E_PIPE)
-		{
-			printf(" [pipe]\n");
-			printf("  |    \n");
-		}
-		else if (elem->exe_type == E_CMD)
-		{
-			printf(" [cmd]--");
-			debug_print_2d_arr(elem->cmds, NULL);
-		}
-		ptr = ptr->next;
-	}
-	printf("\n");
-}
-
 // First try, create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
 int	analysis(t_info *info)
 {
-	t_stack		*exe_stack;
-//	t_stack		*prev;
+	t_tree		*exe_stack;
+//	t_tree		*prev;
 	char 		**split_by_pipe;
 	size_t		i;
 
@@ -163,11 +131,11 @@ int	analysis(t_info *info)
 	exe_stack = create_root_node();
 	if (!exe_stack)
 		return (FAILURE); // TODO:free
-	add_to_bottom(&info->exe_root, exe_stack);
+	add_bottom_of_tree(&info->exe_root, exe_stack);
 
 	// create exec-elem "pipe" and create edge to root
 	exe_stack = create_pipe_node();
-	info->exe_root->next = exe_stack;
+	info->exe_root->right = exe_stack;
 
 	// create exe-elem "commands" which connected same level pipes
 
@@ -184,22 +152,24 @@ int	analysis(t_info *info)
 //	debug_print_2d_arr(split_by_pipe, "split by pipe");
 
 	i = 0;
-//	prev = info->exe_root->next;
 	while (split_by_pipe[i])
 	{
 		exe_stack = create_cmd_elem(split_by_pipe[i]);
 		if (!exe_stack)
 			return (FAILURE); // TODO:free
-		add_to_bottom(&info->exe_root, exe_stack);
-//		prev->next = exe_stack;
-//		prev = exe_stack;
+		add_bottom_of_tree(&info->exe_root, exe_stack);
 		i++;
 	}
 	debug_print_stack(info->exe_root, "print stack");
 
+	// TODO: 任意のnodeにぶら下げるには...?
+	// make *node
+	// add_bottom(&node, *new)
+	// add_bottom(&root, *node)
+
 	/*
 	printf("check prev\n");
-	t_stack *pipe_last = get_last_elem(info->exe_root);
+	t_tree *pipe_last = get_last_elem(info->exe_root);
 
 	t_exe_elem *elem = pipe_last->content;
 	if (elem->exe_type == E_CMD)

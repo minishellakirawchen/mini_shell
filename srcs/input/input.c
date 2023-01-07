@@ -6,29 +6,11 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 20:16:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 08:52:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void debug_print_2d_arr(char **arr, char *str)
-{
-	size_t	i;
-
-	if (!arr)
-		return ;
-	i = 0;
-	if (str)
-		printf("%s:", str);
-	while (arr[i])
-	{
-		printf("[%s]", arr[i++]);
-		if (arr[i])
-			printf(", ");
-	}
-	printf("\n");
-}
 
 int	prompt_loop(t_info	*info)
 {
@@ -65,7 +47,7 @@ int	prompt_loop(t_info	*info)
 
 		analysis(info);
 		expand_variable();
-		exit_status = execute(info);
+		exit_status = execute_command_line(info);
 
 		add_history(input_line);//where?
 		free(input_line);

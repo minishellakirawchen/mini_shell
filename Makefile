@@ -34,7 +34,10 @@ SRC		= main.c \
 		  builtin/ft_export.c \
 		  builtin/ft_unset.c \
 		  builtin/ft_env.c \
-		  builtin/ft_exit.c
+		  builtin/ft_exit.c \
+		  helper/tree_operation.c \
+		  helper/tree_helper.c \
+		  helper/debug_print.c \
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 
@@ -62,7 +65,6 @@ LIBS				= $(LIBFT) $(LIBGNL) $(LIBFT_PRINTF)
 # IFLAGS
 INCLUDES_DIR = ./includes
 IFLAGS = $(addprefix -I, $(INCLUDES_DIR))
-
 
 # RULES
 $(NAME)	: $(OBJS)

@@ -6,33 +6,33 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 20:35:33 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 09:53:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
-#include <errno.h>
-#include <string.h>
-#include <limits.h>
+# include <errno.h>
+# include <string.h>
+# include <limits.h>
 
-#include <readline/readline.h>
-#include <readline/history.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
-#include "./../libs/libft/libft.h"
-#include "./../libs/libftprintf/ft_printf.h"
+# include "./../libs/libft/libft.h"
+# include "./../libs/libftprintf/ft_printf.h"
 
-#define SUCCESS	0
-#define	FAILURE	1
+# define SUCCESS	0
+# define	FAILURE	1
 
-#define READ	0
-#define WRITE	1
+# define READ	0
+# define WRITE	1
 
-#define CHDIR_FAILURE	1
-#define CMD_NOT_FOUND	127
+# define CHDIR_FAILURE	1
+# define CMD_NOT_FOUND	127
 
-#define	ISSPACE	"\t\n\v\f\r "
+# define	ISSPACE	"\t\n\v\f\r "
 
 
 /* typedef struct */
@@ -40,6 +40,7 @@ typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_execute_cmds_info	t_cmds;
 typedef struct s_exe_elem			t_exe_elem;
+typedef struct s_tree				t_tree;
 
 /* typedef enum */
 typedef enum e_cmd_group	t_group;
@@ -75,6 +76,13 @@ struct s_exe_elem
 	char 	**cmds;
 };
 
+struct s_tree
+{
+	void			*content;
+	struct s_tree	*left;
+	struct s_tree	*right;
+};
+
 // builtin needed param
 //  cd		: current path
 //  pwd		: current path
@@ -90,9 +98,9 @@ struct s_minishell_param
 	char	*input_line;
 	char	**commands;   // for demo
 
-	t_stack	*exe_root;
+	t_tree	*exe_root;
 
-//	t_stack	*exe_stack;
+//	t_tree	*exe_stack;
 //	t_list	*exe_root;
 };
 
@@ -108,7 +116,7 @@ int		delete_env_elem(t_list **list_head, char *search_key);
 int		analysis(t_info *info); // tmp
 
 /* execution */
-int		execute(t_info *info);
+int		execute_command_line(t_info *info);
 
 /* expansion */
 int		expand_variable(void); // tmp
@@ -130,7 +138,21 @@ int		ft_exit(t_info *info);
 // builtin helper
 char	*get_current_path(void);
 
-/* */
-void debug_print_2d_arr(char **arr, char *str);
+/* helper */
+
+/* tree_operation */
+t_tree	*pop_tree_elem_from_top(t_tree **root);
+t_tree	*pop_tree_elem_from_bottom(t_tree **root);
+void	add_top_of_tree(t_tree **root, t_tree *elem);
+void	add_bottom_of_tree(t_tree **root, t_tree *elem);
+
+/* tree_helper */
+t_tree	*create_tree_elem(void *content);
+t_tree	*get_last_elem(t_tree *elem);
+void	tree_clear(t_tree **root);
+size_t	get_tree_size(t_tree *root);
+
+/* debug print */
+void	debug_print_stack(t_tree *root, char *str);
 
 #endif

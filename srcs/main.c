@@ -12,7 +12,7 @@
 
 # include "minishell.h"
 
-static t_info	*init_minishell_params(void)
+static t_info	*init_params(void)
 {
 	t_info	*info;
 
@@ -35,7 +35,7 @@ int main(void)
 	t_info	*info;
 	int		exit_status;
 
-	info = init_minishell_params();
+	info = init_params();
 	exit_status = prompt_loop(info);
 	free_alloc(&info);
  	return (exit_status);

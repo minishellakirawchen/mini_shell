@@ -81,22 +81,4 @@ void	ft_lstiter(t_list *lst, void (*f)(void *));
 
 int		ft_lstsize(t_list *lst);
 
-/* stack */
-typedef struct s_stack_elem	t_stack;
-struct s_stack_elem
-{
-	void				*content;
-	struct s_stack_elem	*prev;
-	struct s_stack_elem	*next;
-};
-
-void	add_to_top(t_stack **stk, t_stack *elem);
-void	add_to_bottom(t_stack **stk, t_stack *elem);
-t_stack	*pop_from_top(t_stack **stk);
-t_stack	*pop_from_bottom(t_stack **stk);
-t_stack	*create_stack_elem(void *content);
-t_stack	*get_last_elem(t_stack *elem);
-void	ft_stack_clear(t_stack **stk);
-size_t	get_stack_size(t_stack *stk);
-
 #endif

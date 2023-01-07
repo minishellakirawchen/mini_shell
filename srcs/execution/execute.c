@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 21:56:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 09:26:54 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,42 +71,7 @@ int	execute_builtins(char *cmd_head, t_info *info)
 	return (EXIT_FAILURE);
 }
 
-//** builtins **
-//  cmd		: char **commands (readline->input func->expand_vars)
-//  echo or ECHO
-// 		{"echo", "-n", "foo", NULL}
-// 		{"echo", "-nnnnn", "foo", NULL} -> {"echo", "-n", "foo", NULL} re-shape in analysis
-//		{"echo", "-n", NULL}
-//		{"echo", "bar", NULL}
-//		{"echo", NULL}
-//		{"echo", "-n", "$foo", NULL} -> {"echo", "-n", "bar", NULL} expand $foo=bar in analysis
-//		{"echo", "$foo", NULL} -> {"echo", "bar", NULL} expand $foo=bar in analysis
-//
-//  cd
-//  	{"cd", "relative path", NULL}
-//		{"cd", "absolute path", NULL}
-//
-//  pwd or PWD
-// 		{"pwd", "NULL"}
-//
-//  export
-//  	{"export", "NULL"}
-//		{"export", $foo, NULL} -> {"export", bar, NULL} expand $foo=bar in analysis
-//
-//  unset
-//  	{"unset", NULL}
-//
-//  env or ENV
-//  	{"env", NULL}
-//
-//	exit
-//		{"exit", NULL}
-
-
-// child  -> parent
-// stdout -> stdin
-
-int execute_pipe_recursion(t_stack *stk, t_info *info)
+int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 {
 
 	pid_t		pid;
@@ -114,8 +79,8 @@ int execute_pipe_recursion(t_stack *stk, t_info *info)
 	t_exe_elem	*elem;
 
 	elem = NULL;
-	if (stk->prev)
-		elem = stk->prev->content;
+	if (root->left)
+		elem = root->left->content;
 	if (elem && elem->exe_type == E_CMD)
 	{
 		pipe(pipe_fd);
@@ -126,7 +91,7 @@ int execute_pipe_recursion(t_stack *stk, t_info *info)
 			close(STDOUT_FILENO);
 			dup2(pipe_fd[WRITE], STDOUT_FILENO);
 			close(pipe_fd[WRITE]);
-			execute_pipe_recursion(stk->prev, info);
+			execute_pipe_recursion(root->left, info);
 		}
 
 		close(pipe_fd[WRITE]);
@@ -134,7 +99,7 @@ int execute_pipe_recursion(t_stack *stk, t_info *info)
 		dup2(pipe_fd[READ], STDIN_FILENO);
 		close(pipe_fd[READ]);
 	}
-	elem = stk->content;
+	elem = root->content;
 	if (!elem || !elem->cmds)
 		return (EXIT_FAILURE);
 //	debug_print_2d_arr(elem->cmds, "cmds");
@@ -157,27 +122,26 @@ int execute_pipe_recursion(t_stack *stk, t_info *info)
 	exit (CMD_NOT_FOUND);
 }
 
-int	execute(t_info *info)
+int	execute_command_line(t_info *info)//tmp
 {
 	pid_t	pid;
-	t_stack	*pipe_last;
+	t_tree	*pipe_last;
 	size_t	i;
 	int		status;
 
 	pid = fork();
 	if (pid == 0)
 	{
-		pipe_last = get_last_elem(info->exe_root->next);
+		pipe_last = get_last_elem(info->exe_root->right);
 		execute_pipe_recursion(pipe_last, info);
 	}
 	// parent pid > 0; Process ID
 	i = 0;
-	while (i < get_stack_size(info->exe_root->next) + 1)
+	while (i < get_tree_size(info->exe_root->right) + 1)
 	{
 		wait(&status);
 		i++;
 	}
 	info->exit_status = WEXITSTATUS(status);
-//	info->exit_status = waitpid(pid, NULL, 0);
 	return (info->exit_status);
 }

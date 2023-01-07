@@ -5,6 +5,6 @@
 !includes
 !srcs/
 !libs/
-!test/
+!playground/
 !helper/
 !*.md

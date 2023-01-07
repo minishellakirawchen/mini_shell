@@ -14,7 +14,7 @@
 
 int	main(void)
 {
-	/* fork cd, touch test 22/Jan/5th */
+	/* fork cd, touch playground 22/Jan/5th */
 	int param = 0;
 	char *cd_cmd[10] = {"cd", NULL};
 	char *touch_cmd[10] = {"touch", "testfile", NULL};
@@ -55,7 +55,7 @@ int	main(void)
 
 
 
-	/* fork test 22/Jan/4th */
+	/* fork playground 22/Jan/4th */
 //	printf("init :%d\n", param);
 //
 //	int pid_t = fork();

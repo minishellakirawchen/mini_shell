@@ -3,7 +3,7 @@
 char *input_line = readline("minishell > ");
 
 $> minishell > hogehoge          -> input=[hogehoge]
-$> minishell > "test   "         -> input=["test   "]
+$> minishell > "playground   "         -> input=["playground   "]
 $> minishell > "hello " ' world '-> input=["hello " ' world ']
 ```
 
@@ -206,13 +206,25 @@ split[cat,Makefile,|,grep,a,|,grep,b,&&,pwd,&&,(cd /bin && touch file),&&,echo,"
 
 <br>
 
-
 ### redirection
 * pipexはredirection実行順が決まっていた && "< in cmd", "cmd > out"の順番だったため、順番に実行すれば流れができた
 * これをどうするか？"< in cmd" == "cmd < in"
 * あとは cmd > via1 > via2 > outなど、複数処理への対応
 * redirectへの渡し方、実行方法、関数
+
 ```c
+
+< file cmd, cmd < file // file -> cmd
+1. fd = open(file, READ)
+2. dup2(fd, STDOUT)
+3. exec cmd
+
+cmd > file, > file cmd
+1. fd = open(file, WRITE)
+2. dup2(fd, STDIN)
+3. exec cmd
+
+
 
 ```
 

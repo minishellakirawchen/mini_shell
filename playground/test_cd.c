@@ -4,7 +4,7 @@ int main(void)
 {
 	char	*current_path;
 	int		ret;
-	printf("### cd test ###\n");
+	printf("### cd playground ###\n");
 	current_path = getcwd(NULL, 0);
 	printf(" current:%s\n", current_path);
 

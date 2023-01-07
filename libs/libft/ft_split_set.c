@@ -167,7 +167,7 @@ char	**ft_split_set(const char *str, char delim, char set)
 }
 
 /*
-static int	test(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
+static int	playground(int no, const char *str, const char delim, const char set, size_t exp_size, char *exp_arr[])
 {
 	int		test_wa = 0;
 	size_t	strs_size = get_strs_size(str, delim, set);
@@ -229,52 +229,52 @@ int main(void)
 
 
 	char *ans1[] = {"111","222","33","44","555", NULL};
-	ng += test(no++, "111 222 33 44 555", ' ', '\0', 5, ans1);
+	ng += playground(no++, "111 222 33 44 555", ' ', '\0', 5, ans1);
 
 	char *ans2[] = {"111 222"," 33"," 44 555", NULL};
-	ng += test(no++, "111 222, 33, 44 555", ',', '\0', 3, ans2);
+	ng += playground(no++, "111 222, 33, 44 555", ',', '\0', 3, ans2);
 
 	char *ans3[] = {"111", "222", "33'44'555", NULL};
-	ng += test(no++, "111 222 33'44'555", ' ', '\'', 3, ans3);
+	ng += playground(no++, "111 222 33'44'555", ' ', '\'', 3, ans3);
 
 	char *ans4[] = {"'111 222 33 44 555'", NULL};
-	ng += test(no++, "'111 222 33 44 555'", '\0', '\'', 1, ans4);
+	ng += playground(no++, "'111 222 33 44 555'", '\0', '\'', 1, ans4);
 
 	char *ans5[] = {"111","222","33","44","555", NULL};
-	ng += test(no++, " 111 222 33 44 555 ", ' ', '\'', 5, ans5);
+	ng += playground(no++, " 111 222 33 44 555 ", ' ', '\'', 5, ans5);
 
 	char *ans6[] = {"1   1222", "33", "44", "555", NULL};
-	ng += test(no++, "   1   1222 33 44 555  ", ' ', '1', 4, ans6);
+	ng += playground(no++, "   1   1222 33 44 555  ", ' ', '1', 4, ans6);
 
 	char *ans7[] = {"111", "222", "33", "44", "555**", NULL};
-	ng += test(no++, " 111 222 33 44 555** ", ' ', '*', 5, ans7);
+	ng += playground(no++, " 111 222 33 44 555** ", ' ', '*', 5, ans7);
 
 	char *ans8[] = {"*111 222 33 44 555", NULL};
-	ng += test(no++, "*111 222 33 44 555", ' ', '*', 1, ans8);
+	ng += playground(no++, "*111 222 33 44 555", ' ', '*', 1, ans8);
 
 	char *ans9[] = {"11'1 2'22", "33", "' 44 555  '", NULL};
-	ng += test(no++, "11'1 2'22 33 ' 44 555  '  ", ' ', '\'', 3, ans9);
+	ng += playground(no++, "11'1 2'22 33 ' 44 555  '  ", ' ', '\'', 3, ans9);
 
 	char *ans10[] = {"'", NULL};
-	ng += test(no++, "'", ' ', '\'', 1, ans10);
+	ng += playground(no++, "'", ' ', '\'', 1, ans10);
 
 	char *ans11[] = {"", NULL};
-	ng += test(no++, "", ' ', '\'', 0, ans11);
+	ng += playground(no++, "", ' ', '\'', 0, ans11);
 
-	char *ans12[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test '", NULL};
-	ng += test(no++, "echo hello world | cat Makefile | echo 'test | test | test '", '|', '\'', 3, ans12);
+	char *ans12[] = {"echo hello world ", " cat Makefile ", " echo 'playground | playground | playground '", NULL};
+	ng += playground(no++, "echo hello world | cat Makefile | echo 'playground | playground | playground '", '|', '\'', 3, ans12);
 
-	char *ans13[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test ''", NULL};
-	ng += test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''", '|', '\'', 3, ans13);
+	char *ans13[] = {"echo hello world ", " cat Makefile ", " echo 'playground | playground | playground ''", NULL};
+	ng += playground(no++, "echo hello world | cat Makefile | echo 'playground | playground | playground ''", '|', '\'', 3, ans13);
 
-	char *ans14[] = {"echo hello world ", " cat Makefile ", " echo 'test | test | test ''''", NULL};
-	ng += test(no++, "echo hello world | cat Makefile | echo 'test | test | test ''''", '|', '\'', 3, ans14);
+	char *ans14[] = {"echo hello world ", " cat Makefile ", " echo 'playground | playground | playground ''''", NULL};
+	ng += playground(no++, "echo hello world | cat Makefile | echo 'playground | playground | playground ''''", '|', '\'', 3, ans14);
 
-	char *ans15[] = {"echo hello world ", " 'test | test ' ", " cat -e out", NULL};
-	ng += test(no++, "echo hello world | 'test | test ' | cat -e out", '|', '\'', 3, ans15);
+	char *ans15[] = {"echo hello world ", " 'playground | playground ' ", " cat -e out", NULL};
+	ng += playground(no++, "echo hello world | 'playground | playground ' | cat -e out", '|', '\'', 3, ans15);
 
-	char *ans16[] = {"echo ", " 'test || test| hoge|' ", " cat -e ", " gre", "p", NULL};
-	ng += test(no++, "echo | 'test || test| hoge|' ||| cat -e | gre|p", '|', '\'', 5, ans16);
+	char *ans16[] = {"echo ", " 'playground || playground| hoge|' ", " cat -e ", " gre", "p", NULL};
+	ng += playground(no++, "echo | 'playground || playground| hoge|' ||| cat -e | gre|p", '|', '\'', 5, ans16);
 
 
 	printf("RESULT: %s\n", ng == 0 ? "\x1b[32mAC\x1b[0m" : "\x1b[31mWA\x1b[0m");

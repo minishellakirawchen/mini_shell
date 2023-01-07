@@ -26,3 +26,14 @@ int	free_and_return_no(t_info **info, int exit_status)
 	free_alloc(info);
 	return (exit_status);
 }
+
+char	**free_array(char **array)
+{
+	size_t	i;
+
+	i = 0;
+	while (array[i])
+		free(array[i++]);
+	free(array);
+	return (NULL);
+}

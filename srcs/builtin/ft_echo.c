@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 13:56:37 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 13:56:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 10:55:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	print_echo(char **str, bool is_nl)
 		ft_printf("\n");
 }
 
-int	ft_echo(t_info *info)
+int	ft_echo(t_info *info, char **cmds)
 {
 	char	*nl_flg;
 	size_t	next_echo_chr_len;
@@ -46,9 +46,9 @@ int	ft_echo(t_info *info)
 	bool	is_nl;
 	int		strcmp_res;
 
-	if (!info || !info->commands || !info->commands[0])
+	if (!info || !cmds || !cmds[0])
 		return (1); //TODO: exit?
-	nl_flg = info->commands[1];
+	nl_flg = cmds[1];
 	next_echo_chr_len = ft_strlen_ns(nl_flg);
 	i = 1;
 	is_nl = true;
@@ -58,6 +58,6 @@ int	ft_echo(t_info *info)
 		i++;
 		is_nl = false;
 	}
-	print_echo(&info->commands[i], is_nl);
+	print_echo(&cmds[i], is_nl);
 	return (0);
 }

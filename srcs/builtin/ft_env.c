@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:19 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 20:31:19 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 11:03:43 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,18 @@ void	print_key_value(void *content)
 	t_env_elem	*elem;
 
 	elem = content;
-	printf("%s=%s\n", elem->key, elem->value);
+	ft_printf("%s=%s\n", elem->key, elem->value);
 }
 
-int ft_env(t_info *info)
+// TODO: $> env CMD
+//   ex) $> env ./minishell -> minishell run use env
+// env -op -> error
+int ft_env(t_info *info, char **cmds)
 {
-	if (!info)
+	if (!info || !cmds)
 		return (1); //TODO: exit?
 	ft_lstiter(info->env_list, print_key_value);
+	if (cmds[1])
+		ft_putendl_fd("minishell: env : Unknown options", STDERR_FILENO);
 	return (0);
 }

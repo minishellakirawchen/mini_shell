@@ -6,3 +6,5 @@
 !srcs/
 !libs/
 !test/
+!helper/
+!*.md

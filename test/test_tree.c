@@ -1,31 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   test_tree.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/03 20:31:14 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 11:23:40 by takira           ###   ########.fr       */
+/*   Created: 2023/01/05 21:34:43 by takira            #+#    #+#             */
+/*   Updated: 2023/01/06 08:56:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "test.h"
 
-int ft_unset(t_info *info, char **cmds)
+typedef enum e_group
 {
-	char	*key;
-	int		ret;
+	e_pipe,
+	e_subshell,
+	e_and,
+	e_or,
+}	t_group;
 
-	if (!info || !cmds || !cmds[0] || !cmds[1])//tmp
-		return (1);
-	key = cmds[1]; //tmp
-	if (get_env_value(key, info->env_list))
-	{
-		ret = delete_env_elem(&info->env_list, key);
-		if (ret == FAILURE)
-			return (1);//TODO:exit?
-	}
-//	printf("key:%s, get_val:%s\n", key, get_env_value(key, info->env_list));
+typedef struct s_tree
+{
+	t_group			group;
+	char			**commands;
+	struct s_tree	*left;
+	struct s_tree	*right;
+}					t_tree;
+
+int main(void)
+{
+ `
+
 	return (0);
 }

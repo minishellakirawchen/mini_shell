@@ -5,7 +5,9 @@
 !*.c
 !*.h
 !includes/**
+!srcs
 !srcs/**
+!libs
 !libs/**
-!playground/**
+!playground
 !*.md

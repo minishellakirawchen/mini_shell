@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 09:26:54 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 11:27:55 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,64 +16,124 @@ bool	is_builtins(char *cmd_head)
 {
 	const size_t	len = ft_strlen_ns(cmd_head);
 
-//	printf("#[DEBUG]commands[0]:%s, len:%zu\n", cmd_head, len);
 	if (len == 0)
 		return (false);
 	// TODO: implement more simple, for debug, ft_**
-	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0)
-		return (true);
-	if (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0 \
+	|| (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0))
 		return (true);
 	if (ft_strncmp_ns("ft_cd", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0)
-		return (true);
-	if (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0 \
+	|| (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0))
 		return (true);
 	if (ft_strncmp_ns("ft_export", cmd_head, len) == 0)
 		return (true);
 	if (ft_strncmp_ns("ft_unset", cmd_head, len) == 0)
 		return (true);
-	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0)
-		return (true);
-	if (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0)
+	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0 \
+	|| (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0))
 		return (true);
 	if (ft_strncmp_ns("ft_exit", cmd_head, len) == 0)
 		return (true);
 	return (false);
 }
 
-int	execute_builtins(char *cmd_head, t_info *info)
+int	execute_builtins(t_info *info, char **cmds)
 {
+	const char		*cmd_head = cmds[0];
 	const size_t	len = ft_strlen_ns(cmd_head);
 
 	// TODO:  implement more simple
-	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0)
-		return (ft_echo(info));
-	if (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0)
-		return (ft_echo(info));
+	if (ft_strncmp_ns("ft_echo", cmd_head, len) == 0 \
+	|| (ft_strncmp_ns("ft_ECHO", cmd_head, len) == 0))
+		return (ft_echo(info, cmds));
 	if (ft_strncmp_ns("ft_cd", cmd_head, len) == 0)
-		return (ft_cd(info));
-	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0)
-		return (ft_pwd(info));
-	if (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0)
+		return (ft_cd(info, cmds));
+	if (ft_strncmp_ns("ft_pwd", cmd_head, len) == 0 \
+	|| (ft_strncmp_ns("ft_PWD", cmd_head, len) == 0))
 		return (ft_pwd(info));
 	if (ft_strncmp_ns("ft_export", cmd_head, len) == 0)
-		return (ft_export(info));
+		return (ft_export(info, cmds));
 	if (ft_strncmp_ns("ft_unset", cmd_head, len) == 0)
-		return (ft_unset(info));
-	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0)
-		return (ft_env(info));
-	if (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0)
-		return (ft_env(info));
+		return (ft_unset(info, cmds));
+	if (ft_strncmp_ns("ft_env", cmd_head, len) == 0 \
+	|| (ft_strncmp_ns("ft_ENV", cmd_head, len) == 0))
+		return (ft_env(info, cmds));
 	if (ft_strncmp_ns("ft_exit", cmd_head, len) == 0)
-		return (ft_exit(info));
+		return (ft_exit(info, cmds));
 	return (EXIT_FAILURE);
+}
+
+char	*get_execute_path(char *path, char *file)
+{
+	char			*execute_path;
+	size_t			len;
+	const size_t	path_len = ft_strlen_ns(path);
+	const size_t	file_len = ft_strlen_ns(file);
+
+	len = path_len + file_len;
+	if (path_len > 0 && path[path_len - 1] != '/')
+		len++;
+	len++;
+	execute_path = (char *)ft_calloc(sizeof(char), len);
+	if (!execute_path)
+	{
+		perror("malloc");
+		return (NULL);
+	}
+	ft_strlcat(execute_path, path, len);
+	if (path_len > 0 && path[path_len - 1] != '/')
+		ft_strlcat(execute_path, "/", len);
+	ft_strlcat(execute_path, file, len);
+	printf("create path:[%s]\n", execute_path);
+	return (execute_path);
+}
+
+/*
+char **create_environ(t_list *env_list)
+{
+	char **environ;
+
+
+	return (environ);
+}
+*/
+
+int	ft_execvp(char *file, char **cmds, char *env_paths)
+{
+	extern char	**environ;
+	char		**splitted_paths;
+	size_t		idx;
+	char 		*path;
+
+	splitted_paths = ft_split(env_paths, PATH_DELIMITER);
+	if (!splitted_paths)
+	{
+		perror("malloc");
+		return (EXIT_FAILURE);
+	}
+	debug_print_2d_arr(splitted_paths, "splitted_paths");
+	idx = 0;
+	while (splitted_paths[idx])
+	{
+		path = get_execute_path(splitted_paths[idx], file);
+		if (!path)
+		{
+			perror("malloc");
+			return (EXIT_FAILURE);
+		}
+		execve(path, cmds, environ);
+		free(path);
+		idx++;
+	}
+	free_array(splitted_paths);
+	return (CMD_NOT_FOUND);
 }
 
 int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 {
-
+	extern char	**environ;
 	pid_t		pid;
 	int			pipe_fd[2];
 	t_exe_elem	*elem;
@@ -103,22 +163,16 @@ int execute_pipe_recursion(t_tree *root, t_info *info)//tmp
 	if (!elem || !elem->cmds)
 		return (EXIT_FAILURE);
 //	debug_print_2d_arr(elem->cmds, "cmds");
-	/*
+
 	if (is_builtins(elem->cmds[0]))
-		info->exit_status = execute_builtins(elem->cmds[0], info);
+		return (execute_builtins(info, elem->cmds));
+	if (elem->cmds[0] && (elem->cmds[0][0] == '/' || elem->cmds[0][0] == '.'))
+		execve(elem->cmds[0], elem->cmds, environ);
 	else
 	{
-//		execve(elem->cmds[0], elem->cmds, NULL);
-		execvp(elem->cmds[0], elem->cmds);//TODO:exeve
-		perror("execvp");
+		ft_execvp(elem->cmds[0], elem->cmds, get_env_value(PATH, info->env_list));
 		printf("command not found: %s\n", elem->cmds[0]);
-		info->exit_status = 127;
 	}
-	*/
-
-	execvp(elem->cmds[0], elem->cmds);//TODO:exeve
-	perror("execvp");
-	printf("command not found: %s\n", elem->cmds[0]);
 	exit (CMD_NOT_FOUND);
 }
 

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 09:53:45 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 11:20:43 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,14 @@
 # define READ	0
 # define WRITE	1
 
-# define CHDIR_FAILURE	1
-# define CMD_NOT_FOUND	127
+# define CHDIR_FAILURE				1
+# define CMD_NOT_FOUND				127
+# define EXIT_TOO_MANY_ARGS			1
+# define EXIT_NUMERIC_ARGS_REQUIRED	255
 
-# define	ISSPACE	"\t\n\v\f\r "
+# define	PATH			"PATH"
+# define 	PATH_DELIMITER	':'
+# define	ISSPACE			"\t\n\v\f\r "
 
 
 /* typedef struct */
@@ -128,13 +132,13 @@ char	**free_array(char **array);
 
 /* builtin */
 // return exit_status
-int		ft_echo(t_info *info);
-int		ft_cd(t_info *info);
+int		ft_echo(t_info *info, char **cmds);
+int		ft_cd(t_info *info, char **cmds);
 int		ft_pwd(t_info *info);
-int		ft_export(t_info *info);
-int		ft_unset(t_info *info);
-int		ft_env(t_info *info);
-int		ft_exit(t_info *info);
+int		ft_export(t_info *info, char **cmds);
+int		ft_unset(t_info *info, char **cmds);
+int		ft_env(t_info *info, char **cmds);
+int		ft_exit(t_info *info, char **cmds);
 // builtin helper
 char	*get_current_path(void);
 
@@ -154,5 +158,6 @@ size_t	get_tree_size(t_tree *root);
 
 /* debug print */
 void	debug_print_stack(t_tree *root, char *str);
+void	debug_print_2d_arr(char **arr, char *str);
 
 #endif

@@ -6,20 +6,20 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:14 by takira            #+#    #+#             */
-/*   Updated: 2023/01/05 11:35:32 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 11:23:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int ft_unset(t_info *info)
+int ft_unset(t_info *info, char **cmds)
 {
 	char	*key;
 	int		ret;
 
-	if (!info || !info->commands || !info->commands[0] || !info->commands[1])//tmp
+	if (!info || !cmds || !cmds[0] || !cmds[1])//tmp
 		return (1);
-	key = info->commands[1]; //tmp
+	key = cmds[1]; //tmp
 	if (get_env_value(key, info->env_list))
 	{
 		ret = delete_env_elem(&info->env_list, key);

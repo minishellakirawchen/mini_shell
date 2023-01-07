@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 20:03:02 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 20:11:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ struct s_tree
 	char 			**cmds;
 	bool			redirect_in;
 	bool			redirect_out;
-	char			**files;
+	char			**redirect_files;
 	struct s_tree	*left;
 	struct s_tree	*right;
 };

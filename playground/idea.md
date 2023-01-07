@@ -388,6 +388,10 @@ cat redirect < 引数jec
 分割が必要
 ```
 
+// TODO: check multi case
+<infile1 <infile2 <infile3 cmd
+<infile1 <infile2 <infile3 cmd <infile4
+<infile cmd < //error??
 
 <br>
 <br>

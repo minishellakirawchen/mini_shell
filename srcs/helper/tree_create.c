@@ -6,11 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 18:58:03 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 19:52:03 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/07 20:38:23 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+//TODO: Add function update *node->cmds, delete redirect chars
 
 t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 {
@@ -20,6 +22,9 @@ t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 	if (!new_node)
 		return (perror_and_return_null("malloc"));
 	new_node->exe_type = type;
+	new_node->redirect_in = false;
+	new_node->redirect_out = false;
+	new_node->redirect_files = NULL;
 	if (!raw_cmd_str)
 	{
 		new_node->cmds = NULL;
@@ -31,9 +36,6 @@ t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 		free(new_node);
 		return (perror_and_return_null("malloc"));
 	}
-	new_node->redirect_in = false;
-	new_node->redirect_out = false;
-	new_node->files = NULL;
 	return (new_node);
 }
 

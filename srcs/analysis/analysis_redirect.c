@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 18:29:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 18:36:59 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,16 @@ int	add_redirect_param(t_tree **node)
 
 	if (!node || !*node || (*node)->exe_type != E_LEAF_COMMAND || !(*node)->cmds)
 		return (FAILURE);
+	// <, <<, >, >> とwordを分割する
 	splitted_cmds = split_redirect_and_word_controller((const char **) (*node)->cmds);
+	if (!splitted_cmds)
+		return (FAILURE);
 	debug_print_2d_arr(splitted_cmds, "splitted_cmds");
 
+	// cmd[i] == "<", "<<", ">", ">>"の次のwordをfilename, limiterとして記録
+	// cmd[i] == redirection, cmd[i+1] == redirectionの場合はsyntax errorを出力
+	// char **cmds_except_redirectを作成して、node->cmdsに上書き（free(node->cmds）も忘れずに）
+	// free(splitted_cmds)
 
 
 	return (SUCCESS);

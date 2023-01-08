@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 21:09:09 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 21:17:34 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,10 +128,8 @@ void	*free_redirect_info(t_redirect_info **info)
 {
 	if (!info || !*info)
 		return (NULL);
-	free_1d_array_ret_nullptr((void **)&(*info)->infile);
-	free_1d_array_ret_nullptr((void **)&(*info)->outfile);
-	free_2d_array_ret_nullptr((void ***)&(*info)->via_in_files);
-	free_2d_array_ret_nullptr((void ***)&(*info)->via_out_files);
+	free_2d_array_ret_nullptr((void ***)&(*info)->infiles);
+	free_2d_array_ret_nullptr((void ***)&(*info)->outfiles);
 	free_2d_array_ret_nullptr((void ***)&(*info)->here_doc_limiters);
 	return (NULL);
 }
@@ -166,7 +164,7 @@ int	set_redirect_heredoc(t_redirect_info **info, char *delimiter)
 {
 	(*info)->input_from = E_HERE_DOC;
 	(*info)->here_doc_limiters = update_files((*info)->here_doc_limiters, delimiter);
-	if (!(*info)->via_in_files)
+	if (!(*info)->here_doc_limiters)
 	{
 		perror("malloc");
 		free_redirect_info(&(*info));

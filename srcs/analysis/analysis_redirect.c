@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 08:39:47 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 09:39:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ size_t	get_redirect_cnt(char **cmds)
 		j = 0;
 		while (cmds[i][j])
 		{
-
+			cnt++;
 		}
 	}
+	return (cnt);
 }
 
 void	add_redirect_param(t_tree **node)
@@ -49,16 +50,18 @@ void	add_redirect_param(t_tree **node)
 	if (!node || !*node || (*node)->exe_type != E_LEAF_COMMAND || !(*node)->cmds)
 		return ;
 	idx = 0;
+	redirect_cnt = 0;
 	while ((*node)->cmds[idx])
 	{
 		cmd = (*node)->cmds[idx];
 		if (cmd[0] == '<')
 		{
 			if (ft_strlen_ns(cmd) == 1)
-
+				printf("\n");
 
 		}
 		idx++;
 	}
+	redirect_cnt++;
 
 }

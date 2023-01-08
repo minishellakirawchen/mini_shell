@@ -24,17 +24,12 @@ SRC_DIR	= ./srcs
 SRC		= main.c \
 		  input/input.c \
 		  input/get_env.c \
-
 		  analysis/analysis.c \
-		  analysis/analysis_redirection.c \
-
+		  analysis/analysis_redirect.c \
 		  expansion/expand_variable.c \
-
 		  execution/execute.c \
 		  execution/execute_builtin.c \
-
 		  exit/exit.c \
-
 		  builtin/ft_echo.c \
 		  builtin/ft_cd.c \
 		  builtin/ft_pwd.c \
@@ -42,7 +37,6 @@ SRC		= main.c \
 		  builtin/ft_unset.c \
 		  builtin/ft_env.c \
 		  builtin/ft_exit.c \
-
 		  helper/tree_node_create.c \
 		  helper/tree_operation.c \
 		  helper/tree_helper.c \

@@ -151,12 +151,12 @@ int	execute_command_line(t_info *info)
 	pid = fork();
 	if (pid == 0)
 	{
-		end_of_pipe_elem = get_last_elem(info->exe_root->right);
+		end_of_pipe_elem = get_last_elem(info->tree_root->right);
 		//TODO: execute_handler()
 		execute_pipe_recursion(end_of_pipe_elem, info);
 	}
 	i = 0;
-	while (i++ < get_tree_size(info->exe_root->right) + 1)
+	while (i++ < get_tree_size(info->tree_root->right) + 1)
 		wait(&status); //TODO: check wait operation
 	return (WEXITSTATUS(status));
 }

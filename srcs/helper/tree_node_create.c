@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 18:58:03 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 08:48:08 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 09:40:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 	new_node = (t_tree *)malloc(sizeof(t_tree));
 	if (!new_node)
 		return (perror_and_return_null("malloc"));
-	new_node->redirect = NULL;
+	new_node->redirect_info = NULL;
 	new_node->exe_type = type;
 	if (!raw_cmd_str)
 	{
@@ -33,8 +33,8 @@ t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 		free(new_node);
 		return (perror_and_return_null("malloc"));
 	}
-	new_node->redirect = (t_redirect_info *)malloc(sizeof(t_redirect_info));
-	if (!new_node->redirect)
+	new_node->redirect_info = (t_redirect_info *)malloc(sizeof(t_redirect_info));
+	if (!new_node->redirect_info)
 	{
 		free(new_node);
 		return (perror_and_return_null("malloc"));

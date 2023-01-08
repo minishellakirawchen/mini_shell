@@ -26,7 +26,7 @@ static t_info	*init_params(void)
 	info->exit_status = EXIT_SUCCESS;
 	info->env_list = get_env_list();//if env_list==NULL -> operate with env=NULL
 
-	info->exe_root = NULL;
+	info->tree_root = NULL;
 	return (info);
 }
 

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 19:32:16 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 21:12:32 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,15 @@
 # define SYNTAX_ERROR				258
 
 /* string */
-# define	PATH			"PATH"
-# define	PWD				"PWD"
-# define 	PATH_DELIMITER	':'
-# define	ISSPACE			"\t\n\v\f\r "
+# define	PATH				"PATH"
+# define	PWD					"PWD"
+# define 	PATH_DELIMITER		':'
+# define	ISSPACE				"\t\n\v\f\r "
+# define	REDIRECT_IN			"<"
+# define	REDIRECT_OUT		">"
+# define	REDIRECT_HEREDOC	"<<"
+# define	REDIRECT_APPEND		">>"
+
 
 
 /* ---------------- */
@@ -118,10 +123,8 @@ struct s_redirect_info
 {
 	t_input_from	input_from;
 	t_output_to		ouput_to;
-	char 			*infile; //if here_doc, infile=here_doc_tmp
-	char 			*outfile;
-	char			**via_in_files;
-	char			**via_out_files;
+	char 			**infiles;
+	char 			**outfiles;
 	char			**here_doc_limiters;
 };
 
@@ -205,6 +208,9 @@ int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
 int		perror_and_return_int(char *err, int ret_value);
 void	*perror_and_ret_nullptr(char *err);
+void	*free_2d_array_ret_nullptr(void ***array);
+void	*free_1d_array_ret_nullptr(void **array);
+void	*free_1d_2d_array_ret_nullptr(void **array1d, void ***array2d);
 
 
 /* --------- */

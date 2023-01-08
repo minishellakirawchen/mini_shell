@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 19:53:10 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 21:09:09 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,16 @@
 //  cmds[i] = (*node)->cmds[i] = {"<", "file", "cmd0", "cmd1", ..., NULL}[i]
 // 	* 単体  "<", "<<", ">", ">>" :: "<", "infile<"になっている可能性もある...
 //	* 結合1 "<infile", "outfile>"
-//  * 結合2 "infile>", "<outfile", "<<infile>" ※cmds[i]単独で判別できない
+//  * 結合2 "infile>", "<outfile", "<<infile>" ※cmds[i]単独で判別できず前後もチェックする必要あり
 // すべて"space"で結合してながら< > 前後にspaceがなかったら挿入 -> space splitする...?
-// 1. 結合 & split by ' '
-// 2. cmds[i] == <, <<, >, >> を探し、i++と合わせて処理
-// 3. cmds[i] != <, <<, >, >> はchar **cmds_except_redirectに保存
+// 1. 結合 & split
+// 2. cmds[i] == "<", "<<", ">", ">>" を探し、file name(cmds[i++])と合わせて記録
+// 3. cmds[i] != "<", "<<", ">", ">>" はchar **cmds_except_redirectに保存
 // 4. cmds_except_redirectをcmdsに上書きする
+// 5. コマンド実行時にin, outがredirectなら実行する
 
 
-// $> <>file はOK :: in_out_file
+// 実行時に困ったらerrorにしよう
 int	valid_redirection(char **cmds)
 {
 	size_t	idx;
@@ -46,9 +47,13 @@ int	valid_redirection(char **cmds)
 		{
 			if (ft_strlen_ns(cmds[idx]) > 2 || !cmds[idx + 1])
 				is_error = true;
-			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '>') \
-			&& (!cmds[idx + 2] || (cmds[idx + 2] && (cmds[idx + 2][0] == '<' || cmds[idx + 2][0] == '>'))))
+			// $> <>file はOKだが、めんどいので一旦errorにする
+			// 考慮する際には次の条件をコメントアウト、さらに次の条件を有効にすればOK
+			if ((cmds[idx][0] == '<' || cmds[idx][0] == '>') && (cmds[idx + 1] && (cmds[idx + 1][0] == '<' || cmds[idx + 1][0] == '>')))
 				is_error = true;
+//			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '>') \
+//			&& (!cmds[idx + 2] || (cmds[idx + 2] && (cmds[idx + 2][0] == '<' || cmds[idx + 2][0] == '>'))))
+//				is_error = true;
 			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '<'))
 				is_error = true;
 			if (cmds[idx][0] == '>' && (cmds[idx + 1] && (cmds[idx + 1][0] == '<' || cmds[idx + 1][0] == '>')))
@@ -59,6 +64,154 @@ int	valid_redirection(char **cmds)
 				return (FAILURE);
 			}
 		}
+		idx++;
+	}
+	return (SUCCESS);
+}
+
+int	is_same_str(char *str1, char *str2)
+{
+	const size_t	len1 = ft_strlen_ns(str1);
+	const size_t	len2 = ft_strlen_ns(str2);
+
+	return (len1 == len2 && ft_strncmp_ns(str1, str2, len1));
+}
+
+// char **update = current + add
+// free(current), free(add)
+// TODO: more simple
+char **update_files(char **current_files, char *add_file)
+{
+	char	**new_files;
+	size_t	update_size;
+	size_t	idx;
+
+	update_size = 0;
+	while (current_files && current_files[update_size])
+		update_size++;
+	if (add_file)
+		update_size++;
+	new_files = (char **)ft_calloc(sizeof(char *), update_size + 1);
+	if (!new_files)
+	{
+		free_2d_array_ret_nullptr((void ***)&current_files);
+		free_1d_array_ret_nullptr((void **)&add_file);
+		return ((char **)perror_and_ret_nullptr("malloc"));
+	}
+	idx = 0;
+	while (current_files && current_files[idx])
+	{
+		new_files[idx] = ft_strdup(current_files[idx]);
+		if (!new_files[idx])
+		{
+			free_2d_array_ret_nullptr((void ***)&current_files);
+			free_2d_array_ret_nullptr((void ***)&new_files);
+			free_1d_array_ret_nullptr((void **)&add_file);
+			return ((char **)perror_and_ret_nullptr("malloc"));
+		}
+		idx++;
+	}
+	new_files[idx] = ft_strdup(add_file);
+	if (!new_files[idx])
+	{
+		free_2d_array_ret_nullptr((void ***)&current_files);
+		free_2d_array_ret_nullptr((void ***)&new_files);
+		free_1d_array_ret_nullptr((void **)&add_file);
+		return ((char **)perror_and_ret_nullptr("malloc"));
+	}
+	free_2d_array_ret_nullptr((void ***)&current_files);
+	free_1d_array_ret_nullptr((void **)&add_file);
+	return (new_files);
+}
+
+void	*free_redirect_info(t_redirect_info **info)
+{
+	if (!info || !*info)
+		return (NULL);
+	free_1d_array_ret_nullptr((void **)&(*info)->infile);
+	free_1d_array_ret_nullptr((void **)&(*info)->outfile);
+	free_2d_array_ret_nullptr((void ***)&(*info)->via_in_files);
+	free_2d_array_ret_nullptr((void ***)&(*info)->via_out_files);
+	free_2d_array_ret_nullptr((void ***)&(*info)->here_doc_limiters);
+	return (NULL);
+}
+
+int	set_redirect_in(t_redirect_info **info, char *infile)
+{
+	(*info)->input_from = E_REDIRECT_IN;
+	(*info)->infiles = update_files((*info)->infiles, infile);
+	if (!(*info)->infiles)
+	{
+		perror("malloc");
+		free_redirect_info(&(*info));
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
+int	set_redirect_out(t_redirect_info **info, char *outfile)
+{
+	(*info)->ouput_to = E_REDIRECT_OUT;
+	(*info)->outfiles = update_files((*info)->outfiles, outfile);
+	if (!(*info)->outfiles)
+	{
+		perror("malloc");
+		free_redirect_info(&(*info));
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
+int	set_redirect_heredoc(t_redirect_info **info, char *delimiter)
+{
+	(*info)->input_from = E_HERE_DOC;
+	(*info)->here_doc_limiters = update_files((*info)->here_doc_limiters, delimiter);
+	if (!(*info)->via_in_files)
+	{
+		perror("malloc");
+		free_redirect_info(&(*info));
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
+//TODO: appendはoutでoverwriteできる？
+int	set_redirect_append(t_redirect_info **info, char *outfile)
+{
+	(*info)->ouput_to = E_REDIRECT_APPEND;
+	(*info)->outfiles = update_files((*info)->outfiles, outfile);
+	if (!(*info)->outfiles)
+	{
+		perror("malloc");
+		free_redirect_info(&(*info));
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
+t_redirect_info	*get_redirection_info(char **cmds)
+{
+	size_t			idx;
+	t_redirect_info	*info;
+
+	info = (t_redirect_info *)malloc(sizeof(t_redirect_info));
+	if (!info)
+		return (perror_and_ret_nullptr("malloc"));
+	idx = 0;
+	while (cmds[idx])
+	{
+		if (is_same_str(cmds[idx], REDIRECT_IN))
+			if (set_redirect_in(&info, cmds[idx + 1]) == FAILURE)
+				return (NULL);
+		if (is_same_str(cmds[idx], REDIRECT_OUT))
+			if (set_redirect_out(&info, cmds[idx + 1]) == FAILURE)
+				return (NULL);
+		if (is_same_str(cmds[idx], REDIRECT_HEREDOC))
+			if (set_redirect_heredoc(&info, cmds[idx + 1]) == FAILURE)
+				return (NULL);
+		if (is_same_str(cmds[idx], REDIRECT_APPEND))
+			if (set_redirect_append(&info, cmds[idx + 1]) == FAILURE)
+				return (NULL);
 		idx++;
 	}
 	return (SUCCESS);
@@ -76,15 +229,18 @@ int	add_redirect_param(t_tree **node)
 		return (FAILURE);
 	debug_print_2d_arr(splitted_cmds, "splitted_cmds");
 
+	// syntax check
+	// cmd[i] == redirection, cmd[i+1] == redirectionの場合はsyntax errorを出力
 	if (valid_redirection(splitted_cmds) == FAILURE)
 		return (SYNTAX_ERROR);
 
 	// cmd[i] == "<", "<<", ">", ">>"の次のwordをfilename, limiterとして記録
-	// cmd[i] == redirection, cmd[i+1] == redirectionの場合はsyntax errorを出力
+	(*node)->redirect_info = get_redirection_info(splitted_cmds);
+	if (!(*node)->redirect_info)
+		return (FAILURE);
+
 	// char **cmds_except_redirectを作成して、node->cmdsに上書き（free(node->cmds）も忘れずに）
 	// free(splitted_cmds)
-
-
 	return (SUCCESS);
 
 	//redirect関係のcharを削除する

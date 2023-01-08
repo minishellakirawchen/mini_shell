@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 17:52:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 20:09:22 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	add_command_leaf_to_node(t_tree **node, char *command_line)
 	t_tree	*cmd_leaf;
 	size_t	idx;
 
-	split_by_pipe = ft_split_set(command_line, '|', '"');
+	split_by_pipe = ft_split_set(command_line, '|', '"');//TODO: update split set; char set-> char *set
 	if (!split_by_pipe)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));
 //	debug_print_2d_arr(split_by_pipe, "split by pipe");

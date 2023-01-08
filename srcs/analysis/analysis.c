@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 09:37:07 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 17:52:52 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,11 @@ int	add_command_leaf_to_node(t_tree **node, char *command_line)
 	return (SUCCESS);
 }
 
-// First try, create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
-
+// First try :: create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
+//  -> CLEAR!!!
+// 2nd try   :: pipe in subshell				, like: $> (cat Makefile | grep a)
+// 3rd try   :: subshell in pipeline			, like: $> cat Makefile | (cd /bin) | echo hello
+// 4th try   :: pipe in subshell in pipeline	, like: $> cat Makefile | (echo hello | grep h) | ls -l
 int	analysis(t_info *info)
 {
 	t_tree	*root_node;
@@ -62,17 +65,19 @@ int	analysis(t_info *info)
 	pipe_node = create_tree_node(E_NODE_PIPE, NULL);
 	add_bottom_of_tree(&info->tree_root, pipe_node); //root, pipe共通のelemを代入すると...?
 	/* create exe-elem "commands" which connected same level pipes */
-	// root              <- root node
-	//  |
-	// pipe              <- pipe node (explain execute stage)
-	//  |_______ .. _
-	//  |     |     |
-	// cmd1  cmd2  cmdn  <- command leaf (execute)
+	//   [root]              <- root node
+	//     |
+	//   [pipe]              <- pipe node (explain execute stage)
+	//     |_______ .... _
+	//     |     |       |
+	//   [cmd1][cmd2]  [cmdn]  <- command leaf (execute args)
+	//                             **args = {"cmd1", "cmd2", .., "cmdn", NULL}
+	//                             -> ft_execvp(args[0], args, NULL)
 	add_command_leaf_to_node(&pipe_node, info->input_line); //input: tmp
 	// if fail -> all free, use tree_clear
 
 	// BFS的な実装で入れ子でも順番に展開していける？
 
-	debug_print_stack(info->tree_root, "check pipe case");
+//	debug_print_stack(info->tree_root, "check pipe case");
 	return (SUCCESS);
 }

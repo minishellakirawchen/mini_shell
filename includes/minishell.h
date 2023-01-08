@@ -165,7 +165,7 @@ int		delete_env_elem(t_list **list_head, char *search_key);
 /* ---------- */
 /* analysis.c */
 int		analysis(t_info *info); // tmp
-void	add_redirect_param(t_tree **node);
+int		add_redirect_param(t_tree **node);
 
 /* ----------- */
 /*  execution  */

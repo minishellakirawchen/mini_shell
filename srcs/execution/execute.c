@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 19:40:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 10:06:37 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,9 +145,9 @@ int	execute_command_line(t_info *info)
 	size_t	i;
 	int		status;
 
-	//TODO: only command; no pipe
-	//  cd     -> no fork
-	//  others -> fork
+	//TODO: flg=shell(no pipe, only one command)
+	//  cd     -> must NOT fork to reflect working dir
+	//  others -> must fork     to exit execute process, but ft_builtins doesn't matter
 	pid = fork();
 	if (pid == 0)
 	{

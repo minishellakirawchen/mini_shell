@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 18:28:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 18:29:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 19:15:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ ssize_t	count_split_point_count_by_chr(const char *str, char chr, bool *is_error
 	size_t	j;
 	ssize_t	cnt;
 
+	*is_error = false;
 	cnt = 0;
 	j = 0;
 	while (str[j])
@@ -56,15 +57,8 @@ ssize_t	count_split_point_count_by_chr(const char *str, char chr, bool *is_error
 		if (j > 0 && str[j - 1] != chr)
 			cnt++;
 
-		// syntax check
-		if (str[j + 1] == chr) // <<
+		while (str[j] && str[j] == chr) // <<
 			j++;
-		if (str[j + 1] == chr) // <<<
-		{
-			printf("syntax error\n");//TODO:error handling
-			*is_error = true;
-			return (0);
-		}
 
 		//後ろで区切る
 		// <B, <<B, A<B, A<<B, A<, A<<
@@ -109,22 +103,11 @@ size_t	get_split_idx_by_chr(const char *str, char chr)
 	size_t	j;
 
 	j = 0;
-	while (str[j])
-	{
-		while (str[j] && str[j] != chr)
-			j++;
-		if (!str[j])
-			break ;
-		if (j > 0 && str[j - 1] != chr)
-			return (j);
-		if (str[j + 1] == chr) // <<
-			j++;
-		if (str[j + 1] && str[j + 1] != chr)
-		{
-			j++;
-			return (j);
-		}
+	while (str[j] && str[j] != chr)
 		j++;
-	}
+	if (j > 0 && str[j - 1] != chr)
+		return (j);
+	while (str[j] && str[j] == chr) // <<
+		j++;
 	return (j);
 }

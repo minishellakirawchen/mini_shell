@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 18:26:48 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 18:32:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 19:19:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 /* Prototype declaration */
 static int	assign_dest_to_splitted_src(char ***dest, const char *src, size_t *j);
-static int	assign_dest_to_src(char ***dest, const char *src, size_t *j);
 static char	**split_redirect_and_word(const char **cmds_src, size_t size);
 
 /* Function */
@@ -53,19 +52,6 @@ static int	assign_dest_to_splitted_src(char ***dest, const char *src, size_t *j)
 	return (SUCCESS);
 }
 
-static int	assign_dest_to_src(char ***dest, const char *src, size_t *j)
-{
-	(*dest)[*j] = ft_strdup(src);
-	if (!(*dest)[*j])
-	{
-		free_array(*dest);
-		perror("malloc");
-		return (FAILURE);
-	}
-	*j += 1;
-	return (SUCCESS);
-}
-
 static char	**split_redirect_and_word(const char **cmds_src, size_t size)
 {
 	char	**splitted_cmds;
@@ -79,13 +65,6 @@ static char	**split_redirect_and_word(const char **cmds_src, size_t size)
 	j = 0;
 	while (cmds_src[i])
 	{
-		if (count_chr_in_src(cmds_src[i], '<') == 0 && count_chr_in_src(cmds_src[i], '>') == 0)
-		{
-			if (assign_dest_to_src(&splitted_cmds, cmds_src[i], &j) == FAILURE)
-				return (NULL);
-			i++;
-			continue ;
-		}
 		if (assign_dest_to_splitted_src(&splitted_cmds, cmds_src[i], &j) == FAILURE)
 			return (NULL);
 		i++;

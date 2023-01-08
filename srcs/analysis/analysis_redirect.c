@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 18:36:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 19:24:32 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 // 2. cmds[i] == <, <<, >, >> を探し、i++と合わせて処理
 // 3. cmds[i] != <, <<, >, >> はchar **cmds_except_redirectに保存
 // 4. cmds_except_redirectをcmdsに上書きする
+
 int	add_redirect_param(t_tree **node)
 {
 	char 	**splitted_cmds;

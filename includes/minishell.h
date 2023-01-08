@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 09:17:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 17:58:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void	free_alloc(t_info **info);
 int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
 int		perror_and_return_int(char *err, int ret_value);
-void	*perror_and_return_null(char *err);
+void	*perror_and_ret_nullptr(char *err);
 
 
 /* --------- */

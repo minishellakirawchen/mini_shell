@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 17:52:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 18:16:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ ssize_t	get_split_redirect_char_size(const char **cmds)
 }
 
 // A<, A<B, A<<B, <<B, <B
-//  ^   ^    ^      ^   ^
+//  ^   ^    ^      ^   ^ return idx
 size_t	get_split_idx_by_chr(const char *str, char chr)
 {
 	size_t	j;
@@ -129,69 +129,82 @@ size_t	get_split_idx_by_chr(const char *str, char chr)
 	return (j);
 }
 
+// "<", "<<", ">", ">>" の先頭側のsplit pointで分割する
+int	assign_dest_to_splitted_src(char ***dest, const char *src, size_t *j)
+{
+	size_t	head_idx;
+	size_t	word_size;
 
-char	**get_split(const char **cmds, size_t	size)
+	head_idx = 0;
+	while (src[head_idx])
+	{
+		word_size = minsize(get_split_idx_by_chr(&src[head_idx], '<'), get_split_idx_by_chr(&src[head_idx], '>'));
+		(*dest)[*j] = ft_substr(src, head_idx, word_size);
+		if (!(*dest)[*j])
+		{
+			free_array(*dest);
+			perror("malloc");
+			return (FAILURE);
+		}
+		head_idx += word_size;
+		*j += 1;
+	}
+	return (SUCCESS);
+}
+
+int	assign_dest_to_src(char ***dest, const char *src, size_t *j)
+{
+	(*dest)[*j] = ft_strdup(src);
+	if (!(*dest)[*j])
+	{
+		free_array(*dest);
+		perror("malloc");
+		return (FAILURE);
+	}
+	*j += 1;
+	return (SUCCESS);
+}
+
+char	**split_redirect_and_word(const char **cmds_src, size_t size)
 {
 	char	**splitted_cmds;
 	size_t	i;
 	size_t	j;
-	size_t	head_idx;
-	size_t	word_size;
 
 	splitted_cmds = (char **)ft_calloc(sizeof(char *), size + 1);
 	if (!splitted_cmds)
-	{
-		perror("malloc");
-		return (NULL);
-	}
+		return ((char **) perror_and_ret_nullptr("malloc"));
 	i = 0;
 	j = 0;
-	while (cmds[i])
+	while (cmds_src[i])
 	{
-		if (count_chr_in_src(cmds[i], '<') == 0 && count_chr_in_src(cmds[i], '>') == 0)
+		if (count_chr_in_src(cmds_src[i], '<') == 0 && count_chr_in_src(cmds_src[i], '>') == 0)
 		{
-			splitted_cmds[j] = ft_strdup(cmds[i]);
-			if (!splitted_cmds[j])
-			{
-				perror("malloc");
-				free_array(splitted_cmds);
+			if (assign_dest_to_src(&splitted_cmds, cmds_src[i], &j) == FAILURE)
 				return (NULL);
-			}
 			i++;
-			j++;
 			continue ;
 		}
-		// "<", "<<", ">", ">>" の先頭側のsplit pointで分割する
-		head_idx = 0;
-		while (cmds[i][head_idx])
-		{
-			word_size = minsize(get_split_idx_by_chr(&cmds[i][head_idx], '<'), get_split_idx_by_chr(&cmds[i][head_idx], '>'));
-			splitted_cmds[j] = ft_substr(cmds[i], head_idx, word_size);
-			if (!splitted_cmds[j])
-			{
-				perror("malloc");
-				free_array(splitted_cmds);
-				return (NULL);
-			}
-			printf("splitted_cmds[i]:%s, head:%zu,size:%zu\n", splitted_cmds[i], head_idx, word_size);
-			head_idx += word_size;
-			j++;
-		}
+		if (assign_dest_to_splitted_src(&splitted_cmds, cmds_src[i], &j) == FAILURE)
+			return (NULL);
 		i++;
 	}
 	return (splitted_cmds);
 }
 
-char **split_redirect_sign_and_word(const char **cmds)
+char **split_redirect_and_word_controller(const char **cmds)
 {
 	char	**splitted_cmds;
 	size_t	size;
 
 	size = get_split_redirect_char_size(cmds);
-	splitted_cmds = get_split(cmds, size);
-
+	splitted_cmds = split_redirect_and_word(cmds, size);
+	if (!splitted_cmds)
+		return (NULL);
 	return (splitted_cmds);
 }
+
+
 
 //一度全部見て、last <, <<, >, >>を探す、重複の場合は更新（古い分はviaに入れる）
 // ->input_from, output_toが決定
@@ -217,8 +230,10 @@ int	add_redirect_param(t_tree **node)
 
 	if (!node || !*node || (*node)->exe_type != E_LEAF_COMMAND || !(*node)->cmds)
 		return (FAILURE);
-	splitted_cmds = split_redirect_sign_and_word((const char **)(*node)->cmds);
+	splitted_cmds = split_redirect_and_word_controller((const char **) (*node)->cmds);
 	debug_print_2d_arr(splitted_cmds, "splitted_cmds");
+
+
 
 	return (SUCCESS);
 

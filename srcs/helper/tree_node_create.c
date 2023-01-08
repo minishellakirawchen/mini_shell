@@ -21,7 +21,7 @@ t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 
 	new_node = (t_tree *)malloc(sizeof(t_tree));
 	if (!new_node)
-		return (perror_and_return_null("malloc"));
+		return (perror_and_ret_nullptr("malloc"));
 	new_node->redirect_info = NULL;
 	new_node->exe_type = type;
 	if (!raw_cmd_str)
@@ -33,14 +33,14 @@ t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 	if (!new_node->cmds)
 	{
 		free(new_node);
-		return (perror_and_return_null("malloc"));
+		return (perror_and_ret_nullptr("malloc"));
 	}
 	// TODO: split func; create_redirect_info() ?
 	new_node->redirect_info = (t_redirect_info *)malloc(sizeof(t_redirect_info));
 	if (!new_node->redirect_info)
 	{
 		free(new_node);
-		return (perror_and_return_null("malloc"));
+		return (perror_and_ret_nullptr("malloc"));
 	}
 	if (add_redirect_param(&new_node) == FAILURE)//print errmsg ins func
 	{

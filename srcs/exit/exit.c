@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:45:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 13:22:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 17:58:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	perror_and_return_int(char *err, int ret_value)
 	return (ret_value);
 }
 
-void	*perror_and_return_null(char *err)
+void	*perror_and_ret_nullptr(char *err)
 {
 	perror(err);
 	return (NULL);

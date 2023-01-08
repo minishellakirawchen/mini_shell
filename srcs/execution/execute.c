@@ -25,7 +25,7 @@ char	*get_execute_path(char *path, char *file)
 	len++;
 	execute_path = (char *)ft_calloc(sizeof(char), len);
 	if (!execute_path)
-		return (perror_and_return_null("malloc"));
+		return (perror_and_ret_nullptr("malloc"));
 	ft_strlcat(execute_path, path, len);
 	if (path_len > 0 && path[path_len - 1] != '/')
 		ft_strlcat(execute_path, "/", len);

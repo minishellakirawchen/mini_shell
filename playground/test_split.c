@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 15:24:47 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 17:48:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 17:59:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,31 +101,6 @@ ssize_t	get_split_redirect_char_size(const char **cmds)
 	if (is_error)
 		return (-1);
 	return (cnt);
-}
-
-size_t	get_split_idx_by_chr(const char *str, char chr)
-{
-	size_t	j;
-
-	j = 0;
-	while (str[j])
-	{
-		while (str[j] && str[j] != chr)
-			j++;
-		if (!str[j])
-			break ;
-		if (j > 0 && str[j - 1] != chr)
-			return (j);
-		if (str[j + 1] == chr) // <<
-			j++;
-		if (str[j + 1] && str[j + 1] != chr)
-		{
-			j++;
-			return (j);
-		}
-		j++;
-	}
-	return (j);
 }
 
 int	test_split_count(const char **src, ssize_t expectet, int test_no)

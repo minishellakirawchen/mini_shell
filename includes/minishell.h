@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 18:30:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 19:32:16 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@
 # define EXIT_TOO_MANY_ARGS			1
 # define CMD_NOT_FOUND				127
 # define EXIT_NUMERIC_ARGS_REQUIRED	255
+# define SYNTAX_ERROR				258
 
 /* string */
 # define	PATH			"PATH"

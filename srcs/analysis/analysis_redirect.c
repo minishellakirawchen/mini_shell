@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 19:24:32 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 19:53:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,39 @@
 // 3. cmds[i] != <, <<, >, >> はchar **cmds_except_redirectに保存
 // 4. cmds_except_redirectをcmdsに上書きする
 
+
+// $> <>file はOK :: in_out_file
+int	valid_redirection(char **cmds)
+{
+	size_t	idx;
+	bool	is_error;
+
+	idx = 0;
+	is_error = false;
+	while (cmds[idx])
+	{
+		if (cmds[idx][0] == '<' || cmds[idx][0] == '>')
+		{
+			if (ft_strlen_ns(cmds[idx]) > 2 || !cmds[idx + 1])
+				is_error = true;
+			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '>') \
+			&& (!cmds[idx + 2] || (cmds[idx + 2] && (cmds[idx + 2][0] == '<' || cmds[idx + 2][0] == '>'))))
+				is_error = true;
+			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '<'))
+				is_error = true;
+			if (cmds[idx][0] == '>' && (cmds[idx + 1] && (cmds[idx + 1][0] == '<' || cmds[idx + 1][0] == '>')))
+				is_error = true;
+			if (is_error)
+			{
+				printf("minishell: syntax error near unexpected token `%s'\n", cmds[idx]);// TODO:STDERROR
+				return (FAILURE);
+			}
+		}
+		idx++;
+	}
+	return (SUCCESS);
+}
+
 int	add_redirect_param(t_tree **node)
 {
 	char 	**splitted_cmds;
@@ -42,6 +75,9 @@ int	add_redirect_param(t_tree **node)
 	if (!splitted_cmds)
 		return (FAILURE);
 	debug_print_2d_arr(splitted_cmds, "splitted_cmds");
+
+	if (valid_redirection(splitted_cmds) == FAILURE)
+		return (SYNTAX_ERROR);
 
 	// cmd[i] == "<", "<<", ">", ">>"の次のwordをfilename, limiterとして記録
 	// cmd[i] == redirection, cmd[i+1] == redirectionの場合はsyntax errorを出力

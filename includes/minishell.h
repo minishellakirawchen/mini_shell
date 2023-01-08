@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 17:58:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 18:30:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,16 @@ int		delete_env_elem(t_list **list_head, char *search_key);
 /* analysis.c */
 int		analysis(t_info *info); // tmp
 int		add_redirect_param(t_tree **node);
+
+/* redirection_split.c */
+char **split_redirect_and_word_controller(const char **cmds);
+
+/* redirection_split_helper.c */
+size_t	count_chr_in_src(const char *src, char chr);
+ssize_t	count_split_point_count_by_chr(const char *str, char chr, bool *is_error);
+ssize_t	get_split_redirect_char_size(const char **cmds);
+size_t	get_split_idx_by_chr(const char *str, char chr);
+
 
 /* ----------- */
 /*  execution  */

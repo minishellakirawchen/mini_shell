@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 20:11:36 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 09:17:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,39 +53,77 @@
 typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_tree				t_tree;
-
+typedef struct s_redirect_info		t_redirect_info;
 
 /* -------------- */
 /*  typedef enum  */
 /* -------------- */
-typedef enum e_cmd_group	t_exe_type;
-typedef enum e_export_type	t_export_type;
+typedef enum e_exe_type			t_exe_type;
+typedef enum e_export_type		t_export_type;
+typedef enum e_input_from		t_input_from;
+typedef enum e_output_to		t_output_to;
 
 
 /* -------*/
 /*  enum  */
 /* ------ */
-enum e_cmd_group
+/* separate group and decide command running order */
+//node:branch
+//	priority: ; > &&,|| > () > |
+//		root		:start_point
+//		semicoron	: ;
+//		and			: &&
+//		or			: ||
+//		subshell	: ()
+//		pipe		: |
+//leaf:bottom
+enum e_exe_type
 {
-	E_ROOT,
-	E_PIPE,
-	E_CMD,
-	E_SHELL,
-	E_SUBSHELL,
-	E_AND,
-	E_OR,
+	E_NODE_ROOT,
+	E_NODE_SEMICOLON,
+	E_NODE_AND,
+	E_NODE_OR,
+	E_NODE_SUBSHELL,
+	E_NODE_PIPE,
+	E_NODE_SHELL,
+	E_LEAF_COMMAND,
 };
 
 enum e_export_type
 {
-	E_NEW,
-	E_ADD,
+	E_VAR_CREATE,
+	E_VAR_ADD,
 };
 
+enum e_input_from
+{
+	E_REDIRECT_IN,
+	E_HERE_DOC,
+	E_STDIN,
+};
+
+enum e_output_to
+{
+	E_REDIRECT_OUT,
+	E_REDIRECT_APPEND,
+	E_STDOUT,
+};
 
 /* -------- */
 /*  struct  */
 /* -------- */
+//TODO: <, <<, >, >> が複数混在するケースに対応するためには...?
+struct s_redirect_info
+{
+	t_input_from	input_from;
+	t_output_to		ouput_to;
+	char 			*infile; //if here_doc, infile=here_doc_tmp
+	char 			*outfile;
+	char			**via_in_files;
+	char			**via_out_files;
+	char			**here_doc_limiters;
+};
+
 struct s_env_elem
 {
 	char	*key;
@@ -96,11 +134,9 @@ struct s_tree
 {
 	t_exe_type		exe_type;
 	char 			**cmds;
-	bool			redirect_in;
-	bool			redirect_out;
-	char			**redirect_files;
-	struct s_tree	*left;
-	struct s_tree	*right;
+	t_redirect_info	*redirect_info;
+	t_tree			*left;
+	t_tree			*right;
 };
 
 struct s_minishell_param
@@ -129,7 +165,7 @@ int		delete_env_elem(t_list **list_head, char *search_key);
 /* ---------- */
 /* analysis.c */
 int		analysis(t_info *info); // tmp
-
+void	add_redirect_param(t_tree **node);
 
 /* ----------- */
 /*  execution  */
@@ -178,10 +214,9 @@ char	*get_current_path(void);
 /* -------- */
 /*  helper  */
 /* -------- */
-/* tree_create.c */
+/* tree_node_create.c */
 char	**splitset_and_trim(char *src, char delim, char set, char *trimchar);
 t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str);
-t_tree	*create_tree_elem(t_exe_type type, char ***cmds);
 
 /* tree_operation.c */
 t_tree	*pop_tree_elem_from_top(t_tree **root);

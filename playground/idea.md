@@ -388,10 +388,167 @@ cat redirect < 引数jec
 分割が必要
 ```
 
+```c
 // TODO: check multi case
-<infile1 <infile2 <infile3 cmd
-<infile1 <infile2 <infile3 cmd <infile4
-<infile cmd < //error??
+<infile1 <infile2 <infile3 cmd //cmd <infile3
+<infile1 <infile2 <infile3 cmd <infile4 //cmd < infile4
+<infile cmd < //syntax error
+<infile1<infile2
+
+<infile cat >out //out: infile
+<infile1 <infile2 cat > out //out:infile2
+<infile1 <infile2 cat <infile3 > out //out:infile3
+
+
+bash-3.2$ <test1 cat > out1 << end
+> hogehoge
+> end
+bash-3.2$ cat out1
+hogehoge
+bash-3.2$
+//これやばいな
+//優先順が良くわからん
+
+
+bash-3.2$ <test1 cat > out1 << end > out2
+> hogehoge
+> end
+bash-3.2$ cat out1
+bash-3.2$ cat out2
+hogehoge
+bash-3.2$
+//<infile1 <infile2 <infile3 cmd <infile4 //cmd < infile4 と同様
+
+
+bash-3.2$ <test1 cat > out1 << end > out2 < test2
+> hoge
+> hogehoge
+> end
+bash-3.2$ cat test1
+test1
+bash-3.2$ cat out1
+bash-3.2$ cat out2
+test2
+bash-3.2$ cat test2
+test2
+bash-3.2$
+// <infile1 <infile2 <infile3 cmd <infile4 //cmd < infile4　と同様
+
+
+bash-3.2$ <test111 cat > out1 << end > out2 < test2
+> aa
+> aa
+> end
+bash: test111: No such file or directory
+bash-3.2$ cat out1
+out1
+bash-3.2$ cat out2
+out2
+bash-3.2$ cat test
+cat: test: No such file or directory
+//存在しないtest111, out1, out2は初期状態のまま（初期化されない）
+//here_docは最優先で実行されるみたい？
+//&&, ||の時の挙動も要確認?
+
+
+bash-3.2$ <test1 cat > out1 << end1 << end2 > out2 <<end3 > out
+> hoge
+> end3
+> end2
+> end
+> end1
+>
+>
+> hogehoge
+> test
+> end2
+> fooooo
+> test
+> end3
+bash-3.2$ cat out1
+bash-3.2$ cat out2
+bash-3.2$ cat out
+fooooo
+test
+bash-3.2$
+// here_docは前から実行される
+// 実行に成功すると、outfileが初期化される
+// 優先順位は、末端の << end3 > out が有効になる
+
+bash-3.2$ <test1 cat > out1 << end1 << end2 ls > out2 <<end3 > out
+> aa
+> aa
+> end1
+> bb
+> bb
+> end2
+> vv
+> vv
+> end3
+cat: ls: No such file or directory
+bash-3.2$ cat out1
+bash-3.2$ cat out2
+bash-3.2$ cat out
+// 失敗しても初期化される？
+
+bash-3.2$ <test111 cat > out1 << end1 << end2 ls > out2 <<end3 > out
+> aaa
+> end1
+> avvv
+> end2
+> eeee
+> end3
+bash: test111: No such file or directory
+bash-3.2$ echo out1
+out1
+bash-3.2$ echo out2
+out2
+bash-3.2$ echo out
+out
+bash-3.2$
+//エラーによっては初期化されない
+//まずfileをすべて開くのか？
+// here_doc -> fileopen -> command
+
+bash-3.2$ <test1 cat > out1 > out2 <test2
+bash-3.2$ cat out2
+test2
+bash-3.2$
+
+bash-3.2$ <in1 cat >out1 >out2 <in2
+bash-3.2$ cat in1; cat in2; cat out1; cat out2;
+in1
+in2
+in2
+bash-3.2$ cat out2
+in2
+bash-3.2$
+
+1. <in1 
+2. cat >out1 >out2
+3. <in2
+2, 3が採用?
+
+<in2 cat >out2に整形できる
+
+<をすべて見て,最終段にあるものをstdinとする <in2
+>をすべて見て,最終段にあるものにstdoutをつなげる >res
+file openする
+redirect除いたcommandを実行する
+
+
+bash-3.2$ <in1 cat >out1 >out2 <in2 > res
+bash-3.2$ cat res
+in2
+bash-3.2$ cat out2
+bash-3.2$ cat out2
+bash-3.2$
+
+
+// コマンドが複数存在した場合？
+```
+
+
 
 <br>
 <br>

@@ -6,25 +6,22 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 18:58:03 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 20:38:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/08 08:48:08 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//TODO: Add function update *node->cmds, delete redirect chars
 
 t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 {
 	t_tree		*new_node;
 
-	new_node= (t_tree *)malloc(sizeof(t_tree));
+	new_node = (t_tree *)malloc(sizeof(t_tree));
 	if (!new_node)
 		return (perror_and_return_null("malloc"));
+	new_node->redirect = NULL;
 	new_node->exe_type = type;
-	new_node->redirect_in = false;
-	new_node->redirect_out = false;
-	new_node->redirect_files = NULL;
 	if (!raw_cmd_str)
 	{
 		new_node->cmds = NULL;
@@ -36,6 +33,13 @@ t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str)
 		free(new_node);
 		return (perror_and_return_null("malloc"));
 	}
+	new_node->redirect = (t_redirect_info *)malloc(sizeof(t_redirect_info));
+	if (!new_node->redirect)
+	{
+		free(new_node);
+		return (perror_and_return_null("malloc"));
+	}
+	add_redirect_param(&new_node);
 	return (new_node);
 }
 
@@ -61,18 +65,4 @@ char **splitset_and_trim(char *src, char delim, char set, char *trimchar)
 	}
 //	debug_print_2d_arr(splitted_strs, "splited_str[i]");
 	return (splitted_strs);
-}
-
-t_tree	*create_tree_elem(t_exe_type type, char ***cmds)
-{
-	t_tree	*new_elem;
-
-	new_elem = (t_tree *)malloc(sizeof(t_tree));
-	if (!new_elem)
-		return (NULL);
-	new_elem->exe_type = type;
-	new_elem->cmds = *cmds;
-	new_elem->left = NULL;
-	new_elem->right = NULL;
-	return (new_elem);
 }

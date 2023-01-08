@@ -94,7 +94,7 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 	pid_t		pid;
 	int			pipe_fd[2];
 
-	if (right_elem && right_elem->left && right_elem->left->exe_type == E_CMD)
+	if (right_elem && right_elem->left && right_elem->left->exe_type == E_LEAF_COMMAND)
 	{
 		pipe(pipe_fd);
 		pid = fork();

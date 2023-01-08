@@ -41,17 +41,17 @@ void	debug_print_stack(t_tree *root, char *str)
 	tree = root;
 	while (tree)
 	{
-		if (tree->exe_type == E_ROOT)
+		if (tree->exe_type == E_NODE_ROOT)
 		{
 			ft_printf(" [root]\n");
 			ft_printf("  |    \n");
 		}
-		else if (tree->exe_type == E_PIPE)
+		else if (tree->exe_type == E_NODE_PIPE)
 		{
 			ft_printf(" [pipe]\n");
 			ft_printf("  |    \n");
 		}
-		else if (tree->exe_type == E_CMD)
+		else if (tree->exe_type == E_LEAF_COMMAND)
 		{
 			ft_printf(" [cmd]--");
 			debug_print_2d_arr(tree->cmds, NULL);

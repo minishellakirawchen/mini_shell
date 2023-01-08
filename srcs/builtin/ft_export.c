@@ -30,11 +30,11 @@ int	get_export_param(char *cmd, char **key, char **value, t_export_type *type)
 		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (FAILURE);
 	}
-	*type = E_NEW;
+	*type = E_VAR_CREATE;
 	key_len = idx;
 	if (cmd[idx - 1] == '+')
 	{
-		*type = E_ADD;
+		*type = E_VAR_ADD;
 		key_len--;
 	}
 	*key = ft_substr(cmd, 0, key_len);
@@ -67,14 +67,14 @@ int ft_export(t_info *info, char **cmds)
 		return (EXIT_FAILURE); //TODO: key only, bash returns 0
 	/*
 	printf("key:%s,value:%s, cmd:%s, flag:", key, value, cmds[1]);
-	if (type == E_NEW)
+	if (type == E_VAR_CREATE)
 		printf("NEW\n");
 	else
 		printf("ADD\n");
 	*/
 	if (!get_env_value(key, info->env_list))
 		ret = add_env_elem_to_list(&info->env_list, key, value);
-	else if (type == E_NEW)
+	else if (type == E_VAR_CREATE)
 		ret = overwrite_env_value(&info->env_list, key, value);
 	else
 		ret = append_env_value(&info->env_list, key, value);

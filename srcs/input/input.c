@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 14:14:13 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 15:16:56 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ int	prompt_loop(t_info	*info)
 
 		analysis(info);
 		expand_variable();
-//		exit_status = execute_command_line(info);
-		exit_status = EXIT_SUCCESS;
+		exit_status = execute_command_line(info);
+//		exit_status = EXIT_SUCCESS;
 		add_history(input_line);//where?
 		init_input(&info);
 		free(input_line);

@@ -25,9 +25,10 @@ SRC		= main.c \
 		  input/input.c \
 		  input/get_env.c \
 		  analysis/analysis.c \
+		  analysis/split_pipe.c \
+		  analysis/split_redirection.c \
+		  analysis/split_helper.c \
 		  analysis/analysis_redirect.c \
-		  analysis/redirection_split.c \
-		  analysis/redirection_split_helper.c \
 		  expansion/expand_variable.c \
 		  execution/execute.c \
 		  execution/execute_builtin.c \

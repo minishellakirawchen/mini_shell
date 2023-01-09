@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 19:01:15 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 08:51:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	prompt_loop(t_info	*info)
 {
 	int		exit_status;
 	char	*input_line;
+	char 	**space_splitted_line;
 
 	while (true)
 	{
@@ -36,7 +37,14 @@ int	prompt_loop(t_info	*info)
 
 //		info->input_line = ft_split_set(input_line, ' ', '"'); //temp, for feature, update group flag set; char set -> char *set={'"} ()も
 //		debug_print_2d_arr(info->commands, "commands");
+		space_splitted_line = ft_split_set(input_line, ' ', '"');
+		if (!space_splitted_line)
+		{
+			free(input_line);
+			return (perror_and_return_int("malloc", EXIT_FAILURE));
+		}
 		info->input_line = input_line;
+		info->space_splitted_input = space_splitted_line;
 
 		analysis(info);
 		expand_variable();

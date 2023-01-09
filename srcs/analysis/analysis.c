@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 20:09:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 09:02:14 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,34 @@ int	add_command_leaf_to_node(t_tree **node, char *command_line)
 	return (SUCCESS);
 }
 
+int	valid_input(char **pipe_splitted_input)
+{
+	size_t	idx;
+	bool	is_error;
+
+	idx = 0;
+	is_error = false;
+	while (pipe_splitted_input[idx])
+	{
+		if (pipe_splitted_input[idx][0] == '|')
+		{
+			if (idx == 0 || !pipe_splitted_input[idx + 1])
+				is_error = true;
+			if (ft_strlen_ns(pipe_splitted_input[idx]) > 1)
+				is_error = true;
+			if (pipe_splitted_input[idx + 1] && pipe_splitted_input[idx + 1][0] == '|')
+				is_error = true;
+			if (is_error)
+			{
+				printf("minishell: syntax error near unexpected token `%s'\n", pipe_splitted_input[idx]);// TODO:STDERROR
+				return (FAILURE);
+			}
+		}
+		idx++;
+	}
+	return (SUCCESS);
+}
+
 // First try :: create commands which connected 1 level pipe, like: $> cat Makefile | grep a | grep b
 //  -> CLEAR!!!
 // 2nd try   :: pipe in subshell				, like: $> (cat Makefile | grep a)
@@ -52,9 +80,21 @@ int	analysis(t_info *info)
 {
 	t_tree	*root_node;
 	t_tree 	*pipe_node;
+	char 	**pipe_splitted_input;
 
 	if (!info)
 		return (FAILURE);
+	// split input by before or after of '|'
+	pipe_splitted_input = split_pipe_and_word_controller((const char **)info->space_splitted_input);
+	debug_print_2d_arr(pipe_splitted_input, "pipe_splitted");
+
+	// valid_input
+	if (valid_input(pipe_splitted_input) == FAILURE)
+	{
+		free_2d_array_ret_nullptr((void ***)&pipe_splitted_input);
+		return (SYNTAX_ERROR);
+	}
+
 	// create exe-elem "root"
 	root_node = create_tree_node(E_NODE_ROOT, NULL);
 	if (!root_node)

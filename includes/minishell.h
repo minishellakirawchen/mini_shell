@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 19:45:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 20:05:14 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,6 +240,9 @@ int		execute_command_line(t_info *info);
 bool	is_builtins(const char **cmds);
 int		execute_builtins(t_info *info, const char **cmds);
 
+/* execute_redirect.c */
+int		handle_redirect_fd(t_redirect_info *redirect_info);
+int		openfile_and_heredoc_for_redirect(t_tree **root);
 
 /* ----------- */
 /*  expansion  */
@@ -281,10 +284,9 @@ int		ft_exit(t_info *info, const char **cmds);
 /*  helper  */
 /* -------- */
 // tree_node_create.c
-char		**splitset_and_trim(char *src, char delim, char set, char *trimchar);
-//t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str);
-t_tree		*create_tree_node(t_exe_type type,  const char **cmds);
-size_t		get_2d_array_size(const char **array);
+char	*splitset_and_trim(char *src, char delim, char set, char *trimchar);
+t_tree	*create_tree_node(t_exe_type type,  const char **cmds);
+size_t	get_2d_array_size(const char **array);
 
 // tree_operation.c
 t_tree	*pop_tree_elem_from_top(t_tree **root);

@@ -34,6 +34,7 @@ SRC		= main.c \
 		  expansion/expand_variable.c \
 		  execution/execute.c \
 		  execution/execute_builtin.c \
+		  execution/execute_redirect.c \
 		  exit/exit.c \
 		  builtin/ft_echo.c \
 		  builtin/ft_cd.c \

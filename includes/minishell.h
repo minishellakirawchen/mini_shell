@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 20:05:14 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 21:05:20 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,14 +114,14 @@ enum e_input_from
 {
 	E_REDIRECT_IN,
 	E_HERE_DOC,
-	E_STDIN,
+	E_STDOUT,
 };
 
 enum e_output_to
 {
 	E_REDIRECT_OUT,
 	E_REDIRECT_APPEND,
-	E_STDOUT,
+	E_STDIN,
 };
 
 enum e_token_type

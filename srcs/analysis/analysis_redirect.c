@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 15:33:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 21:04:41 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,11 +139,11 @@ int	set_redirect_in(t_redirect_info **info, const char *infile)
 	return (SUCCESS);
 }
 
-int	set_redirect_out(t_redirect_info **info, const char *outfile)
+int	set_redirect_heredoc(t_redirect_info **info, const char *delimiter)
 {
-	(*info)->ouput_to = E_REDIRECT_OUT;
-	(*info)->outfiles = update_files((*info)->outfiles, outfile);
-	if (!(*info)->outfiles)
+	(*info)->input_from = E_HERE_DOC;
+	(*info)->here_doc_limiters = update_files((*info)->here_doc_limiters, delimiter);
+	if (!(*info)->here_doc_limiters)
 	{
 		perror("malloc");
 		free_redirect_info(&(*info));
@@ -152,11 +152,11 @@ int	set_redirect_out(t_redirect_info **info, const char *outfile)
 	return (SUCCESS);
 }
 
-int	set_redirect_heredoc(t_redirect_info **info, const char *delimiter)
+int	set_redirect_out(t_redirect_info **info, const char *outfile)
 {
-	(*info)->input_from = E_HERE_DOC;
-	(*info)->here_doc_limiters = update_files((*info)->here_doc_limiters, delimiter);
-	if (!(*info)->here_doc_limiters)
+	(*info)->ouput_to = E_REDIRECT_OUT;
+	(*info)->outfiles = update_files((*info)->outfiles, outfile);
+	if (!(*info)->outfiles)
 	{
 		perror("malloc");
 		free_redirect_info(&(*info));
@@ -187,8 +187,8 @@ t_redirect_info	*get_redirection_info(const char **cmds)
 	info = (t_redirect_info *)malloc(sizeof(t_redirect_info));
 	if (!info)
 		return (perror_and_ret_nullptr("malloc"));
-	info->input_from = E_STDIN;
-	info->ouput_to = E_STDOUT;
+	info->input_from = E_STDOUT;
+	info->ouput_to = E_STDIN;
 	info->infiles = NULL;
 	info->outfiles = NULL;
 	info->here_doc_limiters = NULL;

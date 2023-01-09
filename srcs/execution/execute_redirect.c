@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:00:25 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 20:55:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 21:08:03 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ int	openfile_and_heredoc_for_redirect(t_tree **root)
 	{
 		if (node->exe_type == E_LEAF_COMMAND && node->redirect_info)
 		{
+			// TODO:使わないファイルはcreateするだけ
+			// input_from, output_toに合わせてfd_openだけを実行する？
 			r_info = node->redirect_info;
 			if (r_info->here_doc_limiters)
 				if (exec_heredoc(&r_info->fd[FD_IDX_HEREDOC], r_info->here_doc_limiters) == FAILURE)

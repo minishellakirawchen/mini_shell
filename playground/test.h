@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <ctype.h>
+#include <limits.h>
 
 # include "./../libs/libft/libft.h"
 # include "./../libs/libftprintf/ft_printf.h"

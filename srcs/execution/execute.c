@@ -109,7 +109,7 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 	}
 	if (!right_elem || !right_elem->cmds)
 		return (EXIT_FAILURE);
-	debug_print_2d_arr(right_elem->cmds, "cmds");
+//	debug_print_2d_arr(right_elem->cmds, "cmds");
 
 //	TODO:
 //	 if (is_redirections(right_elem->cmds[0]))

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 08:51:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 10:13:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@
 # define	PWD					"PWD"
 # define 	PATH_DELIMITER		':'
 # define	ISSPACE				"\t\n\v\f\r "
+# define	SET_CHR				"\"'"
 # define	REDIRECT_IN			"<"
 # define	REDIRECT_OUT		">"
 # define	REDIRECT_HEREDOC	"<<"
@@ -60,6 +61,7 @@ typedef struct s_minishell_param	t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_tree				t_tree;
 typedef struct s_redirect_info		t_redirect_info;
+typedef struct s_token				t_token;
 
 /* -------------- */
 /*  typedef enum  */
@@ -68,7 +70,7 @@ typedef enum e_exe_type			t_exe_type;
 typedef enum e_export_type		t_export_type;
 typedef enum e_input_from		t_input_from;
 typedef enum e_output_to		t_output_to;
-
+typedef enum e_token_type		t_token_type;
 
 /* -------*/
 /*  enum  */
@@ -115,6 +117,16 @@ enum e_output_to
 	E_STDOUT,
 };
 
+enum e_token_type
+{
+	e_word,
+	e_ope_semicolon,
+	e_ope_and,
+	e_ope_or,
+	e_ope_subshell,
+	e_ope_pipe,
+};
+
 /* -------- */
 /*  struct  */
 /* -------- */
@@ -134,11 +146,24 @@ struct s_env_elem
 	char	*value;
 };
 
+struct s_token
+{
+	t_token_type	type;
+	char			*content;
+
+	t_token			*prev;
+	t_token			*next;
+};
+
 struct s_tree
 {
 	t_exe_type		exe_type;
+
 	char 			**cmds;
+
+
 	t_redirect_info	*redirect_info;
+
 	t_tree			*left;
 	t_tree			*right;
 };
@@ -173,7 +198,7 @@ int		analysis(t_info *info); // tmp
 int		add_redirect_param(t_tree **node);
 
 // pipe_split.c
-char **split_pipe_and_word_controller(const char **cmds);
+char **split_pipe_and_word_controller(const char *readline_input);
 
 // pipe_split_helper.c
 

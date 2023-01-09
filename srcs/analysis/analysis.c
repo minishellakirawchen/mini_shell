@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 09:02:14 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 10:54:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	analysis(t_info *info)
 	if (!info)
 		return (FAILURE);
 	// split input by before or after of '|'
-	pipe_splitted_input = split_pipe_and_word_controller((const char **)info->space_splitted_input);
+	pipe_splitted_input = split_pipe_and_word_controller((const char *)info->input_line);
 	debug_print_2d_arr(pipe_splitted_input, "pipe_splitted");
 
 	// valid_input

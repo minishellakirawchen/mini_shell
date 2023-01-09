@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/08 21:17:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 11:04:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,7 @@ int	add_redirect_param(t_tree **node)
 	splitted_cmds = split_redirect_and_word_controller((const char **) (*node)->cmds);
 	if (!splitted_cmds)
 		return (FAILURE);
-	debug_print_2d_arr(splitted_cmds, "splitted_cmds");
+//	debug_print_2d_arr(splitted_cmds, "splitted_cmds");
 
 	// syntax check
 	// cmd[i] == redirection, cmd[i+1] == redirectionの場合はsyntax errorを出力

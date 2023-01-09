@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 14:53:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 16:02:55 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int	analysis(t_info *info)
 
 	// * syntax error : {"cat", "Makefile", "<", "file", ">>>", "", "", "<", "<" NULL}
 	//                                                     ^ >x3              ^ continues, no file
-	if (valid_redirection(info->splitted_cmds) == FAILURE)
+	if (valid_redirection((const char **)info->splitted_cmds) == FAILURE)
 		return (SYNTAX_ERROR);
 
 	debug_print_2d_arr(info->splitted_cmds, "redirect_splitted");

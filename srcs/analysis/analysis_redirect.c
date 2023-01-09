@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 15:09:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 15:33:59 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,8 @@
 // 4. cmds_except_redirectをcmdsに上書きする
 // 5. コマンド実行時にin, outがredirectなら実行する
 
-
-// 実行時に困ったらerrorにしよう
-int	valid_redirection(char **cmds)
+// <>fileは一旦errorにする
+int	valid_redirection(const char **cmds)
 {
 	size_t	idx;
 	bool	is_error;
@@ -74,7 +73,7 @@ int	valid_redirection(char **cmds)
 // TODO: more simple
 // current_filesは上書きするためfree
 // add_fileはcmdsの一部のためfree NG
-char **update_files(char **current_files, char *add_file)
+char **update_files(char **current_files, const char *add_file)
 {
 	char	**new_files;
 	size_t	update_size;
@@ -127,7 +126,7 @@ void	*free_redirect_info(t_redirect_info **info)
 	return (NULL);
 }
 
-int	set_redirect_in(t_redirect_info **info, char *infile)
+int	set_redirect_in(t_redirect_info **info, const char *infile)
 {
 	(*info)->input_from = E_REDIRECT_IN;
 	(*info)->infiles = update_files((*info)->infiles, infile);
@@ -140,7 +139,7 @@ int	set_redirect_in(t_redirect_info **info, char *infile)
 	return (SUCCESS);
 }
 
-int	set_redirect_out(t_redirect_info **info, char *outfile)
+int	set_redirect_out(t_redirect_info **info, const char *outfile)
 {
 	(*info)->ouput_to = E_REDIRECT_OUT;
 	(*info)->outfiles = update_files((*info)->outfiles, outfile);
@@ -153,7 +152,7 @@ int	set_redirect_out(t_redirect_info **info, char *outfile)
 	return (SUCCESS);
 }
 
-int	set_redirect_heredoc(t_redirect_info **info, char *delimiter)
+int	set_redirect_heredoc(t_redirect_info **info, const char *delimiter)
 {
 	(*info)->input_from = E_HERE_DOC;
 	(*info)->here_doc_limiters = update_files((*info)->here_doc_limiters, delimiter);
@@ -167,7 +166,7 @@ int	set_redirect_heredoc(t_redirect_info **info, char *delimiter)
 }
 
 //TODO: appendはoutでoverwriteできる？
-int	set_redirect_append(t_redirect_info **info, char *outfile)
+int	set_redirect_append(t_redirect_info **info, const char *outfile)
 {
 	(*info)->ouput_to = E_REDIRECT_APPEND;
 	(*info)->outfiles = update_files((*info)->outfiles, outfile);
@@ -180,7 +179,7 @@ int	set_redirect_append(t_redirect_info **info, char *outfile)
 	return (SUCCESS);
 }
 
-t_redirect_info	*get_redirection_info(char **cmds)
+t_redirect_info	*get_redirection_info(const char **cmds)
 {
 	size_t			idx;
 	t_redirect_info	*info;

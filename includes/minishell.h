@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:58:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:45:00 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <errno.h>
 # include <string.h>
 # include <limits.h>
+# include <fcntl.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -41,6 +42,7 @@
 /* exit_status */
 # define CHDIR_FAILURE				1
 # define EXIT_TOO_MANY_ARGS			1
+# define FILE_OPEN_ERROR			1
 # define CMD_NOT_FOUND				127
 # define EXIT_NUMERIC_ARGS_REQUIRED	255
 # define SYNTAX_ERROR				258
@@ -74,7 +76,8 @@ typedef enum e_exe_type			t_exe_type;
 typedef enum e_export_type		t_export_type;
 typedef enum e_input_from		t_input_from;
 typedef enum e_output_to		t_output_to;
-typedef enum e_token_type		t_token_type;
+typedef enum e_token_type		t_token_type; // bonus
+typedef enum e_fopen_type		t_fopen_type;
 
 /* -------*/
 /*  enum  */
@@ -131,6 +134,13 @@ enum e_token_type
 	e_ope_pipe,
 };
 
+enum e_fopen_type
+{
+	e_read,
+	e_overwrite,
+	e_append,
+};
+
 /* -------- */
 /*  struct  */
 /* -------- */
@@ -174,7 +184,6 @@ struct s_minishell_info
 {
 	int		exit_status;
 	t_list	*env_list;
-	char	*input_line; // for demo
 	char	**splitted_cmds;
 	t_tree	*tree_root;
 };

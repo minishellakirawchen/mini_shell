@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 15:16:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:23:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,11 @@ int	prompt_loop(t_info	*info)
 			free(input_line);
 			return (perror_and_return_int("malloc", EXIT_FAILURE));
 		}
-		info->input_line = input_line;
 		info->splitted_cmds = space_splitted_line;
 
 		analysis(info);
 		expand_variable();
 		exit_status = execute_command_line(info);
-//		exit_status = EXIT_SUCCESS;
 		add_history(input_line);//where?
 		init_input(&info);
 		free(input_line);

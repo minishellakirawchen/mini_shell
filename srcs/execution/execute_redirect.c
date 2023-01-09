@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:00:25 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 21:08:03 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 21:20:58 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@ int	openfile_and_heredoc_for_redirect(t_tree **root)
 			// input_from, output_toに合わせてfd_openだけを実行する？
 			r_info = node->redirect_info;
 			if (r_info->here_doc_limiters)
-				if (exec_heredoc(&r_info->fd[FD_IDX_HEREDOC], r_info->here_doc_limiters) == FAILURE)
+				if (exec_heredoc(&r_info->r_fd[FD_IDX_HEREDOC], r_info->here_doc_limiters) == FAILURE)
 					return (FILE_OPEN_ERROR);
 			if (r_info->infiles)
-				if (open_infiles(&r_info->fd[FD_IDX_INFILE], r_info->infiles) == FAILURE)
+				if (open_infiles(&r_info->r_fd[FD_IDX_INFILE], r_info->infiles) == FAILURE)
 					return (FILE_OPEN_ERROR);
 			if (r_info->outfiles)
-				if (open_outfiles(&r_info->fd[FD_IDX_OUTFILE], r_info->outfiles, r_info->ouput_to) == FAILURE)
+				if (open_outfiles(&r_info->r_fd[FD_IDX_OUTFILE], r_info->outfiles, r_info->ouput_to) == FAILURE)
 					return (FILE_OPEN_ERROR);
 		}
 		node = node->next;

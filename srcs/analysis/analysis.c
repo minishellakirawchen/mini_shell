@@ -73,7 +73,7 @@ int	analysis(t_info *info, char *readline_input)
 		free_2d_array_ret_nullptr((void ***)&info->splitted_cmds);
 		return (SYNTAX_ERROR);
 	}
-	debug_print_2d_arr(info->splitted_cmds, "pipe_splitted");
+	debug_print_2d_arr(info->splitted_cmds, "pipe_splitted    ");
 
 	// split redirect sign
 	info->splitted_cmds = split_redirect_and_word_controller((const char **)info->splitted_cmds);

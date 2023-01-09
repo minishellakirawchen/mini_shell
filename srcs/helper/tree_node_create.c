@@ -119,6 +119,6 @@ t_tree	*create_tree_node(t_exe_type type, const char **cmds)
 		free_1d_array_ret_nullptr((void **)&new_node);
 		return (NULL);
 	}
-	debug_print_2d_arr(new_node->cmds, "update cmds");
+	debug_print_2d_arr(new_node->cmds, "update cmds      ");
 	return (new_node);
 }

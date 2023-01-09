@@ -120,7 +120,7 @@ int	create_tree(t_info **info)
 		if (!cmd_line)
 			return (perror_and_return_int("malloc", FAILURE)); // TODO:free
 
-		debug_print_2d_arr(cmd_line, "debug cmd_line");
+//		debug_print_2d_arr(cmd_line, "debug cmd_line");
 
 		cmd_node = create_tree_node(E_LEAF_COMMAND, (const char **)cmd_line);
 		if (!cmd_node)

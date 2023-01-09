@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 21:17:35 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 22:09:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,23 +92,23 @@ int	handle_fd_for_redirection(t_redirect_info *redirect_info)
 		return (FAILURE);
 	if (redirect_info->ouput_to == E_REDIRECT_OUT || redirect_info->ouput_to == E_REDIRECT_APPEND)
 	{
-		if (dup2(redirect_info->fd[FD_IDX_OUTFILE], STDOUT_FILENO) < 0)
+		if (dup2(redirect_info->r_fd[FD_IDX_OUTFILE], STDOUT_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->fd[FD_IDX_OUTFILE]) < 0)
+		if (close(redirect_info->r_fd[FD_IDX_OUTFILE]) < 0)
 			return (perror_and_return_int("close", FAILURE));
 	}
 	if (redirect_info->input_from == E_REDIRECT_IN)
 	{
-		if (dup2(redirect_info->fd[FD_IDX_INFILE], STDIN_FILENO) < 0)
+		if (dup2(redirect_info->r_fd[FD_IDX_INFILE], STDIN_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->fd[FD_IDX_INFILE]) < 0)
+		if (close(redirect_info->r_fd[FD_IDX_INFILE]) < 0)
 			return (perror_and_return_int("close", FAILURE));
 	}
 	else if (redirect_info->input_from == E_HERE_DOC)
 	{
-		if (dup2(redirect_info->fd[FD_IDX_HEREDOC], STDIN_FILENO) < 0)
+		if (dup2(redirect_info->r_fd[FD_IDX_HEREDOC], STDIN_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->fd[FD_IDX_HEREDOC]) < 0)
+		if (close(redirect_info->r_fd[FD_IDX_HEREDOC]) < 0)
 			return (perror_and_return_int("close", FAILURE));
 	}
 	return (SUCCESS);

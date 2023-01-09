@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 21:05:20 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 22:07:42 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@
 # define FD_IDX_OUTFILE	1
 # define FD_IDX_HEREDOC	2
 
-
 /* pid */
 # define CHILD_PROCESS	0
 
@@ -59,11 +58,10 @@
 # define	REDIRECT_APPEND		">>"
 
 
-
 /* ---------------- */
 /*  typedef struct  */
 /* ---------------- */
-typedef struct s_minishell_info	t_info;
+typedef struct s_minishell_info		t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_tree				t_tree;
 typedef struct s_redirect_info		t_redirect_info;
@@ -86,7 +84,7 @@ typedef enum e_fopen_type		t_fopen_type;
 //node:branch
 //	priority: ; > &&,|| > () > |
 //		root		:start_point
-//		semicoron	: ;
+//		semicolon	: ;
 //		and			: &&
 //		or			: ||
 //		subshell	: ()
@@ -151,7 +149,7 @@ struct s_redirect_info
 	char 			**infiles;
 	char 			**outfiles;
 	char			**here_doc_limiters;
-	int				fd[3]; //in,out,heredoc
+	int				r_fd[3]; //in,out,heredoc
 };
 
 struct s_env_elem

@@ -6,15 +6,15 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 13:47:19 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:39:49 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:58:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	is_builtins(char **cmds)
+// TODO: change ft_XX -> XX
+bool	is_builtins(const char **cmds)
 {
-	// TODO: change ft_** to **
 	if (is_same_str("ft_echo",  cmds[0]) || is_same_str("ft_ECHO",  cmds[0]))
 		return (true);
 	if (is_same_str("ft_cd",  cmds[0]))
@@ -32,9 +32,9 @@ bool	is_builtins(char **cmds)
 	return (false);
 }
 
-int	execute_builtins(t_info *info, char **cmds)
+// TODO: change ft_XX -> XX
+int	execute_builtins(t_info *info, const char **cmds)
 {
-	// TODO: change ft_** to **
 	if (is_same_str("ft_echo",  cmds[0]) || is_same_str("ft_ECHO",  cmds[0]))
 		return (ft_echo(info, cmds));
 	if (is_same_str("ft_cd",  cmds[0]))

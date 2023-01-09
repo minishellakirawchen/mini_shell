@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 13:24:33 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:07:14 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	get_export_param(char *cmd, char **key, char **value, t_export_type *type)
+int	get_export_param(const char *cmd, char **key, char **value, t_export_type *type)
 {
 	size_t	idx;
 	size_t	key_len;
@@ -26,7 +26,7 @@ int	get_export_param(char *cmd, char **key, char **value, t_export_type *type)
 	{
 		//TODO: make ft_fprintf or like func use ft_putstr_fd
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-		ft_putstr_fd(cmd, STDERR_FILENO);
+		ft_putstr_fd((char *)cmd, STDERR_FILENO);
 		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
 		return (FAILURE);
 	}
@@ -42,8 +42,8 @@ int	get_export_param(char *cmd, char **key, char **value, t_export_type *type)
 	if (!*key || !*value)
 	{
 		perror("malloc");
-		free(*key);
-		free(*value);
+		free_1d_array_ret_nullptr((void **)key);
+		free_1d_array_ret_nullptr((void **)value);
 		return (EXIT_FAILURE);
 	}
 	return (SUCCESS);
@@ -54,7 +54,7 @@ int	get_export_param(char *cmd, char **key, char **value, t_export_type *type)
 //             "key+=value"
 
 // input: {export, key=value, hoge, hoge, ..., NULL}
-int ft_export(t_info *info, char **cmds)
+int ft_export(t_info *info, const char **cmds)
 {
 	char			*key;
 	char			*value;
@@ -83,7 +83,7 @@ int ft_export(t_info *info, char **cmds)
 		return (1);//TODO: exit?
 
 //	printf("key:%s,get_value:%s\n", key, get_env_value(key, info->env_list));
-	free(key);
-	free(value);
+	free_1d_array_ret_nullptr((void **)&key);
+	free_1d_array_ret_nullptr((void **)&value);
 	return (0);
 }

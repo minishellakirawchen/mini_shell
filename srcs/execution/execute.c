@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:41:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:03:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ int	redirect_handler(t_redirect_info *redirect_info)
 	return (SUCCESS);
 }
 
+//  <- LEFT             RIGHT ->
 // cmd1 | cmd2 |..|cmdn-1| cmdn
 // childn   ...    child2  child1
 //   out->in  ->       out->in
@@ -112,7 +113,7 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 		{
 			if (close_fd_for_child(pipe_fd))
 				exit (EXIT_FAILURE);
-			// child execute prev commands
+			// child : execute LEFT commands
 			execute_pipe_recursion(right_elem->prev, info);
 		}
 		if (close_fd_for_parent(pipe_fd))
@@ -122,12 +123,12 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 		return (EXIT_FAILURE);
 //	debug_print_2d_arr(right_elem->cmds, "cmds");
 
-	// parent execute next commands
+	// parent : execute RIGHT commands
 	if (redirect_handler(right_elem->redirect_info) == FAILURE)
 		exit (EXIT_FAILURE);
 
-	if (is_builtins(right_elem->cmds))
-		exit (execute_builtins(info, right_elem->cmds));//exitしないとblocking ??
+	if (is_builtins((const char **)right_elem->cmds))
+		exit (execute_builtins(info, (const char **)right_elem->cmds));//exitしないとblocking
 	if (right_elem->cmds[0] && (right_elem->cmds[0][0] == '/' || right_elem->cmds[0][0] == '.'))
 		execve(right_elem->cmds[0], right_elem->cmds, NULL);
 	else
@@ -151,10 +152,10 @@ int execute_handler()
 }
 */
 
-int	is_node_shell_and_cmd_cd(t_tree *node)
+int	is_node_shell_and_builtins(t_tree *node)
 {
 	return (node && node->exe_type == E_NODE_SHELL && node->next \
-	&& node->next->cmds && is_same_str(node->next->cmds[0], "ft_cd"));
+	&& node->next->cmds && is_builtins((const char **)node->next->cmds));
 }
 
 // rootから連結nodeを見ていき、各redirect_infoに応じたfd操作を実施
@@ -184,11 +185,11 @@ int	execute_command_line(t_info *info)
 	if (do_redirection(&info->tree_root) == FAILURE)
 		return (EXIT_FAILURE);
 
-	if (is_node_shell_and_cmd_cd(info->tree_root->next))
-	{
-		printf("shell cd\n");
-		return (ft_cd(info, info->tree_root->next->next->cmds));
-	}
+	// shell && builtins
+	if (is_node_shell_and_builtins(info->tree_root->next))
+		return (execute_builtins(info, (const char **)info->tree_root->next->next->cmds));
+
+	// others
 	pid = fork();
 	if (pid == 0)
 	{

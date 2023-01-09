@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:45:35 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:58:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,8 +228,8 @@ size_t	count_pipe(char **cmds);
 int		execute_command_line(t_info *info);
 
 /* execute_builtin */
-bool	is_builtins(char **cmds);
-int		execute_builtins(t_info *info, char **cmds);
+bool	is_builtins(const char **cmds);
+int		execute_builtins(t_info *info, const char **cmds);
 
 
 /* ----------- */
@@ -257,13 +257,13 @@ void	*free_1d_2d_array_ret_nullptr(void **array1d, void ***array2d);
 /*  builtin  */
 /* --------- */
 // builtin.c
-int		ft_echo(t_info *info, char **cmds);
-int		ft_cd(t_info *info, char **cmds);
+int		ft_echo(t_info *info, const char **cmds);
+int		ft_cd(t_info *info, const char **cmds);
 int		ft_pwd(t_info *info);
-int		ft_export(t_info *info, char **cmds);
-int		ft_unset(t_info *info, char **cmds);
-int		ft_env(t_info *info, char **cmds);
-int		ft_exit(t_info *info, char **cmds);
+int		ft_export(t_info *info, const char **cmds);
+int		ft_unset(t_info *info, const char **cmds);
+int		ft_env(t_info *info, const char **cmds);
+int		ft_exit(t_info *info, const char **cmds);
 /* builtin helper.c */
 //char	*get_current_path(void);
 

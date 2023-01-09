@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:19 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 11:03:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:08:21 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	print_key_value(void *content)
 // TODO: $> env CMD
 //   ex) $> env ./minishell -> minishell run use env
 // env -op -> error
-int ft_env(t_info *info, char **cmds)
+int ft_env(t_info *info, const char **cmds)
 {
 	if (!info || !cmds)
 		return (1); //TODO: exit?

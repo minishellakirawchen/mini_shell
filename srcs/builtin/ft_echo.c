@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 13:56:37 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 13:28:19 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:08:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 // $xxx->expand by analysis and expansion part
 // echo just print it
 
-static void	print_echo(char **str, bool is_nl)
+static void	print_echo(const char **str, bool is_nl)
 {
 	size_t	i;
 
@@ -38,13 +38,13 @@ static void	print_echo(char **str, bool is_nl)
 		ft_printf("\n");
 }
 
-int	ft_echo(t_info *info, char **cmds)
+int	ft_echo(t_info *info, const char **cmds)
 {
-	char	*nl_flg;
-	size_t	next_echo_chr_len;
-	size_t	i;
-	bool	is_nl;
-	int		strcmp_res;
+	const char	*nl_flg;
+	size_t		next_echo_chr_len;
+	size_t		i;
+	bool		is_nl;
+	int			strcmp_res;
 
 	if (!info || !cmds || !cmds[0])
 		return (1); //TODO: exit?

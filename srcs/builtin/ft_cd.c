@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:48:07 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:09:04 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 	return (new_path);
 }
 
-int ft_cd(t_info *info, char **cmds)
+int ft_cd(t_info *info, const char **cmds)
 {
 	int		chdir_ret;
 	char 	*new_path;
@@ -48,7 +48,7 @@ int ft_cd(t_info *info, char **cmds)
 		return (EXIT_FAILURE); //TODO: exit?
 	if (get_2d_array_size((const char **)cmds) == 1)
 		return (EXIT_SUCCESS);
-	move_to = cmds[1];
+	move_to = (char *)cmds[1];
 	current_path = getcwd(NULL, 0);
 	if (!current_path)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));

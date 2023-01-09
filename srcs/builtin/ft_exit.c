@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:24 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 11:21:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 19:08:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,24 +36,12 @@
 // bash $> echo $?
 // 1
 
-size_t	get_arr_size(char **arr)
-{
-	size_t	size;
-
-	size = 0;
-	if (!arr)
-		return (0);
-	while (arr[size])
-		size++;
-	return (size);
-}
-
 // cmds = {exit, foo, bar, .., NULL}
-int ft_exit(t_info *info, char **cmds)
+int ft_exit(t_info *info, const char **cmds)
 {
 	int		exit_status;
 	bool	is_atoi_success;
-	size_t	argc = get_arr_size(cmds);
+	size_t	argc = get_2d_array_size(cmds);
 
 	ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc > 2)
@@ -70,7 +58,7 @@ int ft_exit(t_info *info, char **cmds)
 		if (!is_atoi_success)
 		{
 			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-			ft_putstr_fd(cmds[1], STDERR_FILENO);
+			ft_putstr_fd((char *)cmds[1], STDERR_FILENO);
 			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
 			exit (EXIT_NUMERIC_ARGS_REQUIRED);
 		}

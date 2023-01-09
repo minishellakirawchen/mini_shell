@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 20:23:15 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 20:57:53 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,34 @@ int	close_fd_for_parent(int pipe_fd[2])
 	return (SUCCESS);
 }
 
+// if redirect in/out/here_doc, handle fds
+int	handle_fd_for_redirection(t_redirect_info *redirect_info)
+{
+	if (!redirect_info)
+		return (FAILURE);
+	if (redirect_info->ouput_to == E_REDIRECT_OUT || redirect_info->ouput_to == E_REDIRECT_APPEND)
+	{
+		if (dup2(redirect_info->fd[FD_IDX_OUTFILE], STDIN_FILENO) < 0)
+			return (perror_and_return_int("dup2", FAILURE));
+		if (close(redirect_info->fd[FD_IDX_OUTFILE]) < 0)
+			return (perror_and_return_int("close", FAILURE));
+	}
+	if (redirect_info->input_from == E_REDIRECT_IN)
+	{
+		if (dup2(redirect_info->fd[FD_IDX_INFILE], STDOUT_FILENO) < 0)
+			return (perror_and_return_int("dup2", FAILURE));
+		if (close(redirect_info->fd[FD_IDX_INFILE]) < 0)
+			return (perror_and_return_int("close", FAILURE));
+	}
+	else if (redirect_info->ouput_to == E_HERE_DOC)
+	{
+		if (dup2(redirect_info->fd[FD_IDX_HEREDOC], STDOUT_FILENO) < 0)
+			return (perror_and_return_int("dup2", FAILURE));
+		if (close(redirect_info->fd[FD_IDX_HEREDOC]) < 0)
+			return (perror_and_return_int("close", FAILURE));
+	}
+	return (SUCCESS);
+}
 
 //  <- LEFT             RIGHT ->
 // cmd1 | cmd2 |..|cmdn-1| cmdn
@@ -96,7 +124,12 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 	pid_t		pid;
 	int			pipe_fd[2];
 
-	if (right_elem && right_elem->prev && right_elem->prev->exe_type == E_LEAF_COMMAND)
+	if (!right_elem || !right_elem->cmds)
+		return (EXIT_FAILURE);
+
+	// if redirect in/out/here_doc, handle fds
+
+	if (right_elem->prev && right_elem->prev->exe_type == E_LEAF_COMMAND)
 	{
 		pipe(pipe_fd);
 		pid = fork();
@@ -110,16 +143,11 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 		if (close_fd_for_parent(pipe_fd))
 			exit (EXIT_FAILURE);
 	}
-	if (!right_elem || !right_elem->cmds)
-		return (EXIT_FAILURE);
 //	debug_print_2d_arr(right_elem->cmds, "cmds");
-
-	// parent : execute RIGHT commands
-
-	// if redirect in/out/here_doc, handle fds
-	if (handle_redirect_fd(right_elem->redirect_info) == FAILURE)
+	if (handle_fd_for_redirection(right_elem->redirect_info) == FAILURE)
 		exit (EXIT_FAILURE);
 
+	// parent : execute RIGHT commands
 	// execute builtins
 	if (is_builtins((const char **)right_elem->cmds))
 		exit (execute_builtins(info, (const char **)right_elem->cmds));//exitしないとblocking
@@ -150,16 +178,6 @@ int	is_node_shell_and_builtins(t_tree *node)
 {
 	return (node && node->exe_type == E_NODE_SHELL && node->next \
 	&& node->next->cmds && is_builtins((const char **)node->next->cmds));
-}
-
-// if redirect in/out/here_doc, handle fds
-int	handle_redirect_fd(t_redirect_info *redirect_info)
-{
-	if (!redirect_info)
-		return (FAILURE);
-
-	// TODO
-	return (SUCCESS);
 }
 
 // rootから連結nodeを見ていき、各redirect_infoに応じたfd操作を実施

@@ -205,7 +205,7 @@ int		delete_env_elem(t_list **list_head, char *search_key);
 /*  analysis  */
 /* ---------- */
 // analysis.c
-int		analysis(t_info *info); // tmp
+int		analysis(t_info *info, char *readline_input); // tmp
 //int		add_redirect_param(t_tree **node);
 
 // pipe_split.c
@@ -241,7 +241,7 @@ bool	is_builtins(const char **cmds);
 int		execute_builtins(t_info *info, const char **cmds);
 
 /* execute_redirect.c */
-int		handle_redirect_fd(t_redirect_info *redirect_info);
+int		handle_fd_for_redirection(t_redirect_info *redirect_info);
 int		openfile_and_heredoc_for_redirect(t_tree **root);
 
 /* ----------- */

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:11:10 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 20:39:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	valid_input(char **pipe_splitted_input)
 // 2nd try   :: pipe in subshell				, like: $> (cat Makefile | grep a)
 // 3rd try   :: subshell in pipeline			, like: $> cat Makefile | (cd /bin) | echo hello
 // 4th try   :: pipe in subshell in pipeline	, like: $> cat Makefile | (echo hello | grep h) | ls -l
-int	analysis(t_info *info)
+int	analysis(t_info *info, char *readline_input)
 {
 	if (!info)
 		return (FAILURE);
@@ -61,7 +61,7 @@ int	analysis(t_info *info)
 	// split input by before or after of '|'
 	// * input [echo hello |grep a| echo "hello | world" > out]
 	// * split {"echo", "hello", "|", "grep", "a", "|", "echo", "hello", "|", "world", ">", "out", NULL}
-	info->splitted_cmds = split_pipe_and_word_controller((const char *)info->input_line);
+	info->splitted_cmds = split_pipe_and_word_controller(readline_input);
 	if (!info->splitted_cmds)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));
 
@@ -108,7 +108,7 @@ int	analysis(t_info *info)
 	printf("#print tree\n");
 	debug_print_stack(info->tree_root, "check tree");
 
-//	add_command_leaf_to_node(&pipe_node, info->input_line); //input: tmp
+//	add_command_leaf_to_node(&pipe_node, info->readline_input); //input: tmp
 	// if fail -> all free, by tree_clear
 
 	// BFS的な実装で入れ子でも順番に展開していける？

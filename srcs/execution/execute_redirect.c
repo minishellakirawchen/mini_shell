@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:00:25 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 20:13:30 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 20:55:42 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 /* prototype declaration */
 static int	get_fd_and_open_file(char *filename, t_fopen_type fopen_type);
-static int	exec_heredoc(int fd, char **files);
-static int	open_infiles(int fd, char **files);
-static int	open_outfiles(int fd, char **files, t_output_to output_to);
+static int	exec_heredoc(int *fd, char **files);
+static int	open_infiles(int *fd, char **files);
+static int	open_outfiles(int *fd, char **files, t_output_to output_to);
 
 /* functions */
 int	openfile_and_heredoc_for_redirect(t_tree **root)
@@ -34,13 +34,13 @@ int	openfile_and_heredoc_for_redirect(t_tree **root)
 		{
 			r_info = node->redirect_info;
 			if (r_info->here_doc_limiters)
-				if (exec_heredoc(r_info->fd[FD_IDX_HEREDOC], r_info->here_doc_limiters) == FAILURE)
+				if (exec_heredoc(&r_info->fd[FD_IDX_HEREDOC], r_info->here_doc_limiters) == FAILURE)
 					return (FILE_OPEN_ERROR);
 			if (r_info->infiles)
-				if (open_infiles(r_info->fd[FD_IDX_INFILE], r_info->infiles) == FAILURE)
+				if (open_infiles(&r_info->fd[FD_IDX_INFILE], r_info->infiles) == FAILURE)
 					return (FILE_OPEN_ERROR);
 			if (r_info->outfiles)
-				if (open_outfiles(r_info->fd[FD_IDX_OUTFILE], r_info->outfiles, r_info->ouput_to) == FAILURE)
+				if (open_outfiles(&r_info->fd[FD_IDX_OUTFILE], r_info->outfiles, r_info->ouput_to) == FAILURE)
 					return (FILE_OPEN_ERROR);
 		}
 		node = node->next;
@@ -59,7 +59,7 @@ static int	get_fd_and_open_file(char *filename, t_fopen_type fopen_type)
 
 // bash: XXX: Permission denied
 // bash: XXX: No such file or directory
-static int	exec_heredoc(int fd, char **files)
+static int	exec_heredoc(int *fd, char **files)
 {
 	size_t	idx;
 
@@ -68,33 +68,39 @@ static int	exec_heredoc(int fd, char **files)
 	idx = 0;
 	while (files[idx])
 	{
-		// TODO:Implement later.
-		idx++;
-	}
-	return (SUCCESS);
-}
-
-static int	open_infiles(int fd, char **files)
-{
-	size_t	idx;
-
-	if (!files)
-		return (FAILURE);
-	idx = 0;
-	while (files[idx])
-	{
-		fd = get_fd_and_open_file(files[idx], e_read);
-		if (fd < 0)
+		// TODO: 仮
+		*fd = get_fd_and_open_file(files[idx], e_read);
+		if (*fd < 0)
 			return (perror_and_return_int("open", FAILURE));
 		idx++;
 		if (files[idx])
-			if (close(fd) < 0)
+			if (close(*fd) < 0)
 				return (perror_and_return_int("close", FAILURE));
 	}
 	return (SUCCESS);
 }
 
-static int	open_outfiles(int fd, char **files, t_output_to output_to)
+static int	open_infiles(int *fd, char **files)
+{
+	size_t	idx;
+
+	if (!files)
+		return (FAILURE);
+	idx = 0;
+	while (files[idx])
+	{
+		*fd = get_fd_and_open_file(files[idx], e_read);
+		if (*fd < 0)
+			return (perror_and_return_int("open", FAILURE));
+		idx++;
+		if (files[idx])
+			if (close(*fd) < 0)
+				return (perror_and_return_int("close", FAILURE));
+	}
+	return (SUCCESS);
+}
+
+static int	open_outfiles(int *fd, char **files, t_output_to output_to)
 {
 	size_t			idx;
 	t_fopen_type	fopen_type;
@@ -109,12 +115,12 @@ static int	open_outfiles(int fd, char **files, t_output_to output_to)
 	idx = 0;
 	while (files[idx])
 	{
-		fd = get_fd_and_open_file(files[idx], fopen_type);
-		if (fd < 0)
+		*fd = get_fd_and_open_file(files[idx], fopen_type);
+		if (*fd < 0)
 			return (perror_and_return_int("open", FAILURE));
 		idx++;
 		if (files[idx])
-			if (close(fd) < 0)
+			if (close(*fd) < 0)
 				return (perror_and_return_int("close", FAILURE));
 	}
 	return (SUCCESS);

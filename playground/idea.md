@@ -1,6 +1,6 @@
 # Input
 ```c
-char *input_line = readline("minishell > ");
+char *readline_input = readline("minishell > ");
 
 $> minishell > hogehoge          -> input=[hogehoge]
 $> minishell > "playground   "         -> input=["playground   "]

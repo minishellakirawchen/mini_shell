@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 11:04:33 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 15:09:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ int	valid_redirection(char **cmds)
 // char **update = current + add
 // free(current), free(add)
 // TODO: more simple
+// current_filesは上書きするためfree
+// add_fileはcmdsの一部のためfree NG
 char **update_files(char **current_files, char *add_file)
 {
 	char	**new_files;
@@ -93,7 +95,7 @@ char **update_files(char **current_files, char *add_file)
 	idx = 0;
 	while (current_files && current_files[idx])
 	{
-		new_files[idx] = ft_strdup(current_files[idx]);
+		new_files[idx] = ft_strdup_ns(current_files[idx]);
 		if (!new_files[idx])
 		{
 			free_2d_array_ret_nullptr((void ***)&current_files);
@@ -103,7 +105,7 @@ char **update_files(char **current_files, char *add_file)
 		}
 		idx++;
 	}
-	new_files[idx] = ft_strdup(add_file);
+	new_files[idx] = ft_strdup_ns(add_file);
 	if (!new_files[idx])
 	{
 		free_2d_array_ret_nullptr((void ***)&current_files);
@@ -112,7 +114,6 @@ char **update_files(char **current_files, char *add_file)
 		return ((char **)perror_and_ret_nullptr("malloc"));
 	}
 	free_2d_array_ret_nullptr((void ***)&current_files);
-	free_1d_array_ret_nullptr((void **)&add_file);
 	return (new_files);
 }
 
@@ -187,6 +188,11 @@ t_redirect_info	*get_redirection_info(char **cmds)
 	info = (t_redirect_info *)malloc(sizeof(t_redirect_info));
 	if (!info)
 		return (perror_and_ret_nullptr("malloc"));
+	info->input_from = E_STDIN;
+	info->ouput_to = E_STDOUT;
+	info->infiles = NULL;
+	info->outfiles = NULL;
+	info->here_doc_limiters = NULL;
 	idx = 0;
 	while (cmds[idx])
 	{
@@ -204,68 +210,5 @@ t_redirect_info	*get_redirection_info(char **cmds)
 				return (NULL);
 		idx++;
 	}
-	return (SUCCESS);
+	return (info);
 }
-
-int	add_redirect_param(t_tree **node)
-{
-	char 	**splitted_cmds;
-
-	if (!node || !*node || (*node)->exe_type != E_LEAF_COMMAND || !(*node)->cmds)
-		return (FAILURE);
-	// <, <<, >, >> とwordを分割する
-	splitted_cmds = split_redirect_and_word_controller((const char **) (*node)->cmds);
-	if (!splitted_cmds)
-		return (FAILURE);
-//	debug_print_2d_arr(splitted_cmds, "splitted_cmds");
-
-	// syntax check
-	// cmd[i] == redirection, cmd[i+1] == redirectionの場合はsyntax errorを出力
-	if (valid_redirection(splitted_cmds) == FAILURE)
-		return (SYNTAX_ERROR);
-
-	// cmd[i] == "<", "<<", ">", ">>"の次のwordをfilename, limiterとして記録
-	(*node)->redirect_info = get_redirection_info(splitted_cmds);
-	if (!(*node)->redirect_info)
-		return (FAILURE);
-
-	// char **cmds_except_redirectを作成して、node->cmdsに上書き（free(node->cmds）も忘れずに）
-	// free(splitted_cmds)
-	return (SUCCESS);
-
-	//redirect関係のcharを削除する
-	// execve "" は問題なし、command not foundにはならない
-	// $> << end ならhere_docのみ実行されるはず
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^
-	//minishell $>
-	//#DEBUG[print_stack : check pipe case]
-	// [root]
-	//  |
-	// [pipe]
-	//  |
-	// [cmd]--{}
-	//
-	//splitted_cmds:{}
-	//minishell $>
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 12:25:22 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 14:34:13 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 14:41:18 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ size_t	count_pipe(char **cmds)
 	return (cnt);
 }
 
-char **get_cmd_line(char **src, size_t start_idx, size_t size)
+char **get_dup_cmds(char **src, size_t start_idx, size_t size)
 {
 	char	**line;
 	size_t	i;
@@ -116,11 +116,11 @@ int	create_tree(t_info **info)
 	while ((*info)->splitted_cmds[head_idx])
 	{
 		size = get_pipe_idx(&(*info)->splitted_cmds[head_idx]);
-		cmd_line = get_cmd_line((*info)->splitted_cmds, head_idx, size);
+		cmd_line = get_dup_cmds((*info)->splitted_cmds, head_idx, size);
 		if (!cmd_line)
 			return (perror_and_return_int("malloc", FAILURE)); // TODO:free
 		debug_print_2d_arr(cmd_line, "debug cmd_line");
-		cmd_node = create_tree_node(E_LEAF_COMMAND, cmd_line);
+		cmd_node = create_tree_node(E_LEAF_COMMAND, &cmd_line);
 		if (!cmd_node)
 			return (perror_and_return_int("malloc", FAILURE)); // TODO:free
 		add_bottom_of_tree(&(*info)->tree_root, cmd_node);

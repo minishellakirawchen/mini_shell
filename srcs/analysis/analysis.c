@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 13:29:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 14:53:28 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,28 +20,28 @@
 // flg_in = redirectin, here_doc, stdin
 // flg_out = redirect_out, append, stdout
 
-int	add_command_leaf_to_node(t_tree **node, char *command_line)
-{
-	char 	**split_by_pipe;
-	t_tree	*cmd_leaf;
-	size_t	idx;
-
-	split_by_pipe = ft_split_set(command_line, '|', '"');//TODO: update split set; char set-> char *set
-	if (!split_by_pipe)
-		return (perror_and_return_int("malloc", EXIT_FAILURE));
-//	debug_print_2d_arr(split_by_pipe, "split by pipe");
-
-	idx = 0;
-	while (split_by_pipe[idx])
-	{
-		cmd_leaf = create_tree_node(E_LEAF_COMMAND, &split_by_pipe[idx]);
-		if (!cmd_leaf)
-			return (perror_and_return_int("malloc", EXIT_FAILURE));
-		add_bottom_of_tree(node, cmd_leaf);
-		idx++;
-	}
-	return (SUCCESS);
-}
+//int	add_command_leaf_to_node(t_tree **node, char *command_line)
+//{
+//	char 	**split_by_pipe;
+//	t_tree	*cmd_leaf;
+//	size_t	idx;
+//
+//	split_by_pipe = ft_split_set(command_line, '|', '"');//TODO: update split set; char set-> char *set
+//	if (!split_by_pipe)
+//		return (perror_and_return_int("malloc", EXIT_FAILURE));
+////	debug_print_2d_arr(split_by_pipe, "split by pipe");
+//
+//	idx = 0;
+//	while (split_by_pipe[idx])
+//	{
+//		cmd_leaf = create_tree_node(E_LEAF_COMMAND, &split_by_pipe[idx]);
+//		if (!cmd_leaf)
+//			return (perror_and_return_int("malloc", EXIT_FAILURE));
+//		add_bottom_of_tree(node, cmd_leaf);
+//		idx++;
+//	}
+//	return (SUCCESS);
+//}
 
 int	valid_input(char **pipe_splitted_input)
 {
@@ -89,9 +89,8 @@ int	analysis(t_info *info)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));
 
 	// valid_input
-	// * syntax error : split[i][0] == '|' and len(split[i]) > 1
-	//                  split[0][0] == '|'
-	//                  split[size][0] == '|' where size is size of the split
+	// * syntax error : {"|", "echo", "hello || ", "||", "cat", "Makefile", "|", "|", NULL}
+	//                    ^ first one                ^ |x2                        ^ | next of | or last one
 	if (valid_input(info->splitted_cmds) == FAILURE)
 	{
 		free_2d_array_ret_nullptr((void ***)&info->splitted_cmds);
@@ -103,6 +102,10 @@ int	analysis(t_info *info)
 	info->splitted_cmds = split_redirect_and_word_controller((const char **)info->splitted_cmds);
 	if (!info->splitted_cmds)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));
+	// valid redirect sign
+
+	// * syntax error : {"cat", "Makefile", "<", "file", ">>>", "", "", "<", "<" NULL}
+	//                                                     ^ >x3              ^ continues, no file
 	if (valid_redirection(info->splitted_cmds) == FAILURE)
 		return (SYNTAX_ERROR);
 

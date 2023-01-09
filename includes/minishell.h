@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 13:23:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 14:59:45 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ int		delete_env_elem(t_list **list_head, char *search_key);
 /* ---------- */
 // analysis.c
 int		analysis(t_info *info); // tmp
-int		add_redirect_param(t_tree **node);
+//int		add_redirect_param(t_tree **node);
 
 // pipe_split.c
 char **split_pipe_and_word_controller(const char *readline_input);
@@ -212,6 +212,7 @@ size_t	get_split_idx_by_chr(const char *str, char chr);
 
 // analysis_redirect.c
 int	valid_redirection(char **cmds);
+t_redirect_info	*get_redirection_info(char **cmds);
 
 // create_tree.c
 int		create_tree(t_info **info);
@@ -270,7 +271,7 @@ char	*get_current_path(void);
 // tree_node_create.c
 char	**splitset_and_trim(char *src, char delim, char set, char *trimchar);
 //t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str);
-t_tree	*create_tree_node(t_exe_type type, char **cmds);
+t_tree	*create_tree_node(t_exe_type type, char ***cmds);
 
 // tree_operation.c
 t_tree	*pop_tree_elem_from_top(t_tree **root);

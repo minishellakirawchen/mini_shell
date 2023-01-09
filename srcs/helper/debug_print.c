@@ -61,7 +61,7 @@ void	debug_print_stack(t_tree *root, char *str)
 			ft_printf(" [cmd]--");
 			debug_print_2d_arr(tree->cmds, NULL);
 		}
-		tree = tree->right;
+		tree = tree->next;
 	}
 	ft_printf("\n");
 }

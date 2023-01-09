@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 15:33:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:45:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@
 /* fd */
 # define READ			0
 # define WRITE			1
+# define FD_IDX_INFILE	0
+# define FD_IDX_OUTFILE	1
+# define FD_IDX_HEREDOC	2
+
 
 /* pid */
 # define CHILD_PROCESS	0
@@ -57,7 +61,7 @@
 /* ---------------- */
 /*  typedef struct  */
 /* ---------------- */
-typedef struct s_minishell_param	t_info;
+typedef struct s_minishell_info	t_info;
 typedef struct s_env_elem			t_env_elem;
 typedef struct s_tree				t_tree;
 typedef struct s_redirect_info		t_redirect_info;
@@ -130,7 +134,6 @@ enum e_token_type
 /* -------- */
 /*  struct  */
 /* -------- */
-//TODO: <, <<, >, >> が複数混在するケースに対応するためには...?
 struct s_redirect_info
 {
 	t_input_from	input_from;
@@ -138,6 +141,7 @@ struct s_redirect_info
 	char 			**infiles;
 	char 			**outfiles;
 	char			**here_doc_limiters;
+	int				fd[3]; //in,out,heredoc
 };
 
 struct s_env_elem
@@ -146,11 +150,10 @@ struct s_env_elem
 	char	*value;
 };
 
-struct s_token
+struct s_token // for bonus
 {
 	t_token_type	type;
 	char			*content;
-
 	t_token			*prev;
 	t_token			*next;
 };
@@ -163,15 +166,15 @@ struct s_tree
 
 	t_redirect_info	*redirect_info;
 
-	t_tree			*left;
-	t_tree			*right;
+	t_tree			*prev;
+	t_tree			*next;
 };
 
-struct s_minishell_param
+struct s_minishell_info
 {
 	int		exit_status;
 	t_list	*env_list;
-	char	*input_line;
+	char	*input_line; // for demo
 	char	**splitted_cmds;
 	t_tree	*tree_root;
 };
@@ -225,7 +228,7 @@ size_t	count_pipe(char **cmds);
 int		execute_command_line(t_info *info);
 
 /* execute_builtin */
-bool	is_builtins(char *cmd_head);
+bool	is_builtins(char **cmds);
 int		execute_builtins(t_info *info, char **cmds);
 
 
@@ -262,16 +265,17 @@ int		ft_unset(t_info *info, char **cmds);
 int		ft_env(t_info *info, char **cmds);
 int		ft_exit(t_info *info, char **cmds);
 /* builtin helper.c */
-char	*get_current_path(void);
+//char	*get_current_path(void);
 
 
 /* -------- */
 /*  helper  */
 /* -------- */
 // tree_node_create.c
-char	**splitset_and_trim(char *src, char delim, char set, char *trimchar);
+char		**splitset_and_trim(char *src, char delim, char set, char *trimchar);
 //t_tree	*create_tree_node(t_exe_type type, char *raw_cmd_str);
-t_tree	*create_tree_node(t_exe_type type,  const char **cmds);
+t_tree		*create_tree_node(t_exe_type type,  const char **cmds);
+size_t		get_2d_array_size(const char **array);
 
 // tree_operation.c
 t_tree	*pop_tree_elem_from_top(t_tree **root);

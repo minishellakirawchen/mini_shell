@@ -16,8 +16,8 @@ t_tree	*get_last_node(t_tree *elem)
 {
 	if (!elem)
 		return (NULL);
-	while (elem->right)
-		elem = elem->right;
+	while (elem->next)
+		elem = elem->next;
 	return (elem);
 }
 
@@ -29,7 +29,7 @@ void	tree_clear(t_tree **stk)
 		return ;
 	while (*stk)
 	{
-		right = (*stk)->right;
+		right = (*stk)->next;
 		free(*stk);
 		*stk = right;
 	}
@@ -43,7 +43,7 @@ size_t	get_tree_size(t_tree *stk)
 	size = 0;
 	while (stk)
 	{
-		stk = stk->right;
+		stk = stk->next;
 		size++;
 	}
 	return (size);

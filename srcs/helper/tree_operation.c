@@ -16,10 +16,10 @@ void	add_top_of_tree(t_tree **root, t_tree *elem)
 {
 	if (!root)
 		return ;
-	elem->left = NULL;
-	elem->right = *root;
+	elem->prev = NULL;
+	elem->next = *root;
 	if (*root)
-		(*root)->left = elem;
+		(*root)->prev = elem;
 	*root = elem;
 }
 
@@ -32,14 +32,14 @@ void	add_bottom_of_tree(t_tree **root, t_tree *elem)
 	if (!*root)
 	{
 		*root = elem;
-		elem->right = NULL;
-		elem->left = NULL;
+		elem->next = NULL;
+		elem->prev = NULL;
 		return ;
 	}
 	bottom_elem = get_last_node(*root);
-	bottom_elem->right = elem;
-	elem->left = bottom_elem;
-	elem->right = NULL;
+	bottom_elem->next = elem;
+	elem->prev = bottom_elem;
+	elem->next = NULL;
 }
 
 t_tree	*pop_from_top(t_tree **root)
@@ -49,11 +49,11 @@ t_tree	*pop_from_top(t_tree **root)
 	if (!root || !*root)
 		return (NULL);
 	top_elem = *root;
-	*root = top_elem->right;
-	if (top_elem->right)
-		top_elem->right->left = NULL;
-	top_elem->left = NULL;
-	top_elem->right = NULL;
+	*root = top_elem->next;
+	if (top_elem->next)
+		top_elem->next->prev = NULL;
+	top_elem->prev = NULL;
+	top_elem->next = NULL;
 	return (top_elem);
 }
 
@@ -64,9 +64,9 @@ t_tree	*pop_from_bottom(t_tree **tree)
 	if (!tree || !*tree)
 		return (NULL);
 	bottom_elem = get_last_node(*tree);
-	if (bottom_elem->left)
-		bottom_elem->left->right = NULL;
-	bottom_elem->left = NULL;
-	bottom_elem->right = NULL;
+	if (bottom_elem->prev)
+		bottom_elem->prev->next = NULL;
+	bottom_elem->prev = NULL;
+	bottom_elem->next = NULL;
 	return (bottom_elem);
 }

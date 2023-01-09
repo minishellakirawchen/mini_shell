@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 18:58:03 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 16:03:47 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:13:46 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ t_tree	*create_tree_node(t_exe_type type, const char **cmds)
 	if (!new_node)
 		return (perror_and_ret_nullptr("malloc"));
 	new_node->exe_type = type;
-	new_node->left = NULL;
-	new_node->right = NULL;
+	new_node->prev = NULL;
+	new_node->next = NULL;
 	new_node->redirect_info = NULL;
 	if (!cmds)
 	{

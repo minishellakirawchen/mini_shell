@@ -24,8 +24,8 @@ typedef struct s_tree
 {
 	t_group			group;
 	char			**commands;
-	struct s_tree	*left;
-	struct s_tree	*right;
+	struct s_tree	*prev;
+	struct s_tree	*next;
 }					t_tree;
 
 int main(void)

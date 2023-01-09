@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 16:02:55 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:11:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,6 @@
 // その際にsplie(space), trim(space)して整形する
 // flg_in = redirectin, here_doc, stdin
 // flg_out = redirect_out, append, stdout
-
-//int	add_command_leaf_to_node(t_tree **node, char *command_line)
-//{
-//	char 	**split_by_pipe;
-//	t_tree	*cmd_leaf;
-//	size_t	idx;
-//
-//	split_by_pipe = ft_split_set(command_line, '|', '"');//TODO: update split set; char set-> char *set
-//	if (!split_by_pipe)
-//		return (perror_and_return_int("malloc", EXIT_FAILURE));
-////	debug_print_2d_arr(split_by_pipe, "split by pipe");
-//
-//	idx = 0;
-//	while (split_by_pipe[idx])
-//	{
-//		cmd_leaf = create_tree_node(E_LEAF_COMMAND, &split_by_pipe[idx]);
-//		if (!cmd_leaf)
-//			return (perror_and_return_int("malloc", EXIT_FAILURE));
-//		add_bottom_of_tree(node, cmd_leaf);
-//		idx++;
-//	}
-//	return (SUCCESS);
-//}
 
 int	valid_input(char **pipe_splitted_input)
 {

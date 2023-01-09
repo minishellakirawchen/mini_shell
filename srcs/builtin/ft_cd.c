@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:16:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:48:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 		return (move_to);
 	trimmed_move_to = ft_strtrim(move_to, "/"); // /bin + hoge/ -> /bin + hoge
 	if (!trimmed_move_to)
-	{
-		perror("malloc");
-		return (NULL);
-	}
+		return ((char *)perror_and_ret_nullptr("malloc"));
 	move_to_len = ft_strlen_ns(trimmed_move_to);
 	new_path = (char *)ft_calloc(sizeof(char), current_len + move_to_len + 2);
 	if (!new_path)
@@ -36,7 +33,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 	ft_strlcat(new_path, current_path, current_len + 1);
 	ft_strlcat(new_path, "/", current_len + 2);
 	ft_strlcat(new_path, trimmed_move_to, current_len + move_to_len + 2);
-	free(trimmed_move_to); // memcpy in strlcat
+	free_1d_array_ret_nullptr((void **)&trimmed_move_to); // memcpy in strlcat
 	return (new_path);
 }
 
@@ -47,28 +44,33 @@ int ft_cd(t_info *info, char **cmds)
 	char 	*move_to;
 	char 	*current_path;
 
-	if (!info || !cmds || !cmds[1])
+	if (!info || !cmds)
 		return (EXIT_FAILURE); //TODO: exit?
+	if (get_2d_array_size((const char **)cmds) == 1)
+		return (EXIT_SUCCESS);
 	move_to = cmds[1];
-	current_path = get_current_path();
+	current_path = getcwd(NULL, 0);
+	if (!current_path)
+		return (perror_and_return_int("malloc", EXIT_FAILURE));
 	new_path = get_chdir_path(current_path, move_to);
+	free_1d_array_ret_nullptr((void **)&current_path);
 	if (!new_path)
-	{
-//		free(current_path);
-		perror("malloc");
-		return (EXIT_FAILURE); //TODO: exit?
-	}
+		return (perror_and_return_int("malloc", EXIT_FAILURE));
 	chdir_ret = chdir(new_path);
+	free_1d_array_ret_nullptr((void **)&new_path);
 	if (chdir_ret < 0)
 	{
-		ft_printf("cd: no such file or directory: %s", move_to);//TODO: STDERROR or make fprintf
+		ft_printf("cd: no such file or directory: %s\n", move_to);//TODO: STDERROR or make fprintf
 		return (CHDIR_FAILURE);
 	}
-	if (overwrite_env_value(&info->env_list, PWD, new_path) == FAILURE)
+	current_path = getcwd(NULL, 0);
+	if (!current_path)
+		return (perror_and_return_int("malloc", EXIT_FAILURE));
+	if (overwrite_env_value(&info->env_list, PWD, current_path) == FAILURE)
 	{
-		free(new_path);
-		return (EXIT_FAILURE);
+		free_1d_array_ret_nullptr((void **)&current_path);
+		return (perror_and_return_int("malloc", EXIT_FAILURE));
 	}
-	free(new_path); //strdup in env func
+	free_1d_array_ret_nullptr((void **)&current_path);
 	return (EXIT_SUCCESS);
 }

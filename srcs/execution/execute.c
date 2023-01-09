@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 15:24:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:41:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,16 @@ int	close_fd_for_parent(int pipe_fd[2])
 	return (SUCCESS);
 }
 
+int	redirect_handler(t_redirect_info *redirect_info)
+{
+	if (!redirect_info)
+		return (FAILURE);
+
+	// fd
+
+	return (SUCCESS);
+}
+
 // cmd1 | cmd2 |..|cmdn-1| cmdn
 // childn   ...    child2  child1
 //   out->in  ->       out->in
@@ -94,7 +104,7 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 	pid_t		pid;
 	int			pipe_fd[2];
 
-	if (right_elem && right_elem->left && right_elem->left->exe_type == E_LEAF_COMMAND)
+	if (right_elem && right_elem->prev && right_elem->prev->exe_type == E_LEAF_COMMAND)
 	{
 		pipe(pipe_fd);
 		pid = fork();
@@ -102,7 +112,8 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 		{
 			if (close_fd_for_child(pipe_fd))
 				exit (EXIT_FAILURE);
-			execute_pipe_recursion(right_elem->left, info);
+			// child execute prev commands
+			execute_pipe_recursion(right_elem->prev, info);
 		}
 		if (close_fd_for_parent(pipe_fd))
 			exit (EXIT_FAILURE);
@@ -111,9 +122,11 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 		return (EXIT_FAILURE);
 //	debug_print_2d_arr(right_elem->cmds, "cmds");
 
-//	TODO:
-//	 if (is_redirections(right_elem->cmds[0]))
-	if (is_builtins(right_elem->cmds[0]))
+	// parent execute next commands
+	if (redirect_handler(right_elem->redirect_info) == FAILURE)
+		exit (EXIT_FAILURE);
+
+	if (is_builtins(right_elem->cmds))
 		exit (execute_builtins(info, right_elem->cmds));//exitしないとblocking ??
 	if (right_elem->cmds[0] && (right_elem->cmds[0][0] == '/' || right_elem->cmds[0][0] == '.'))
 		execve(right_elem->cmds[0], right_elem->cmds, NULL);
@@ -125,7 +138,7 @@ int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 	exit (CMD_NOT_FOUND);
 }
 
-// TODO: implement handler
+// TODO: implement handler (Bonus part)
 // nodeを辿りながらflagに応じた実行をしていく
 // node中にflagがあった場合、内部でhandlerを実行することで、実行順の整合性が取れる（はず）
 /*
@@ -138,25 +151,53 @@ int execute_handler()
 }
 */
 
+int	is_node_shell_and_cmd_cd(t_tree *node)
+{
+	return (node && node->exe_type == E_NODE_SHELL && node->next \
+	&& node->next->cmds && is_same_str(node->next->cmds[0], "ft_cd"));
+}
+
+// rootから連結nodeを見ていき、各redirect_infoに応じたfd操作を実施
+// open成功ならばupdate
+// here_docも前から実行
+// どこかで失敗（open fail, etc）ならば、コマンドは実行しない
+int	do_redirection(t_tree **root)
+{
+	if (!root | !*root | !(*root)->next)
+		return (FAILURE);
+
+	return (SUCCESS);
+}
+
 int	execute_command_line(t_info *info)
 {
 	pid_t	pid;
-	t_tree	*end_of_pipe_elem;
+	t_tree	*end_of_pipe_leaf;
 	size_t	i;
 	int		status;
 
-	//TODO: flg=shell(no pipe, only one command)
+	//type=shell(no pipe, only one command)
 	//  cd     -> must NOT fork to reflect working dir
 	//  others -> must fork     to exit execute process, but ft_builtins doesn't matter
+	if (!info || !info->tree_root || !info->tree_root->next)
+		return (EXIT_FAILURE);
+	if (do_redirection(&info->tree_root) == FAILURE)
+		return (EXIT_FAILURE);
+
+	if (is_node_shell_and_cmd_cd(info->tree_root->next))
+	{
+		printf("shell cd\n");
+		return (ft_cd(info, info->tree_root->next->next->cmds));
+	}
 	pid = fork();
 	if (pid == 0)
 	{
-		end_of_pipe_elem = get_last_node(info->tree_root->right);
-		//TODO: execute_handler()
-		execute_pipe_recursion(end_of_pipe_elem, info);
+		end_of_pipe_leaf = get_last_node(info->tree_root->next);
+		execute_pipe_recursion(end_of_pipe_leaf, info);
 	}
+	//TODO: check wait operation
 	i = 0;
-	while (i++ < get_tree_size(info->tree_root->right) + 1)
-		wait(&status); //TODO: check wait operation
+	while (i++ < get_tree_size(info->tree_root->next) + 1)
+		wait(&status);
 	return (WEXITSTATUS(status));
 }

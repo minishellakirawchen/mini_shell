@@ -6,12 +6,12 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:01 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 10:06:12 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 18:45:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+/*
 // Free src inside ft_realloc
 // If len(src) > newsize, terminating of new_ptr is undefined
 void	*ft_realloc(void *src, size_t newsize)
@@ -28,6 +28,7 @@ void	*ft_realloc(void *src, size_t newsize)
 	return (new_ptr);
 }
 
+//TODO: use getcdw(NULL), use malloc for justsize
 char *get_current_path(void)
 {
 	char	*path;
@@ -54,14 +55,16 @@ char *get_current_path(void)
 //	printf("path:%s, size:%zu, len:%zu\n", path, size, ft_strlen_ns(path));
 	return (path);
 }
-
+*/
 int ft_pwd(t_info *info)
 {
 	char	*current_path;
 
 	if (!info)
 		return (1); //TODO: exit?
-	current_path = get_current_path();
+//	current_path = get_current_path();
+	current_path = getcwd(NULL, 0);
 	ft_printf("%s\n", current_path);
+	free(current_path);
 	return (0);
 }

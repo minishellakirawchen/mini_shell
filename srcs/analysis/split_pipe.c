@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 08:36:40 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 11:09:05 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 11:15:47 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static size_t	get_split_set_size(const char *str,  const char *set)
 			//    ^                                            ^
 			while (str[idx] && str[idx] != setchr[0])
 				idx++;
-			if (str[idx])
+			if (str[idx] == setchr[0])
 				idx++;
 		}
 		// space or setならばcontinue
@@ -102,6 +102,7 @@ static size_t	get_split_set_size(const char *str,  const char *set)
 	return (cnt);
 }
 
+// str[0] is not space
 static size_t	get_word_size(const char *str,  const char *set)
 {
 	size_t	idx;
@@ -110,35 +111,24 @@ static size_t	get_word_size(const char *str,  const char *set)
 	if (!str)
 		return (0);
 	idx = 0;
-	while (str[idx])
+	if (str[idx] && ft_strchr(set, str[idx]))
 	{
-		while (str[idx] && ft_isspace(str[idx]))
+		setchr = ft_strchr(set, str[idx]);
+		idx++;
+		while (str[idx] && str[idx] != setchr[0])
 			idx++;
-		if (str[idx] && ft_strchr(set, str[idx]))
-		{
-			setchr = ft_strchr(set, str[idx]);
+		if (str[idx] == setchr[0])
 			idx++;
-			while (str[idx] && str[idx] != setchr[0])
-				idx++;
-			if (str[idx])
-				idx++;
-			return (idx);
-		}
-		if (str[idx] && (ft_isspace(str[idx]) || ft_strchr(set, str[idx])))
-			continue ;
-		if (str[idx] && str[idx] == '|')
-		{
-			while (str[idx] && str[idx] == '|')
-				idx++;
-			return (idx);
-		}
-		if (str[idx] && str[idx] != '|')
-		{
-			while (str[idx] && str[idx] != '|' && !ft_isspace(str[idx]) && !ft_strchr(set, str[idx]))
-				idx++;
-			return (idx);
-		}
+		return (idx);
 	}
+	if (str[idx] && str[idx] == '|')
+	{
+		while (str[idx] && str[idx] == '|')
+			idx++;
+		return (idx);
+	}
+	while (str[idx] && str[idx] != '|' && !ft_isspace(str[idx]) && !ft_strchr(set, str[idx]))
+		idx++;
 	return (idx);
 }
 

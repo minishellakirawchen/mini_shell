@@ -37,6 +37,6 @@ int main(void)
 
 	info = init_params();
 	exit_status = prompt_loop(info);
-	free_alloc(&info);
+	free_info(&info);
  	return (exit_status);
 }

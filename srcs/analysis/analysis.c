@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 10:54:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 13:29:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	add_command_leaf_to_node(t_tree **node, char *command_line)
 	idx = 0;
 	while (split_by_pipe[idx])
 	{
-		cmd_leaf = create_tree_node(E_LEAF_COMMAND, split_by_pipe[idx]);
+		cmd_leaf = create_tree_node(E_LEAF_COMMAND, &split_by_pipe[idx]);
 		if (!cmd_leaf)
 			return (perror_and_return_int("malloc", EXIT_FAILURE));
 		add_bottom_of_tree(node, cmd_leaf);
@@ -78,33 +78,45 @@ int	valid_input(char **pipe_splitted_input)
 // 4th try   :: pipe in subshell in pipeline	, like: $> cat Makefile | (echo hello | grep h) | ls -l
 int	analysis(t_info *info)
 {
-	t_tree	*root_node;
-	t_tree 	*pipe_node;
-	char 	**pipe_splitted_input;
-
 	if (!info)
 		return (FAILURE);
+
 	// split input by before or after of '|'
-	pipe_splitted_input = split_pipe_and_word_controller((const char *)info->input_line);
-	debug_print_2d_arr(pipe_splitted_input, "pipe_splitted");
+	// * input [echo hello |grep a| echo "hello | world" > out]
+	// * split {"echo", "hello", "|", "grep", "a", "|", "echo", "hello", "|", "world", ">", "out", NULL}
+	info->splitted_cmds = split_pipe_and_word_controller((const char *)info->input_line);
+	if (!info->splitted_cmds)
+		return (perror_and_return_int("malloc", EXIT_FAILURE));
 
 	// valid_input
-	if (valid_input(pipe_splitted_input) == FAILURE)
+	// * syntax error : split[i][0] == '|' and len(split[i]) > 1
+	//                  split[0][0] == '|'
+	//                  split[size][0] == '|' where size is size of the split
+	if (valid_input(info->splitted_cmds) == FAILURE)
 	{
-		free_2d_array_ret_nullptr((void ***)&pipe_splitted_input);
+		free_2d_array_ret_nullptr((void ***)&info->splitted_cmds);
 		return (SYNTAX_ERROR);
 	}
+	debug_print_2d_arr(info->splitted_cmds, "pipe_splitted");
 
-	// create exe-elem "root"
-	root_node = create_tree_node(E_NODE_ROOT, NULL);
-	if (!root_node)
-		return (FAILURE); // TODO:free
-	add_bottom_of_tree(&info->tree_root, root_node);
+	// split redirect sign
+	info->splitted_cmds = split_redirect_and_word_controller((const char **)info->splitted_cmds);
+	if (!info->splitted_cmds)
+		return (perror_and_return_int("malloc", EXIT_FAILURE));
+	if (valid_redirection(info->splitted_cmds) == FAILURE)
+		return (SYNTAX_ERROR);
 
-	// create exec-elem "pipe" and create edge to root
-	pipe_node = create_tree_node(E_NODE_PIPE, NULL);
-	add_bottom_of_tree(&info->tree_root, pipe_node); //root, pipe共通のelemを代入すると...?
-	/* create exe-elem "commands" which connected same level pipes */
+	debug_print_2d_arr(info->splitted_cmds, "redirect_splitted");
+
+	// create tree
+	if (create_tree(&info) == FAILURE)
+	{
+		free_info(&info); //TODO:error handling
+		return (EXIT_FAILURE);
+	}
+
+	// check tree
+	//
 	//   [root]              <- root node
 	//     |
 	//   [pipe]              <- pipe node (explain execute stage)
@@ -113,11 +125,13 @@ int	analysis(t_info *info)
 	//   [cmd1][cmd2]  [cmdn]  <- command leaf (execute args)
 	//                             **args = {"cmd1", "cmd2", .., "cmdn", NULL}
 	//                             -> ft_execvp(args[0], args, NULL)
-	add_command_leaf_to_node(&pipe_node, info->input_line); //input: tmp
-	// if fail -> all free, use tree_clear
+	printf("#print tree\n");
+	debug_print_stack(info->tree_root, "check tree");
+
+//	add_command_leaf_to_node(&pipe_node, info->input_line); //input: tmp
+	// if fail -> all free, by tree_clear
 
 	// BFS的な実装で入れ子でも順番に展開していける？
 
-//	debug_print_stack(info->tree_root, "check pipe case");
 	return (SUCCESS);
 }

@@ -48,7 +48,7 @@ void	*free_1d_array_ret_nullptr(void **array)
 }
 
 
-void	free_alloc(t_info	**info)
+void	free_info(t_info	**info)
 {
 	if (!info || !*info)
 		return ;
@@ -59,7 +59,7 @@ void	free_alloc(t_info	**info)
 
 int	free_and_return_no(t_info **info, int exit_status)
 {
-	free_alloc(info);
+	free_info(info);
 	return (exit_status);
 }
 

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 09:21:33 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 14:49:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 13:25:34 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ void	debug_print_stack(t_tree *root, char *str)
 		else if (tree->exe_type == E_NODE_PIPE)
 		{
 			ft_printf(" [pipe]\n");
+			ft_printf("  |    \n");
+		}
+		else if (tree->exe_type == E_NODE_SHELL)
+		{
+			ft_printf(" [shell]\n");
 			ft_printf("  |    \n");
 		}
 		else if (tree->exe_type == E_LEAF_COMMAND)

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/20 09:19:29 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 09:14:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 13:02:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	add_bottom_of_tree(t_tree **root, t_tree *elem)
 		elem->left = NULL;
 		return ;
 	}
-	bottom_elem = get_last_elem(*root);
+	bottom_elem = get_last_node(*root);
 	bottom_elem->right = elem;
 	elem->left = bottom_elem;
 	elem->right = NULL;
@@ -63,7 +63,7 @@ t_tree	*pop_from_bottom(t_tree **tree)
 
 	if (!tree || !*tree)
 		return (NULL);
-	bottom_elem = get_last_elem(*tree);
+	bottom_elem = get_last_node(*tree);
 	if (bottom_elem->left)
 		bottom_elem->left->right = NULL;
 	bottom_elem->left = NULL;

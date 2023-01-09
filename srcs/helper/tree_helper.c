@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-t_tree	*get_last_elem(t_tree *elem)
+t_tree	*get_last_node(t_tree *elem)
 {
 	if (!elem)
 		return (NULL);

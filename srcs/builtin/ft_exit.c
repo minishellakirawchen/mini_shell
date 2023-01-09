@@ -76,7 +76,7 @@ int ft_exit(t_info *info, char **cmds)
 		}
 		exit_status %= 255;
 	}
-	free_alloc(&info);
+	free_info(&info);
 	exit_status = 10;
 	exit(exit_status);
 }

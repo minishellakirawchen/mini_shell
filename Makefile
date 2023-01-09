@@ -29,6 +29,8 @@ SRC		= main.c \
 		  analysis/split_redirection.c \
 		  analysis/split_helper.c \
 		  analysis/analysis_redirect.c \
+		  analysis/tokenize.c \
+		  analysis/create_tree.c \
 		  expansion/expand_variable.c \
 		  execution/execute.c \
 		  execution/execute_builtin.c \
@@ -45,6 +47,7 @@ SRC		= main.c \
 		  helper/tree_helper.c \
 		  helper/debug_print.c \
 		  helper/env_list.c \
+		  helper/is_same_str.c \
 
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))

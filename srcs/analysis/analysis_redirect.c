@@ -69,14 +69,6 @@ int	valid_redirection(char **cmds)
 	return (SUCCESS);
 }
 
-int	is_same_str(char *str1, char *str2)
-{
-	const size_t	len1 = ft_strlen_ns(str1);
-	const size_t	len2 = ft_strlen_ns(str2);
-
-	return (len1 == len2 && ft_strncmp_ns(str1, str2, len1));
-}
-
 // char **update = current + add
 // free(current), free(add)
 // TODO: more simple

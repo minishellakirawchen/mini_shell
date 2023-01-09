@@ -6,11 +6,21 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 08:51:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/09 14:14:13 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	init_input(t_info **info)
+{
+	if (!info || !*info)
+		return ;
+	free_2d_array_ret_nullptr((void ***)&(*info)->splitted_cmds);
+	tree_clear(&(*info)->tree_root);
+	(*info)->splitted_cmds = NULL;
+	(*info)->tree_root = NULL;
+}
 
 int	prompt_loop(t_info	*info)
 {
@@ -44,15 +54,15 @@ int	prompt_loop(t_info	*info)
 			return (perror_and_return_int("malloc", EXIT_FAILURE));
 		}
 		info->input_line = input_line;
-		info->space_splitted_input = space_splitted_line;
+		info->splitted_cmds = space_splitted_line;
 
 		analysis(info);
 		expand_variable();
-		exit_status = execute_command_line(info);
-
+//		exit_status = execute_command_line(info);
+		exit_status = EXIT_SUCCESS;
 		add_history(input_line);//where?
+		init_input(&info);
 		free(input_line);
-//		free input and commands in info
 	}
 	return (exit_status);
 }

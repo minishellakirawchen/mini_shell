@@ -151,7 +151,7 @@ int	execute_command_line(t_info *info)
 	pid = fork();
 	if (pid == 0)
 	{
-		end_of_pipe_elem = get_last_elem(info->tree_root->right);
+		end_of_pipe_elem = get_last_node(info->tree_root->right);
 		//TODO: execute_handler()
 		execute_pipe_recursion(end_of_pipe_elem, info);
 	}

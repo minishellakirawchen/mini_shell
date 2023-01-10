@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 11:14:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 15:13:43 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,46 +40,33 @@ int	valid_redirection(const char **cmds)
 
 	idx = 0;
 	is_error = false;
-	printf("1\n");
-	printf("size:%zu\n", get_2d_array_size(cmds));
 	while (cmds[idx])
 	{
-		printf(" 2, cmds[%zu]:%s\n", idx, cmds[idx]);
 		if (cmds[idx][0] == CHR_REDIRECT_IN || cmds[idx][0] == CHR_REDIRECT_OUT)
 		{
-			printf("  3\n");
 			if (ft_strlen_ns(cmds[idx]) > 2 || !cmds[idx + 1])
 				is_error = true;
-			printf("  4\n");
 			// $> <>file はOKだが、めんどいので一旦errorにする
 			// 考慮する際には次の条件をコメントアウト、さらに次の条件を有効にすればOK
-			printf("  5\n");
 			if ((cmds[idx][0] == CHR_REDIRECT_IN || cmds[idx][0] == CHR_REDIRECT_OUT) \
 			&& (cmds[idx + 1] && (cmds[idx + 1][0] == CHR_REDIRECT_IN || cmds[idx + 1][0] == CHR_REDIRECT_OUT)))
 				is_error = true;
 //			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '>') \
 //			&& (!cmds[idx + 2] || (cmds[idx + 2] && (cmds[idx + 2][0] == '<' || cmds[idx + 2][0] == '>'))))
 //				is_error = true;
-			printf("  6\n");
 			if (cmds[idx][0] == CHR_REDIRECT_IN && (cmds[idx + 1] && cmds[idx + 1][0] == CHR_REDIRECT_IN))
 				is_error = true;
-			printf("  7\n");
-
 			if (cmds[idx][0] == CHR_REDIRECT_OUT \
 			&& (cmds[idx + 1] && (cmds[idx + 1][0] == CHR_REDIRECT_IN || cmds[idx + 1][0] == CHR_REDIRECT_OUT)))
 				is_error = true;
-			printf("  8\n");
-
 			if (is_error)
 			{
 				printf("minishell: syntax error near unexpected token `%s'\n", cmds[idx]);// TODO:STDERROR
 				return (FAILURE);
 			}
 		}
-		printf("9\n");
 		idx++;
 	}
-	printf("10\n");
 	return (SUCCESS);
 }
 

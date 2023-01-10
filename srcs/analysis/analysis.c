@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 11:28:12 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 15:15:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ int	analysis(t_info *info, char *readline_input)
 	//                             cmd1 = {"cmd11", "cmd12", "cmd13",.., NULL} -> ft_execvp(cmd1[0], cmd1, NULL)
 	//                             cmd2 = {"cmd21", "cmd22", "cmd23",.., NULL}
 	//
-	printf("#print tree\n");
+//	printf("#print tree\n");
 	debug_print_stack(info->tree_root, "check tree");
 
 //	add_command_leaf_to_node(&pipe_node, info->readline_input); //input: tmp

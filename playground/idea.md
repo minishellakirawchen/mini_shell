@@ -3,9 +3,27 @@
 char *readline_input = readline("minishell > ");
 
 $> minishell > hogehoge          -> input=[hogehoge]
-$> minishell > "playground   "         -> input=["playground   "]
+$> minishell > "playground   "   -> input=["playground   "]
 $> minishell > "hello " ' world '-> input=["hello " ' world ']
 ```
+
+# Expansion
+### わかっていない・曖昧なこと
+* varの定義 : manを確認する
+* $var=echo, $> $var hello -> echo hello ?
+
+### わかっていること
+* executionに渡す前に展開しておいた方が、取り扱いやすい
+
+
+### varの定義
+* name=value
+* value is optional
+* variable parameter : ^$[_a-zA-z][_a-zA-z0-9]
+* 
+
+<br>
+<br>
 
 # Analysis
 * |
@@ -13,10 +31,10 @@ $> minishell > "hello " ' world '-> input=["hello " ' world ']
 * ()
 * &&, ||
 
-### わからないこと
-* here_doc tmpfileの存在と削除の方法
+### わかっていない・曖昧なこと
+* bashの実装、より良い実装（一応できたっぽいが、改善点はたくさんあるはず）
 
-### わかっていること
+### わかっていること 
 * pipe単独であれば | で分割して、順番にfork, 実行すればOK
 * &&, ||はpipeの前段階で分割してグルーピングする -> もう一段階階層が必要か？ -> 木構造で対応できそう
 * () 実行時にForkして、その中で上記の実行をすれば良い、ただし実行順序の整合性は自信なし -> 木構造で対応できそう
@@ -25,6 +43,7 @@ $> minishell > "hello " ' world '-> input=["hello " ' world ']
 * 適切なparameterの持ち方 -> 木構造で対応できそう？
 * 実行方法と実行順序 -> 木構造で対応できそう
 * <,<<,>,>>がある時の処理の流れが曖昧？->実験結果より、整形できる
+* here_doc tmpfileの存在と削除の方法 -> tmpの作成等は特に調査せず。file deleteはunlinkで実装できた
 
 <br>
 <br> 

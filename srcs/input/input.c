@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 21:20:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 15:15:58 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,11 @@ int	prompt_loop(t_info	*info)
 
 		analysis(info, input_line);
 		expand_variable();
+
+		printf(" vvvvv Execution vvvvv\n");
 		exit_status = execute_command_line(info);
+		printf(" ^^^^^ Execution ^^^^^\n");
+
 		add_history(input_line);//where?
 		init_input(&info);
 		free(input_line);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 18:26:48 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 11:17:12 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 15:12:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ char **split_redirect_and_word_controller(const char **cmds)
 	size_t	size;
 
 	size = get_split_redirect_char_size(cmds);
-	printf("size:%zu\n", size);
 	splitted_cmds = split_redirect_and_word(cmds, size);
 	if (!splitted_cmds)
 		return (NULL);

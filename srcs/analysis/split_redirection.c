@@ -6,14 +6,14 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 18:26:48 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 08:43:13 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 11:17:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /* Prototype declaration */
-static int		assign_dest_to_splitted_src(char ***dest, const char *src, size_t *j);
+static int		split_src_with_redirect_sign(char ***dest, const char *src, size_t *j);
 static char		**split_redirect_and_word(const char **cmds_src, size_t size);
 static ssize_t	get_split_redirect_char_size(const char **cmds);
 
@@ -24,6 +24,7 @@ char **split_redirect_and_word_controller(const char **cmds)
 	size_t	size;
 
 	size = get_split_redirect_char_size(cmds);
+	printf("size:%zu\n", size);
 	splitted_cmds = split_redirect_and_word(cmds, size);
 	if (!splitted_cmds)
 		return (NULL);
@@ -31,7 +32,7 @@ char **split_redirect_and_word_controller(const char **cmds)
 }
 
 // "<", "<<", ">", ">>" の先頭側のsplit pointで分割する
-static int	assign_dest_to_splitted_src(char ***dest, const char *src, size_t *j)
+static int	split_src_with_redirect_sign(char ***dest, const char *src, size_t *j)
 {
 	size_t	head_idx;
 	size_t	word_size;
@@ -39,13 +40,13 @@ static int	assign_dest_to_splitted_src(char ***dest, const char *src, size_t *j)
 	head_idx = 0;
 	while (src[head_idx])
 	{
-		word_size = minsize(get_split_idx_by_chr(&src[head_idx], '<'), get_split_idx_by_chr(&src[head_idx], '>'));
+		word_size = minsize(get_split_idx_by_chr(&src[head_idx], CHR_REDIRECT_IN), \
+		get_split_idx_by_chr(&src[head_idx], CHR_REDIRECT_OUT));
 		(*dest)[*j] = ft_substr(src, head_idx, word_size);
 		if (!(*dest)[*j])
 		{
 			free_array(*dest);
-			perror("malloc");
-			return (FAILURE);
+			return (perror_and_return_int("malloc", FAILURE));
 		}
 		head_idx += word_size;
 		*j += 1;
@@ -66,7 +67,7 @@ static char	**split_redirect_and_word(const char **cmds_src, size_t size)
 	j = 0;
 	while (cmds_src[i])
 	{
-		if (assign_dest_to_splitted_src(&splitted_cmds, cmds_src[i], &j) == FAILURE)
+		if (split_src_with_redirect_sign(&splitted_cmds, cmds_src[i], &j) == FAILURE)
 			return (NULL);
 		i++;
 	}
@@ -85,13 +86,14 @@ static ssize_t	get_split_redirect_char_size(const char **cmds)
 	while (cmds[i])
 	{
 		cnt++;
-		if (count_chr_in_src(cmds[i], '<') != 0)
-			cnt += count_split_point_count_by_chr(cmds[i], '<');
-		if (count_chr_in_src(cmds[i], '>') != 0)
-			cnt += count_split_point_count_by_chr(cmds[i], '>');
+		if (count_chr_in_src(cmds[i], CHR_REDIRECT_IN) != 0)
+			cnt += count_split_point_count_by_chr(cmds[i], CHR_REDIRECT_IN);
+		if (count_chr_in_src(cmds[i], CHR_REDIRECT_OUT) != 0)
+			cnt += count_split_point_count_by_chr(cmds[i], CHR_REDIRECT_OUT);
 //		printf("cnt:%zu, cmd[i]:%s\n", cnt, cmds[i]);
 		i++;
 	}
 	return (cnt);
 }
 
+//TODO: "<<a", "|", "<<b" segv

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 22:07:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 10:47:05 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <readline/history.h>
 
 # include "./../libs/libft/libft.h"
+# include "./../libs/libgnl/get_next_line.h"
 # include "./../libs/libftprintf/ft_printf.h"
 
 /* func return value */
@@ -49,6 +50,7 @@
 /* string */
 # define	PATH				"PATH"
 # define	PWD					"PWD"
+
 # define 	PATH_DELIMITER		':'
 # define	ISSPACE				"\t\n\v\f\r "
 # define	SET_CHR				"\"'"
@@ -56,6 +58,17 @@
 # define	REDIRECT_OUT		">"
 # define	REDIRECT_HEREDOC	"<<"
 # define	REDIRECT_APPEND		">>"
+
+# define	CHR_REDIRECT_IN		'<'
+# define	CHR_REDIRECT_OUT	'>'
+# define	CHR_PIPE	'|'
+
+# define 	STR_PIPE			"|"
+# define 	STR_AND				"&&"
+# define 	STR_OR				"||"
+# define 	STR_SEMICOLON		";"
+
+# define	HEREDOC_TMP_FILE	".here_doc_tmp"
 
 
 /* ---------------- */
@@ -149,6 +162,7 @@ struct s_redirect_info
 	char 			**infiles;
 	char 			**outfiles;
 	char			**here_doc_limiters;
+	char 			*heredoc_file;
 	int				r_fd[3]; //in,out,heredoc
 };
 
@@ -242,6 +256,8 @@ int		execute_builtins(t_info *info, const char **cmds);
 int		handle_fd_for_redirection(t_redirect_info *redirect_info);
 int		openfile_and_heredoc_for_redirect(t_tree **root);
 
+/* execute_heredoc.c */
+int		execute_heredoc(int fd, const char *delimiter);
 /* ----------- */
 /*  expansion  */
 /* ----------- */

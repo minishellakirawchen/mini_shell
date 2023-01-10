@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 12:25:22 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 16:06:37 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 09:26:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ size_t	get_pipe_idx(char **cmds)
 	idx = 0;
 	while (cmds[idx])
 	{
-		if (is_same_str(cmds[idx], "|"))
+		if (is_same_str(cmds[idx], STR_PIPE))
 		{
 //			printf("same:cmds[%zu]:%s\n", idx, cmds[idx]);
 			return (idx);
@@ -50,7 +50,7 @@ size_t	count_pipe(char **cmds)
 	cnt = 0;
 	while (cmds[idx])
 	{
-		if (is_same_str(cmds[idx], "|"))
+		if (is_same_str(cmds[idx], STR_PIPE))
 			cnt++;
 		idx++;
 	}
@@ -103,6 +103,7 @@ int	create_tree(t_info **info)
 	if (!root_node)
 		return (perror_and_return_int("malloc", FAILURE)); // TODO:free
 	add_bottom_of_tree(&(*info)->tree_root, root_node);
+
 	// create pipe or shell node
 	pipe_node = create_tree_node(E_NODE_PIPE, NULL);
 	if (!pipe_node)
@@ -111,10 +112,17 @@ int	create_tree(t_info **info)
 		pipe_node->exe_type = E_NODE_SHELL;
 	add_bottom_of_tree(&(*info)->tree_root, pipe_node);
 
-	// new_nodeを使い回しても上書きされない？関数にcopyが渡されるから？ TODO:check
 	head_idx = 0;
 	while ((*info)->splitted_cmds[head_idx])
 	{
+
+		// splitted_cmds = {"cat", "Makefile", "|", "echo", "hello", NULL}
+		//                                      ^ size = 3
+		// cmd_line      = {"cat", "Makefile", NULL}
+		//   ↓ next
+		// splitted_cmds = {"echo", "hello", NULL}
+		//                                     ^ size = 3
+		// cmd_line      = {"echo", "hello", NULL}
 		size = get_pipe_idx(&(*info)->splitted_cmds[head_idx]);
 		cmd_line = get_dup_cmds((*info)->splitted_cmds, head_idx, size);
 		if (!cmd_line)
@@ -126,8 +134,9 @@ int	create_tree(t_info **info)
 		if (!cmd_node)
 			return (perror_and_return_int("malloc", FAILURE)); // TODO:free
 		add_bottom_of_tree(&(*info)->tree_root, cmd_node);
+
 		head_idx += size;
-		if (is_same_str((*info)->splitted_cmds[head_idx], "|"))
+		if (is_same_str((*info)->splitted_cmds[head_idx], STR_PIPE))
 			head_idx++;
 	}
 	return (SUCCESS);

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 22:09:12 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 10:59:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,9 @@ int	handle_fd_for_redirection(t_redirect_info *redirect_info)
 			return (perror_and_return_int("dup2", FAILURE));
 		if (close(redirect_info->r_fd[FD_IDX_HEREDOC]) < 0)
 			return (perror_and_return_int("close", FAILURE));
+//		printf("handler heredoc_file:%s\n", redirect_info->heredoc_file);
+		if (unlink(redirect_info->heredoc_file) < 0)
+			return (perror_and_return_int("unlink", FAILURE));
 	}
 	return (SUCCESS);
 }

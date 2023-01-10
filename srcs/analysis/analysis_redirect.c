@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 21:04:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 11:14:00 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,31 +40,46 @@ int	valid_redirection(const char **cmds)
 
 	idx = 0;
 	is_error = false;
+	printf("1\n");
+	printf("size:%zu\n", get_2d_array_size(cmds));
 	while (cmds[idx])
 	{
-		if (cmds[idx][0] == '<' || cmds[idx][0] == '>')
+		printf(" 2, cmds[%zu]:%s\n", idx, cmds[idx]);
+		if (cmds[idx][0] == CHR_REDIRECT_IN || cmds[idx][0] == CHR_REDIRECT_OUT)
 		{
+			printf("  3\n");
 			if (ft_strlen_ns(cmds[idx]) > 2 || !cmds[idx + 1])
 				is_error = true;
+			printf("  4\n");
 			// $> <>file はOKだが、めんどいので一旦errorにする
 			// 考慮する際には次の条件をコメントアウト、さらに次の条件を有効にすればOK
-			if ((cmds[idx][0] == '<' || cmds[idx][0] == '>') && (cmds[idx + 1] && (cmds[idx + 1][0] == '<' || cmds[idx + 1][0] == '>')))
+			printf("  5\n");
+			if ((cmds[idx][0] == CHR_REDIRECT_IN || cmds[idx][0] == CHR_REDIRECT_OUT) \
+			&& (cmds[idx + 1] && (cmds[idx + 1][0] == CHR_REDIRECT_IN || cmds[idx + 1][0] == CHR_REDIRECT_OUT)))
 				is_error = true;
 //			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '>') \
 //			&& (!cmds[idx + 2] || (cmds[idx + 2] && (cmds[idx + 2][0] == '<' || cmds[idx + 2][0] == '>'))))
 //				is_error = true;
-			if (cmds[idx][0] == '<' && (cmds[idx + 1] && cmds[idx + 1][0] == '<'))
+			printf("  6\n");
+			if (cmds[idx][0] == CHR_REDIRECT_IN && (cmds[idx + 1] && cmds[idx + 1][0] == CHR_REDIRECT_IN))
 				is_error = true;
-			if (cmds[idx][0] == '>' && (cmds[idx + 1] && (cmds[idx + 1][0] == '<' || cmds[idx + 1][0] == '>')))
+			printf("  7\n");
+
+			if (cmds[idx][0] == CHR_REDIRECT_OUT \
+			&& (cmds[idx + 1] && (cmds[idx + 1][0] == CHR_REDIRECT_IN || cmds[idx + 1][0] == CHR_REDIRECT_OUT)))
 				is_error = true;
+			printf("  8\n");
+
 			if (is_error)
 			{
 				printf("minishell: syntax error near unexpected token `%s'\n", cmds[idx]);// TODO:STDERROR
 				return (FAILURE);
 			}
 		}
+		printf("9\n");
 		idx++;
 	}
+	printf("10\n");
 	return (SUCCESS);
 }
 
@@ -132,9 +147,8 @@ int	set_redirect_in(t_redirect_info **info, const char *infile)
 	(*info)->infiles = update_files((*info)->infiles, infile);
 	if (!(*info)->infiles)
 	{
-		perror("malloc");
 		free_redirect_info(&(*info));
-		return (FAILURE);
+		return (perror_and_return_int("malloc", FAILURE));
 	}
 	return (SUCCESS);
 }
@@ -145,10 +159,11 @@ int	set_redirect_heredoc(t_redirect_info **info, const char *delimiter)
 	(*info)->here_doc_limiters = update_files((*info)->here_doc_limiters, delimiter);
 	if (!(*info)->here_doc_limiters)
 	{
-		perror("malloc");
 		free_redirect_info(&(*info));
-		return (FAILURE);
+		return (perror_and_return_int("malloc", FAILURE));
 	}
+	// TODO:exec_here_doc (1);; 1 or 2 ?
+	// TODO: delete tmpfile
 	return (SUCCESS);
 }
 
@@ -158,9 +173,8 @@ int	set_redirect_out(t_redirect_info **info, const char *outfile)
 	(*info)->outfiles = update_files((*info)->outfiles, outfile);
 	if (!(*info)->outfiles)
 	{
-		perror("malloc");
 		free_redirect_info(&(*info));
-		return (FAILURE);
+		return (perror_and_return_int("malloc", FAILURE));
 	}
 	return (SUCCESS);
 }
@@ -172,9 +186,8 @@ int	set_redirect_append(t_redirect_info **info, const char *outfile)
 	(*info)->outfiles = update_files((*info)->outfiles, outfile);
 	if (!(*info)->outfiles)
 	{
-		perror("malloc");
 		free_redirect_info(&(*info));
-		return (FAILURE);
+		return (perror_and_return_int("malloc", FAILURE));
 	}
 	return (SUCCESS);
 }
@@ -192,6 +205,7 @@ t_redirect_info	*get_redirection_info(const char **cmds)
 	info->infiles = NULL;
 	info->outfiles = NULL;
 	info->here_doc_limiters = NULL;
+	info->heredoc_file = NULL;
 	idx = 0;
 	while (cmds[idx])
 	{

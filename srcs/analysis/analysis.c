@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 20:41:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 11:28:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int	analysis(t_info *info, char *readline_input)
 	}
 	debug_print_2d_arr(info->splitted_cmds, "pipe_splitted    ");
 
+
 	// split redirect sign
 	info->splitted_cmds = split_redirect_and_word_controller((const char **)info->splitted_cmds);
 	if (!info->splitted_cmds)
@@ -82,6 +83,7 @@ int	analysis(t_info *info, char *readline_input)
 	// valid redirect sign
 
 	// * syntax error : {"cat", "Makefile", "<", "file", ">>>", "", "", "<", "<" NULL}
+	//
 	//                                                     ^ >x3              ^ continues, no file
 	if (valid_redirection((const char **)info->splitted_cmds) == FAILURE)
 		return (SYNTAX_ERROR);
@@ -103,8 +105,9 @@ int	analysis(t_info *info, char *readline_input)
 	//     |_______ .... _
 	//     |     |       |
 	//   [cmd1][cmd2]  [cmdn]  <- command leaf (execute args)
-	//                             **args = {"cmd1", "cmd2", .., "cmdn", NULL}
-	//                             -> ft_execvp(args[0], args, NULL)
+	//                             cmd1 = {"cmd11", "cmd12", "cmd13",.., NULL} -> ft_execvp(cmd1[0], cmd1, NULL)
+	//                             cmd2 = {"cmd21", "cmd22", "cmd23",.., NULL}
+	//
 	printf("#print tree\n");
 	debug_print_stack(info->tree_root, "check tree");
 

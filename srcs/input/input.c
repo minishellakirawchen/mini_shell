@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 15:54:08 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 21:50:43 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	prompt_loop(t_info	*info)
 		printf("input            :[%s]\n", input_line);
 		analysis(info, input_line);//TODO cmd op重複も解析、削除するか？
 		expansion(info);
-
+		arrange_command_line(info);
 		printf(" vvvvv Execution vvvvv\n"); // tmp
 		exit_status = execute_command_line(info);
 		printf(" ^^^^^ Execution ^^^^^\n"); // tmp

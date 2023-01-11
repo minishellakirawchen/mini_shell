@@ -99,12 +99,12 @@ int	analysis(t_info *info, char *readline_input)
 
 	// check tree
 	//
-	//   [root]              <- root node
+	//   [root]                 <- root node
 	//     |
-	//   [pipe]              <- pipe node (explain execute stage)
+	//   [pipe]                 <- pipe node (explain execute stage)
 	//     |_______ .... _
 	//     |     |       |
-	//   [cmd1][cmd2]  [cmdn]  <- command leaf (execute args)
+	//   [cmd1] [cmd2]  [cmdn]  <- command leaf (execute args)
 	//                             cmd1 = {"cmd11", "cmd12", "cmd13",.., NULL} -> ft_execvp(cmd1[0], cmd1, NULL)
 	//                             cmd2 = {"cmd21", "cmd22", "cmd23",.., NULL}    execve("echo", {"echo", "hello", "world", NULL}, NULL)
 	//

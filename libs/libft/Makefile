@@ -62,6 +62,8 @@ SRCS		= ft_strlen.c \
 				ft_lstmap.c \
 				ft_math.c \
               	ft_isspace.c \
+              	ft_isupper.c \
+              	ft_islower.c \
 
 OBJS		= $(SRCS:.c=.o)
 

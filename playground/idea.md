@@ -106,8 +106,21 @@ bash-3.2$ cd ."$testpath1" && pwd // /Users/akira/Documents/Programming/CLionPro
 bash-3.2$ cd .'$testpath1'        // bash: cd: .$testpath1: No such file or directory
 // cd はechoと同じ
 
+
+
 ````
 
+
+## arrange command option
+```c
+
+bash-3.2$ echo -h test //-h test
+bash-3.2$ echo -nnn-n-n test //-nnn-n-n test
+bash-3.2$ echo -nnn -n-n test
+
+
+
+```
 
 <br>
 <br>

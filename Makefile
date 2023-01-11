@@ -32,6 +32,7 @@ SRC		= main.c \
 		  analysis/tokenize.c \
 		  analysis/create_tree.c \
 		  expansion/expand_variable.c \
+		  expansion/arrangement_command_line.c \
 		  execution/execute.c \
 		  execution/execute_builtin.c \
 		  execution/execute_redirect.c \

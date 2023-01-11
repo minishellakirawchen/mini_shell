@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 15:15:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 18:14:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,16 @@ int	prompt_loop(t_info	*info)
 		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
 		//		rewrite prompt
 		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+		//TODO: is necessary clear history?
+		printf("input            :[%s]\n", input_line);
+		analysis(info, input_line);//TODO cmd op重複も解析、削除するか？
+		expansion(info);
 
-		analysis(info, input_line);
-		expand_variable();
-
-		printf(" vvvvv Execution vvvvv\n");
+		printf(" vvvvv Execution vvvvv\n"); // tmp
 		exit_status = execute_command_line(info);
-		printf(" ^^^^^ Execution ^^^^^\n");
+		printf(" ^^^^^ Execution ^^^^^\n"); // tmp
 
-		add_history(input_line);//where?
+		add_history(input_line);//tmp
 		init_input(&info);
 		free(input_line);
 	}

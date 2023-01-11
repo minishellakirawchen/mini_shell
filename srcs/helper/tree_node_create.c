@@ -83,7 +83,7 @@ char	**update_cmds(const char **cmds)
 		if (!update_cmds[dst_idx])
 		{
 			free_2d_array_ret_nullptr((void ***)&update_cmds);
-			return (perror_and_ret_nullptr("malloc"));
+			return (perror_and_return_nullptr("malloc"));
 		}
 		src_idx++;
 		dst_idx++;
@@ -97,7 +97,7 @@ t_tree	*create_tree_node(t_exe_type type, const char **cmds)
 
 	new_node = (t_tree *)malloc(sizeof(t_tree));
 	if (!new_node)
-		return (perror_and_ret_nullptr("malloc"));
+		return (perror_and_return_nullptr("malloc"));
 	new_node->exe_type = type;
 	new_node->prev = NULL;
 	new_node->next = NULL;

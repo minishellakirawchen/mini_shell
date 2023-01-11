@@ -51,7 +51,7 @@ void	debug_print_stack(t_tree *root, char *str)
 			ft_printf(" [pipe]\n");
 			ft_printf("  |    \n");
 		}
-		else if (tree->exe_type == E_NODE_SHELL)
+		else if (tree->exe_type == E_NODE_NO_PIPE)
 		{
 			ft_printf(" [shell]\n");
 			ft_printf("  |    \n");

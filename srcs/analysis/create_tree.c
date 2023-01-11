@@ -71,7 +71,7 @@ char **get_dup_cmds(char **src, size_t start_idx, size_t size)
 		return (NULL);
 	line = (char **)ft_calloc(sizeof(char *), size + 1);
 	if (!line)
-		return ((char **)perror_and_ret_nullptr("malloc"));
+		return ((char **) perror_and_return_nullptr("malloc"));
 	i = 0;
 	while (i < size)
 	{
@@ -79,7 +79,7 @@ char **get_dup_cmds(char **src, size_t start_idx, size_t size)
 		if (!line[i])
 		{
 			free_2d_array_ret_nullptr((void ***)&line);
-			return (perror_and_ret_nullptr("malloc"));
+			return (perror_and_return_nullptr("malloc"));
 		}
 		i++;
 	}
@@ -109,7 +109,7 @@ int	create_tree(t_info **info)
 	if (!pipe_node)
 		return (perror_and_return_int("malloc", FAILURE)); // TODO:free
 	if (count_pipe((*info)->splitted_cmds) == 0)
-		pipe_node->exe_type = E_NODE_SHELL;
+		pipe_node->exe_type = E_NODE_NO_PIPE;
 	add_bottom_of_tree(&(*info)->tree_root, pipe_node);
 
 	head_idx = 0;

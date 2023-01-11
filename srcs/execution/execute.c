@@ -6,12 +6,15 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 10:59:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 21:31:05 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// PATH: "/bin", "/bin/usr", ...
+// -> /bin/ls, /bin/usr/ls, を試していく
+// 成功したらok(exit), 失敗したら次のpathを試す
 char	*get_execute_path(char *path, char *file)
 {
 	char			*execute_path;
@@ -25,7 +28,7 @@ char	*get_execute_path(char *path, char *file)
 	len++;
 	execute_path = (char *)ft_calloc(sizeof(char), len);
 	if (!execute_path)
-		return (perror_and_ret_nullptr("malloc"));
+		return (perror_and_return_nullptr("malloc"));
 	ft_strlcat(execute_path, path, len);
 	if (path_len > 0 && path[path_len - 1] != '/')
 		ft_strlcat(execute_path, "/", len);
@@ -41,7 +44,7 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 	size_t		idx;
 	char 		*path;
 
-	splitted_paths = ft_split(env_paths, PATH_DELIMITER);
+	splitted_paths = ft_split(env_paths, CHA_PATH_DELIM);
 	if (!splitted_paths)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));
 //	debug_print_2d_arr(splitted_paths, "splitted_paths"); // check
@@ -58,6 +61,11 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 	free_array(splitted_paths);
 	return (CMD_NOT_FOUND);
 }
+
+// cmd1                |            cmd2
+// child                            parent
+// stdout->[->write   pipe  read->]->stdin
+//
 
 int	close_fd_for_child(int pipe_fd[2])
 {
@@ -92,23 +100,23 @@ int	handle_fd_for_redirection(t_redirect_info *redirect_info)
 		return (FAILURE);
 	if (redirect_info->ouput_to == E_REDIRECT_OUT || redirect_info->ouput_to == E_REDIRECT_APPEND)
 	{
-		if (dup2(redirect_info->r_fd[FD_IDX_OUTFILE], STDOUT_FILENO) < 0)
+		if (dup2(redirect_info->r_fd[R_FD_OUTFILE], STDOUT_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->r_fd[FD_IDX_OUTFILE]) < 0)
+		if (close(redirect_info->r_fd[R_FD_OUTFILE]) < 0)
 			return (perror_and_return_int("close", FAILURE));
 	}
 	if (redirect_info->input_from == E_REDIRECT_IN)
 	{
-		if (dup2(redirect_info->r_fd[FD_IDX_INFILE], STDIN_FILENO) < 0)
+		if (dup2(redirect_info->r_fd[R_FD_INFILE], STDIN_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->r_fd[FD_IDX_INFILE]) < 0)
+		if (close(redirect_info->r_fd[R_FD_INFILE]) < 0)
 			return (perror_and_return_int("close", FAILURE));
 	}
 	else if (redirect_info->input_from == E_HERE_DOC)
 	{
-		if (dup2(redirect_info->r_fd[FD_IDX_HEREDOC], STDIN_FILENO) < 0)
+		if (dup2(redirect_info->r_fd[R_FD_HEREDOC], STDIN_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->r_fd[FD_IDX_HEREDOC]) < 0)
+		if (close(redirect_info->r_fd[R_FD_HEREDOC]) < 0)
 			return (perror_and_return_int("close", FAILURE));
 //		printf("handler heredoc_file:%s\n", redirect_info->heredoc_file);
 		if (unlink(redirect_info->heredoc_file) < 0)
@@ -117,13 +125,13 @@ int	handle_fd_for_redirection(t_redirect_info *redirect_info)
 	return (SUCCESS);
 }
 
-//  <- LEFT             RIGHT ->
+//  <- Prev             next ->
 // cmd1 | cmd2 |..|cmdn-1| cmdn
 // childn   ...    child2  child1
 //   out->in  ->       out->in
 int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
 {
-//	extern char	**environ;　// env更新必要？envが必要なcommandが実行されなければexecve(hoge, hoge, NULL)で良い getenvくらい？
+//	extern char	**environ;// env更新必要？envが必要なcommandが実行されなければexecve(hoge, hoge, NULL)で良い getenvくらい？
 	pid_t		pid;
 	int			pipe_fd[2];
 
@@ -179,8 +187,8 @@ int execute_handler()
 
 int	is_node_shell_and_builtins(t_tree *node)
 {
-	return (node && node->exe_type == E_NODE_SHELL && node->next \
-	&& node->next->cmds && is_builtins((const char **)node->next->cmds));
+	return (node && node->exe_type == E_NODE_NO_PIPE && node->next \
+ && node->next->cmds && is_builtins((const char **)node->next->cmds));
 }
 
 // rootから連結nodeを見ていき、各redirect_infoに応じたfd操作を実施
@@ -195,12 +203,12 @@ int	execute_command_line(t_info *info)
 	int		status;
 
 	//type=shell(no pipe, only one command)
-	//  cd     -> must NOT fork to reflect working dir
-	//  others -> must fork     to exit execute process, but ft_builtins doesn't matter
+	//  cd     -> must NOT fork to reflect working dir and ft_builtins doesn't matter
+	//  others -> must fork     to exit execute process
 	if (!info || !info->tree_root || !info->tree_root->next)
 		return (EXIT_FAILURE);
 
-	if (openfile_and_heredoc_for_redirect(&info->tree_root) == FAILURE)
+	if (execute_redirect(&info->tree_root) == FAILURE)
 		return (EXIT_FAILURE);
 
 	// shell(do not pipe) && builtins
@@ -212,7 +220,7 @@ int	execute_command_line(t_info *info)
 	if (pid < 0)
 		return (perror_and_return_int("fork", EXIT_FAILURE));
 	end_of_pipe_leaf = get_last_node(info->tree_root->next);
-	if (pid == 0)
+	if (pid == CHILD_PROCESS)
 		execute_pipe_recursion(end_of_pipe_leaf, info);
 	//TODO: check wait operation
 	i = 0;

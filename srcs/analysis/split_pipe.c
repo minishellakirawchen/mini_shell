@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 08:36:40 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 10:28:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 15:30:00 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 static char		**split_pipe_and_word(const char *src, size_t size);
 static size_t	get_split_set_size(const char *str,  const char *set);
 
-// input [  | echo hello | cat Makefile || echo "foo | bar" |]
-// split {|,echo,hello,|,cat,Makefile,||,echo "foo | bar",|, NULL}
+// char *input="  | echo hello | cat Makefile || echo "foo | bar" |";
+// char **split {"|",echo,hello,|,cat,Makefile,||,echo "foo | bar",|, NULL}
 
 /* Function */
 char **split_pipe_and_word_controller(const char *readline_input)
 {
 	char	**splitted_cmds;
 	size_t	size;
-
-	size = get_split_set_size(readline_input, SET_CHR);
+	//TODO: unclosed "", '' -> Error
+	size = get_split_set_size(readline_input, SET_CHARS);
 	splitted_cmds = split_pipe_and_word(readline_input, size);
 	if (!splitted_cmds)
 		return (NULL);
@@ -60,7 +60,7 @@ static size_t	get_split_set_size(const char *str,  const char *set)
 			setchr = ft_strchr(set, str[idx]);
 			idx++;
 			// setを抜けるまでインクリメント
-			// [  echo hello | echo "foo | bar |"], [  " text "||| foo]
+			// [  echo hello | echo "foo | bar |"], [  " text|||foo]
 			//    ^                                            ^
 			while (str[idx] && str[idx] != setchr[0])
 				idx++;
@@ -141,19 +141,19 @@ static char	**split_pipe_and_word(const char *src, size_t size)
 
 	splitted_cmds = (char **)ft_calloc(sizeof(char *), size + 1);
 	if (!splitted_cmds)
-		return ((char **) perror_and_ret_nullptr("malloc"));
+		return ((char **) perror_and_return_nullptr("malloc"));
 	cmds_idx = 0;
 	head_idx = 0;
 	while (cmds_idx < size)
 	{
 		while (src[head_idx] && ft_isspace(src[head_idx]))
 			head_idx++;
-		word_size = get_word_size(&src[head_idx], SET_CHR);
+		word_size = get_word_size(&src[head_idx], SET_CHARS);
 		splitted_cmds[cmds_idx] = ft_substr(src, head_idx, word_size);
 		if (!splitted_cmds[cmds_idx])
 		{
 			free_2d_array_ret_nullptr((void ***)&splitted_cmds);
-			return ((char **)perror_and_ret_nullptr("malloc"));
+			return ((char **) perror_and_return_nullptr("malloc"));
 		}
 		head_idx += word_size;
 		cmds_idx++;

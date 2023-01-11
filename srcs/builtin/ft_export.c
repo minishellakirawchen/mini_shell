@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 19:07:14 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 22:45:23 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 
 // TODO: input "key=value" -> separate to key, value
 //             "key+=value"
+
+// TODO: is name=value ??
 
 // input: {export, key=value, hoge, hoge, ..., NULL}
 int ft_export(t_info *info, const char **cmds)

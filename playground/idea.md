@@ -20,7 +20,94 @@ $> minishell > "hello " ' world '-> input=["hello " ' world ']
 * name=value
 * value is optional
 * variable parameter : ^$[_a-zA-z][_a-zA-z0-9]
-* 
+
+* $'\string'
+  * a: alert
+  * b: backspace
+  * e: escape character ??
+  * f: form feed ??
+  * n: new line
+  * r: carriage return
+  * t: horizontal tab
+  * v: vertical tab
+  * \: backslash
+  * ': single quote
+  * nnn: octal value nnn 1-3digits
+  * xHH: hexadecimal value HH 1-2digits
+  * cx: control-x character
+
+
+````c
+bash-3.2$ export test=echo
+bash-3.2$ $test hello           //hello
+bash-3.2$ $test -n hello        //hellobash-3.2$ $test hello
+bash-3.2$ "$test" hello         //hello
+bash-3.2$ echo "$test" hello    //echo hello
+bash-3.2$ "$test" -n hello      //hellobash-3.2$
+
+bash-3.2$ export test2=ech
+bash-3.2$ $test2 hello           //bash: ech: command not found
+bash-3.2$ $test2 o hello         //bash: ech: command not found
+bash-3.2$ "$test2"o hello       //hello
+bash-3.2$ "$test2"o -n hello    //hellobash-3.2$ 
+
+bash-3.2$ test=ch
+bash-3.2$ echo $test            //ch
+bash-3.2$ echo e$test o         //ech o
+bash-3.2$ echo e $test o        //e ch o
+bash-3.2$ echo e"$test"o        //echo
+bash-3.2$ echo e"$test"o hello  //echo hello
+bash-3.2$ e"$test"o hello       //hello
+bash-3.2$ e"$test"o -n hello    //hellobash-3.2$ 
+
+bash-3.2$ echo $test1 $test2 $test3                   //TEST1 TEST2 TEST3
+bash-3.2$ echo $test1$test2$test3                     //TEST1TEST2TEST3
+bash-3.2$ echo "$test1" '$test2' "$test3"             //TEST1 $test2 TEST3 *''は展開されない
+bash-3.2$ echo "$test1"'$test2'"$test3"               //TEST1$test2TEST3
+bash-3.2$ echo "hoge$test1"'hoge$test2'"hoge$test3"   //hogeTEST1hoge$test2hogeTEST3
+bash-3.2$ echo "hoge$test1" 'hoge$test2 '"hoge$test3" // hogeTEST1 hoge$test2 hogeTEST3
+bash-3.2$ echo "hello" world"goodbye" 'good'morning   //hello worldgoodbye goodmorning
+
+bash-3.2$ echo test$test1       //testTEST1
+bash-3.2$ echo test $test1      //test TEST1
+
+bash-3.2$ echo 'test "$test1"'  //test "$test1"
+bash-3.2$ echo "test '$test1'"  //test 'TEST1
+
+bash-3.2$ cat << end
+> $test     //ch
+> "$test"   //"ch"
+> e$testo   //e
+> e$test o  //ech o
+> e"$test"o //e"ch"o
+> end
+
+bash-3.2$ cat << end
+> "$test1"  //"TEST1"
+> '$test1'  //'TEST1'
+> end
+
+
+// echoとhere_docで展開後の""の有無が変わる...?
+// 展開方法の差異はexpansion後のarrange partで実行しようか...
+// echo, here_docで''内部の展開がそもそも異なる どうする...??
+
+// here_docはhere_doc実行時にheredoc用のexpansionを実行しよう
+// TODO: heredoc vs others かどうかをチェックする
+// 展開に関係ありそうな部分は、echo, export, unset, cd?
+
+
+bash-3.2$ testpath1=.
+bash-3.2$ echo $testpath1         //.
+bash-3.2$ pwd                     // /Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell/minishell
+bash-3.2$ cd $testpath1 && pwd    // /Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell/minishell
+bash-3.2$ cd .$testpath1 && pwd   // /Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell
+bash-3.2$ cd ."$testpath1" && pwd // /Users/akira/Documents/Programming/CLionProjects/42/42cursus
+bash-3.2$ cd .'$testpath1'        // bash: cd: .$testpath1: No such file or directory
+// cd はechoと同じ
+
+````
+
 
 <br>
 <br>

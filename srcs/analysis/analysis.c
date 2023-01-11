@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 15:15:07 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/10 18:42:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ int	analysis(t_info *info, char *readline_input)
 		return (FAILURE);
 
 	// split input by before or after of '|'
-	// * input [echo hello |grep a| echo "hello | world" > out]
-	// * split {"echo", "hello", "|", "grep", "a", "|", "echo", "hello", "|", "world", ">", "out", NULL}
+	// * input [echo hello |grep a| echo "hello | world" >out]
+	// * split {"echo", "hello", "|", "grep", "a", "|", "echo", "hello", "|", "world", ">out", NULL}
 	info->splitted_cmds = split_pipe_and_word_controller(readline_input);
 	if (!info->splitted_cmds)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));
@@ -106,7 +106,7 @@ int	analysis(t_info *info, char *readline_input)
 	//     |     |       |
 	//   [cmd1][cmd2]  [cmdn]  <- command leaf (execute args)
 	//                             cmd1 = {"cmd11", "cmd12", "cmd13",.., NULL} -> ft_execvp(cmd1[0], cmd1, NULL)
-	//                             cmd2 = {"cmd21", "cmd22", "cmd23",.., NULL}
+	//                             cmd2 = {"cmd21", "cmd22", "cmd23",.., NULL}    execve("echo", {"echo", "hello", "world", NULL}, NULL)
 	//
 //	printf("#print tree\n");
 	debug_print_stack(info->tree_root, "check tree");

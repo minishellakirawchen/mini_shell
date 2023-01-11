@@ -25,7 +25,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 		return (move_to);
 	trimmed_move_to = ft_strtrim(move_to, "/"); // /bin + hoge/ -> /bin + hoge
 	if (!trimmed_move_to)
-		return ((char *)perror_and_ret_nullptr("malloc"));
+		return ((char *) perror_and_return_nullptr("malloc"));
 	move_to_len = ft_strlen_ns(trimmed_move_to);
 	new_path = (char *)ft_calloc(sizeof(char), current_len + move_to_len + 2);
 	if (!new_path)

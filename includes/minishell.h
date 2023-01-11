@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 21:36:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 23:48:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,9 @@
 # define STR_OR				"||"
 # define STR_SEMICOLON		";"
 
-# define CHR_CMD_OPTION_FLG	'-'
+# define CHR_CMD_OPTION_FLG		'-'
+# define STR_CMD_ECHO_OPTIONS	"n"
+
 # define ALPHABET_CNT			26
 
 /* ---------------- */
@@ -272,6 +274,7 @@ int		execute_heredoc(int fd, const char *delimiter);
 // expansion.c
 int		expansion(t_info *info);
 int		arrange_command_line(t_info *info);
+char	**create_arranged_cmds_controller(char **src, const char *options);
 
 
 /* ------ */

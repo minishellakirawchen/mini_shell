@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 19:15:40 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 22:56:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 23:58:43 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 // cmd -xxxxx -x -y -x hoge, cmd -xxx-yyy
 //  op ^^^^^^ ^^ ^^ ^^           ^^^^^^^^ NOT option
 
-bool	is_option_str(const char *str)
+bool	is_option_str(const char *str, const char *options)
 {
 	size_t	idx;
 
@@ -43,7 +43,7 @@ bool	is_option_str(const char *str)
 	idx = 1;
 	while (str[idx])
 	{
-		if (!ft_isalpha(str[idx]))
+		if (ft_strchr(options, str[idx]) == NULL)
 			return (false);
 		idx++;
 	}
@@ -75,14 +75,10 @@ void	count_cmd_options(int **option_cnt_arr, const char *option_str)
 	}
 }
 
-// option_str = "-[a-zA-Z]"
-char	*create_option_str(const int *cnt_arr)
+size_t	count_option_aplhabets(const int *cnt_arr)
 {
-	char	*option_str;
 	int		cnt_idx;
 	size_t	size;
-	size_t	str_idx;
-	char	chr;
 
 	cnt_idx = 0;
 	size = 0;
@@ -92,34 +88,54 @@ char	*create_option_str(const int *cnt_arr)
 			size++;
 		cnt_idx++;
 	}
-	if (size == 0)
-		return (NULL);
-	option_str = (char *)malloc(sizeof(char) * (size + 2));
-	if (!option_str)
-		return (perror_and_return_nullptr("malloc"));
-	option_str[0] = CHR_CMD_OPTION_FLG;
-	option_str[size + 1] = '\0';
+	return (size);
+}
+
+void	add_option_alphabet_to_str(char **str, const int *cnt_arr, size_t strsize)
+{
+	int		cnt_idx;
+	size_t	str_idx;
+	char	chr;
+
+	if (!str || !*str)
+		return ;
+	(*str)[0] = CHR_CMD_OPTION_FLG;
+	(*str)[strsize + 1] = '\0';
 	cnt_idx = 0;
 	str_idx = 1;
-	while (size)
+	while (strsize)
 	{
 		if (cnt_arr[cnt_idx] > 0)
 		{
 			chr = (char)(cnt_idx + 'a');
 			if (cnt_idx >= ALPHABET_CNT)
 				chr = ft_toupper(chr);
-			printf("chr:%c, cnt:%d\n", chr, cnt_arr[cnt_idx]);
-			option_str[str_idx] = chr;
-			size--;
+			(*str)[str_idx] = chr;
+			strsize--;
 			str_idx++;
 		}
 		cnt_idx++;
 	}
-	printf("option str:%s\n", option_str);
+}
+
+// option_str = "-[a-zA-Z]"
+// option echo -n なので nだけ対応する
+char	*create_option_str(const int *cnt_arr)
+{
+	char	*option_str;
+	size_t	size;
+
+	size = count_option_aplhabets(cnt_arr);
+	if (size == 0)
+		return (NULL);
+	option_str = (char *)malloc(sizeof(char) * (size + 2));
+	if (!option_str)
+		return (perror_and_return_nullptr("malloc"));
+	add_option_alphabet_to_str(&option_str, cnt_arr, size);
 	return (option_str);
 }
 
-ssize_t	get_option_count(int **cnt_arr, const char **src)
+ssize_t	get_option_count(int **cnt_arr, const char **src, const char *options)
 {
 	ssize_t	cnt;
 	size_t	idx;
@@ -128,7 +144,7 @@ ssize_t	get_option_count(int **cnt_arr, const char **src)
 		return (-1);
 	idx = 1;
 	cnt = 0;
-	while (src[idx] && is_option_str(src[idx]))
+	while (src[idx] && is_option_str(src[idx], options))
 	{
 		cnt++;
 		count_cmd_options(cnt_arr, src[idx]);
@@ -139,8 +155,9 @@ ssize_t	get_option_count(int **cnt_arr, const char **src)
 }
 
 
-// echo -a -b -c hoge option:3
-//
+// echo -a -b -c hoge   option:3
+// echo -nnnnn hoge     option:1
+
 char	**create_arranged_cmds(char **src, ssize_t option_str_cnt, int *cnt_arr)
 {
 	size_t			src_idx;
@@ -153,42 +170,26 @@ char	**create_arranged_cmds(char **src, ssize_t option_str_cnt, int *cnt_arr)
 		return (perror_and_return_nullptr("malloc"));
 	src_idx = 0;
 	dst_idx = 0;
-
-	arranged_cmds[dst_idx] = ft_strdup_ns(src[src_idx]);
-	if (!arranged_cmds[dst_idx])
-	{
-		free_2d_array_ret_nullptr((void ***)&arranged_cmds);
-		return (perror_and_return_nullptr("malloc"));
-	}
-
-	dst_idx++;
-	src_idx++;
-
-	arranged_cmds[dst_idx] = create_option_str(cnt_arr);
-	printf("option:%s, option cnt:%zu\n", arranged_cmds[dst_idx], option_str_cnt);
-	if (!arranged_cmds[dst_idx])
-	{
-		free_2d_array_ret_nullptr((void ***)&arranged_cmds);
-		return (perror_and_return_nullptr("malloc"));
-	}
-	dst_idx++;
-
-	src_idx += option_str_cnt;
 	while (src[src_idx])
 	{
-		arranged_cmds[dst_idx] = ft_strdup_ns(src[src_idx]);
+		if (dst_idx == 1)
+			arranged_cmds[dst_idx] = create_option_str(cnt_arr);
+		else
+			arranged_cmds[dst_idx] = ft_strdup_ns(src[src_idx]);
 		if (!arranged_cmds[dst_idx])
 		{
 			free_2d_array_ret_nullptr((void ***)&arranged_cmds);
 			return (perror_and_return_nullptr("malloc"));
 		}
+		if (dst_idx == 1)
+			src_idx += (option_str_cnt - 1);
 		src_idx++;
 		dst_idx++;
 	}
 	return (arranged_cmds);
 }
 
-char **arranged_cmds(char **src)
+char **create_arranged_cmds_controller(char **src, const char *options)
 {
 	char			**arranged_cmds;
 	int				*option_cnt_arr;
@@ -196,32 +197,25 @@ char **arranged_cmds(char **src)
 
 	if (!src || !*src)
 		return (NULL);
-	printf("1\n");
 	option_cnt_arr = (int *)ft_calloc(sizeof(int), ALPHABET_CNT * 2);
 	if (!option_cnt_arr)
 		return ((char **)perror_and_return_nullptr("malloc"));
-	printf("2\n");
-
-	option_str_cnt = get_option_count(&option_cnt_arr, (const char **)src);
+	option_str_cnt = get_option_count(&option_cnt_arr, (const char **)src, options);
 	if (option_str_cnt == 0)
 		return (src);
-	printf("3\n");
-
 	arranged_cmds = create_arranged_cmds(src, option_str_cnt, option_cnt_arr);
 	if (!arranged_cmds)
 	{
 		free_1d_array_ret_nullptr((void **)&option_cnt_arr);
 		return (NULL);
 	}
-	printf("4\n");
-
-	debug_print_2d_arr(src, "src");
-	debug_print_2d_arr(arranged_cmds, "arranged");
 	free_2d_array_ret_nullptr((void ***)&src);
 	free_1d_array_ret_nullptr((void **)&option_cnt_arr);
 	return (arranged_cmds);
 }
 
+// if all command option reshape, use arrange_command_line before execution part.
+/*
 int	arrange_command_line(t_info *info)
 {
 	t_tree	*node;
@@ -233,12 +227,13 @@ int	arrange_command_line(t_info *info)
 	{
 		if (node->exe_type == E_LEAF_COMMAND)
 		{
-			node->cmds = arranged_cmds(node->cmds);
+			node->cmds = create_arranged_cmds_controller(node->cmds, STR_CMD_ECHO_OPTIONS);
 			if (!node->cmds)
 				return (FAILURE);
 		}
 		node = node->next;
 	}
-	debug_print_stack(info->tree_root, "arrange command line");
+//	debug_print_stack(info->tree_root, "arrange command line");
 	return (SUCCESS);
 }
+*/

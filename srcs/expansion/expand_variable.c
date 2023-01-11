@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:06:06 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 16:40:20 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 16:55:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,8 +285,8 @@ int	expand_variable_in_str(t_info *info, char **str)
 	size_t	size;
 	size_t	head_idx;
 	size_t	var_size;
-	char 	*var_key;
-	char 	*var_value;
+	char 	*key;
+	char 	*value;
 
 	if (!str || !*str)
 		return (FAILURE);
@@ -306,44 +306,45 @@ int	expand_variable_in_str(t_info *info, char **str)
 			if ((*str)[head_idx + 1] == CHR_DOLLAR || (*str)[head_idx + 1] == CHR_QUESTION)
 			{
 				if ((*str)[head_idx + 1] == CHR_DOLLAR)
-					var_value = ft_itoa(info->pid);
+					value = ft_itoa(info->pid);
 				else
-					var_value = ft_itoa(info->exit_status);
-				if (!var_value)
+					value = ft_itoa(info->exit_status);
+				if (!value)
 				{
 					free_1d_array_ret_nullptr((void **)&new_str);
 					return (perror_and_return_int("malloc", FAILURE));
 				}
-				strlcat(new_str, var_value, size + 1);
-				free_1d_array_ret_nullptr((void **)&var_value);
+				strlcat(new_str, value, size + 1);
+				free_1d_array_ret_nullptr((void **)&value);
 				head_idx += 2;
 			}
 			else
 			{
-				var_key = get_key_from_start_idx(*str, head_idx);
-				if (!var_key)
+				key = get_key_from_start_idx(*str, head_idx);
+				if (!key)
 				{
 					free_1d_array_ret_nullptr((void **)&new_str);
 					return (perror_and_return_int("malloc", FAILURE));
 				}
-				var_value = get_env_value(var_key, info->env_list);
-				ft_strlcat(new_str, var_value, size + 1);
-				head_idx += (ft_strlen_ns(var_key) + 1);
-				free_1d_array_ret_nullptr((void **)&var_key);
+				value = get_env_value(key, info->env_list);
+//				printf("key:%s, value:%s\n", key, value);
+				ft_strlcat(new_str, value, size + 1);
+				head_idx += (ft_strlen_ns(key) + 1);
+				free_1d_array_ret_nullptr((void **)&key);
 			}
 		}
 		else
 		{
 			var_size = get_first_expand_sign_idx(&(*str)[head_idx]);
-			var_value = ft_substr(*str, head_idx, var_size);
-			if (!var_value)
+			value = ft_substr(*str, head_idx, var_size);
+			if (!value)
 			{
 				free_1d_array_ret_nullptr((void **)&new_str);
 				return (perror_and_return_int("malloc", FAILURE));
 			}
-			ft_strlcat(new_str, var_value, size + 1);
+			ft_strlcat(new_str, value, size + 1);
 			head_idx += var_size;
-			free_1d_array_ret_nullptr((void **)&var_key);
+			free_1d_array_ret_nullptr((void **)&value);
 		}
 	}
 	free_1d_array_ret_nullptr((void **)&(*str));
@@ -374,15 +375,15 @@ int	expansion(t_info *info)
 			//    -> {"echo", "hello", "0", "piyopiyoUSERNAME", NULL}
 			while (node->cmds[idx])
 			{
-				printf(" %2zu:[%s]", idx, node->cmds[idx]);
-				printf("isneeded:%d\n", is_expand_needed(node->cmds[idx]));
+//				printf(" %2zu:[%s]", idx, node->cmds[idx]);
+//				printf("isneeded:%d\n", is_expand_needed(node->cmds[idx]));
 				if (is_expand_needed(node->cmds[idx]))
 				{
 					if (expand_variable_in_str(info, &node->cmds[idx]) == FAILURE)
 						return (FAILURE);
-					printf("->[%s]", node->cmds[idx]);
+//					printf("->[%s]", node->cmds[idx]);
 				}
-				printf("\n");
+//				printf("\n");
 				idx++;
 			}
 		}

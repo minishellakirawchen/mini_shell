@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:06:06 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 16:33:40 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 16:40:20 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,7 @@ size_t	get_expand_size(t_info *info, const char *str)
 					return (perror_and_return_int("malloc", FAILURE));
 				size += ft_strlen_ns(expand_value);
 				idx += 2; //$$ or $?
-				free(expand_value);
+				free_1d_array_ret_nullptr((void **)&expand_value);
 			}
 			else
 			{
@@ -268,7 +268,7 @@ size_t	get_expand_size(t_info *info, const char *str)
 				expand_value = get_env_value(key, info->env_list);
 				size += ft_strlen_ns(expand_value);
 				idx += (1 + ft_strlen_ns(key)); //$hoge
-				free(key);
+				free_1d_array_ret_nullptr((void **)&key);
 			}
 			continue ;
 		}
@@ -370,19 +370,19 @@ int	expansion(t_info *info)
 		if (node->exe_type == E_LEAF_COMMAND && node->cmds)
 		{
 			idx = 0;
-			// cmds: {"echo", "hello", "$?", "$hoge$USER$nothing", NULL}
+			// cmds: {"echo", "hello", "$?", "$hoge$USER$nothing", NULL}q
 			//    -> {"echo", "hello", "0", "piyopiyoUSERNAME", NULL}
 			while (node->cmds[idx])
 			{
-//				printf(" %2zu:[%s]", idx, node->cmds[idx]);
-//				printf("isneeded:%d\n", is_expand_needed(node->cmds[idx]));
+				printf(" %2zu:[%s]", idx, node->cmds[idx]);
+				printf("isneeded:%d\n", is_expand_needed(node->cmds[idx]));
 				if (is_expand_needed(node->cmds[idx]))
 				{
 					if (expand_variable_in_str(info, &node->cmds[idx]) == FAILURE)
 						return (FAILURE);
-//					printf("->[%s]", node->cmds[idx]);
+					printf("->[%s]", node->cmds[idx]);
 				}
-//				printf("\n");
+				printf("\n");
 				idx++;
 			}
 		}

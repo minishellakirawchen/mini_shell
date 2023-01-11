@@ -88,7 +88,7 @@ int	analysis(t_info *info, char *readline_input)
 	if (valid_redirection((const char **)info->splitted_cmds) == FAILURE)
 		return (SYNTAX_ERROR);
 
-	debug_print_2d_arr(info->splitted_cmds, "redirect_splitted");
+//	debug_print_2d_arr(info->splitted_cmds, "redirect_splitted");
 
 	// create tree
 	if (create_tree(&info) == FAILURE)

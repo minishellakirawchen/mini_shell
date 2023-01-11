@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 08:55:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 15:30:13 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ struct s_minishell_info
 	t_list	*env_list;
 	char	**splitted_cmds;
 	t_tree	*tree_root;
-	char 	*pid; // use getpid()
+	int		pid; // use getpid()
 };
 
 
@@ -217,7 +217,7 @@ struct s_minishell_info
 // input.c
 int		prompt_loop(t_info *info);
 t_list	*get_env_list(void);
-char	*get_env_value(char *search_key, t_list *env_list_head);
+char	*get_env_value(const char *search_key, t_list *env_list_head);
 int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
@@ -329,7 +329,7 @@ int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
 int		append_env_value(t_list **list_head, char *search_key, char *append_value);
-char	*get_env_value(char *search_key, t_list *env_list_head);
+char	*get_env_value(const char *search_key, t_list *env_list_head);
 
 // is_same_str.c
 int		is_same_str(const char *str1, const char *str2);

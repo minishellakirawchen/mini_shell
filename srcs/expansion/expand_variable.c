@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:06:06 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 22:43:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 16:33:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 // name=value; //TODO:valueの定義
 // name=[_a-zA-z][_a-zA-Z0-9]
+// str=$hoo$var$hoge
+//      ^^^ ここまでを判定して return (1);
 int	is_name(const char *str)
 {
 	size_t	idx;
@@ -23,7 +25,8 @@ int	is_name(const char *str)
 	if (str[0] != '_' && !ft_isalpha(str[0]))
 		return (0);
 	idx = 1;
-	while (str[idx])
+//	while (str[idx])
+	while (str[idx] && str[idx] != CHR_DOLLAR)
 	{
 		if (str[idx] != '_' && !ft_isalnum(str[idx]))
 			return (0);
@@ -49,8 +52,6 @@ int	is_name(const char *str)
 // $test=ech
 // before:{""$test"", "o", "hello", NULL}
 // after :{"echo", "hello", NULL} <- "$test" + o = "ech" + o = echo; expand ""
-
-
 
 // $test=echo
 // before:{""$test"", "o", "hello", NULL}
@@ -102,16 +103,20 @@ bool is_expand_needed(const char *str)
 		{
 			if (str[idx + 1] == CHR_DOLLAR || str[idx + 1] == CHR_QUESTION)
 				return (true);
-			if (is_name(&str[idx + 1]))
+			if (is_name(&str[idx + 1])) //次の$hogeまで is_name
 				return (true);
 		}
+		idx++;
 	}
 	return (false);
 }
 
 // ''内以外の$+hogeを探し、見つけたらtrue
 // 'だったら次の'まで飛ばす
-size_t	get__next_expand_idx(const char *str)
+
+// $hoge,  abc$?,  abc$
+// ^          ^        ^(null)
+size_t	get_first_expand_sign_idx(const char *str)
 {
 	size_t	idx;
 
@@ -133,17 +138,102 @@ size_t	get__next_expand_idx(const char *str)
 		{
 			if (str[idx + 1] == CHR_DOLLAR || str[idx + 1] == CHR_QUESTION)
 				return (idx);
-			if (is_name(&str[idx + 1]))
+			if (is_name(&str[idx + 1])) //次の$hogeまで is_name
 				return (idx);
 		}
+		idx++;
 	}
 	return (idx);
 }
 
+// $hogehoge$foo expandable -> true
+// ^^^^^^^^^
+// ^start
+
+// $? expandable -> true
+// ^start
+
+// $  -> false
+// ^start
+
+// hoge$huge false
+// ^^^^
+// ^start
+bool	is_expandable_from_start_idx(const char *str, size_t start_idx)
+{
+	if (!str || ft_strlen_ns(str) <= start_idx + 1)
+		return (false);
+	if (str[start_idx] != CHR_DOLLAR || !str[start_idx + 1])
+		return (false);
+	if (str[start_idx + 1] == CHR_DOLLAR)
+		return (true);
+	if (str[start_idx + 1] == CHR_QUESTION)
+		return (true);
+	if (is_name(&str[start_idx + 1])) //次の$hogeまで is_name
+		return (true);
+	return (false);
+}
+
+char	*get_next_envkey_in_str(const char *str)
+{
+	char	*key;;
+	size_t	head_idx;
+	size_t	tail_idx;
+	size_t	size;
+
+	if (!str)
+		return (NULL);
+	head_idx = get_first_expand_sign_idx(str);
+	tail_idx = get_first_expand_sign_idx(&str[head_idx + 1]);
+	if (head_idx >= tail_idx)
+		return (NULL);
+	size = tail_idx - head_idx + 1;
+	key = (char *)ft_calloc(sizeof(char), size);
+	if (!key)
+		return (perror_and_return_nullptr("malloc"));
+	ft_strlcat(key, &str[head_idx], size + 1);
+	return (key);
+}
+
+
+// key is not include head "$"
+// $hoge
+// ^start
+char	*get_key_from_start_idx(const char *str, size_t start_idx)
+{
+	size_t	size;
+	char 	*key;
+
+	if (!str || ft_strlen_ns(str) <= start_idx + 1)
+		return (NULL);
+	if (is_expandable_from_start_idx(str, start_idx) == false)
+		return (NULL);
+
+	size = 1;
+	if (str[start_idx + 1] != CHR_DOLLAR || str[start_idx + 1] != CHR_QUESTION) // $$ or $?
+		while (str[start_idx + size] && str[start_idx + size] != CHR_DOLLAR)
+			size++;
+	if (str[start_idx + size] == CHR_DOLLAR)
+		size--;
+	key = ft_substr(str, start_idx + 1, size);
+	if (!key)
+		return ((char *)perror_and_return_nullptr("malloc"));
+//	printf("##get_key str[start]:%s, key:%s\n", &str[start_idx], key);
+	return (key);
+}
+// str="$"        -> "$", size=1
+//     "$SHELL"   -> "/bin/bash", size=9
+//     "$nothing" -> "", size=0
+//     "$?"       -> "0", size=len(itoa(status))
+//     "$$"       -> "4242", size=len(pid)
+
+//TODO: Refactor, too long
 size_t	get_expand_size(t_info *info, const char *str)
 {
 	size_t	size;
 	size_t	idx;
+	char	*expand_value;
+	char 	*key;
 
 	if (!str)
 		return (0);
@@ -151,9 +241,36 @@ size_t	get_expand_size(t_info *info, const char *str)
 	idx = 0;
 	while (str[idx])
 	{
-		if (str[idx] == CHR_DOLLAR)
+		if (str[idx] == CHR_DOLLAR && str[idx + 1])
 		{
-			// TODO
+			// foo$bar,   $$$$
+			//    ^ idx   ^
+
+			if (str[idx + 1] == CHR_QUESTION || str[idx + 1] == CHR_DOLLAR) // $?
+			{
+				if (str[idx + 1] == CHR_QUESTION)
+					expand_value = ft_itoa(info->exit_status);
+				else
+					expand_value = ft_itoa(info->pid);
+				if (!expand_value)
+					return (perror_and_return_int("malloc", FAILURE));
+				size += ft_strlen_ns(expand_value);
+				idx += 2; //$$ or $?
+				free(expand_value);
+			}
+			else
+			{
+				// $hoge$foo
+				// ^^^^^ key now needed
+				key = get_key_from_start_idx(str, idx);
+				if (!key)
+					return (perror_and_return_int("malloc", FAILURE));
+				expand_value = get_env_value(key, info->env_list);
+				size += ft_strlen_ns(expand_value);
+				idx += (1 + ft_strlen_ns(key)); //$hoge
+				free(key);
+			}
+			continue ;
 		}
 		size++;
 		idx++;
@@ -161,22 +278,76 @@ size_t	get_expand_size(t_info *info, const char *str)
 	return (size);
 }
 
-int	expand_variable_in_str(t_info *info, char **src)
+//TODO:refactor, too long
+int	expand_variable_in_str(t_info *info, char **str)
 {
-	char	*expanded_str;
+	char	*new_str;
 	size_t	size;
+	size_t	head_idx;
+	size_t	var_size;
+	char 	*var_key;
+	char 	*var_value;
 
-	if (!src || !*src)
+	if (!str || !*str)
 		return (FAILURE);
-	size = get_expand_size(info, *src);
-	expanded_str = (char *)malloc(sizeof(char) * (size + 1));
-	if (!expanded_str)
+	size = get_expand_size(info, *str);
+	new_str = (char *)ft_calloc(sizeof(char), size + 1);
+	if (!new_str)
 		return (perror_and_return_int("malloc", FAILURE));
 
-	//TODO
-
-	free_1d_array_ret_nullptr((void **)&src);
-	*src = expanded_str;
+	// hoge$hugahugahuga$piyopiyo
+	//     ^ head       ^ tail
+	head_idx = 0;
+	while ((*str)[head_idx])
+	{
+		if (is_expandable_from_start_idx(*str, head_idx))
+		{
+			// $$, $? or $hoge
+			if ((*str)[head_idx + 1] == CHR_DOLLAR || (*str)[head_idx + 1] == CHR_QUESTION)
+			{
+				if ((*str)[head_idx + 1] == CHR_DOLLAR)
+					var_value = ft_itoa(info->pid);
+				else
+					var_value = ft_itoa(info->exit_status);
+				if (!var_value)
+				{
+					free_1d_array_ret_nullptr((void **)&new_str);
+					return (perror_and_return_int("malloc", FAILURE));
+				}
+				strlcat(new_str, var_value, size + 1);
+				free_1d_array_ret_nullptr((void **)&var_value);
+				head_idx += 2;
+			}
+			else
+			{
+				var_key = get_key_from_start_idx(*str, head_idx);
+				if (!var_key)
+				{
+					free_1d_array_ret_nullptr((void **)&new_str);
+					return (perror_and_return_int("malloc", FAILURE));
+				}
+				var_value = get_env_value(var_key, info->env_list);
+				ft_strlcat(new_str, var_value, size + 1);
+				head_idx += (ft_strlen_ns(var_key) + 1);
+				free_1d_array_ret_nullptr((void **)&var_key);
+			}
+		}
+		else
+		{
+			var_size = get_first_expand_sign_idx(&(*str)[head_idx]);
+			var_value = ft_substr(*str, head_idx, var_size);
+			if (!var_value)
+			{
+				free_1d_array_ret_nullptr((void **)&new_str);
+				return (perror_and_return_int("malloc", FAILURE));
+			}
+			ft_strlcat(new_str, var_value, size + 1);
+			head_idx += var_size;
+			free_1d_array_ret_nullptr((void **)&var_key);
+		}
+	}
+	free_1d_array_ret_nullptr((void **)&(*str));
+	*str = new_str;
 	return (SUCCESS);
 }
 
@@ -199,16 +370,27 @@ int	expansion(t_info *info)
 		if (node->exe_type == E_LEAF_COMMAND && node->cmds)
 		{
 			idx = 0;
+			// cmds: {"echo", "hello", "$?", "$hoge$USER$nothing", NULL}
+			//    -> {"echo", "hello", "0", "piyopiyoUSERNAME", NULL}
 			while (node->cmds[idx])
 			{
+//				printf(" %2zu:[%s]", idx, node->cmds[idx]);
+//				printf("isneeded:%d\n", is_expand_needed(node->cmds[idx]));
 				if (is_expand_needed(node->cmds[idx]))
+				{
 					if (expand_variable_in_str(info, &node->cmds[idx]) == FAILURE)
 						return (FAILURE);
+//					printf("->[%s]", node->cmds[idx]);
+				}
+//				printf("\n");
 				idx++;
 			}
 		}
 		node = node->next;
 	}
+
+	debug_print_stack(info->tree_root, "check tree after expansion");
+
 	return (SUCCESS);
 }
 

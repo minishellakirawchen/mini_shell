@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 18:56:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 20:56:09 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,12 @@ int	prompt_loop(t_info	*info)
 		analysis(info, input_line);//TODO cmd op重複も解析、削除するか？
 		expansion(info);
 //		arrange_command_line(info);
-		printf("[#DEGUG] vvvvv Execution vvvvv\n"); // tmp
+//		printf("[#DEGUG] vvvvv Execution vvvvv\n"); // tmp
 		exit_status = execute_command_line(info);
 		info->exit_status = exit_status;
-		printf("[#DEGUG] ^^^^^ Execution ^^^^^\n"); // tmp
-		printf("[#DEGUG] >> status:%d <<\n", exit_status);
+//		printf("[#DEGUG] ^^^^^ Execution ^^^^^\n"); // tmp
+//		printf("[#DEGUG] ^^^^^ Execution ^^^^^\n"); // tmp
+		dprintf(STDERR_FILENO, "[#DEBUG]exit status:%d\n", info->exit_status);
 		add_history(input_line);//tmp
 		init_input(&info);
 		free(input_line);

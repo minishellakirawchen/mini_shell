@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 17:04:30 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 20:21:44 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,6 +278,9 @@ int		execute_heredoc(int fd, const char *delimiter);
 int		expansion(t_info *info);
 int		arrange_command_line(t_info *info);
 char	**create_arranged_cmds_controller(char **src, const char *options);
+
+// expand_variable.c
+int		is_name(const char *str);
 
 
 /* ------ */

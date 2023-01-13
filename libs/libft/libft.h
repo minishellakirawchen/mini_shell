@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:40:35 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 21:33:29 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 21:13:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,5 +84,8 @@ void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 
 int		ft_lstsize(t_list *lst);
+
+long long	ft_strtoll(char *num, bool *is_success);
+
 
 #endif

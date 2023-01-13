@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 23:48:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 17:04:30 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,7 @@ struct s_tree
 {
 	t_exe_type		exe_type;
 	char 			**cmds;
+	pid_t			pid;			//TODO: init
 	t_redirect_info	*redirect_info;
 	t_tree			*prev;
 	t_tree			*next;
@@ -261,7 +262,7 @@ int		execute_command_line(t_info *info);
 
 /* execute_builtin */
 bool	is_builtins(const char **cmds);
-int		execute_builtins(t_info *info, const char **cmds);
+int		execute_builtin(t_info *info, const char **cmds);
 
 /* execute_redirect.c */
 int		handle_fd_for_redirection(t_redirect_info *r_info);

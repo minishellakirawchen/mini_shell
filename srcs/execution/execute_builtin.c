@@ -33,7 +33,7 @@ bool	is_builtins(const char **cmds)
 }
 
 // TODO: change ft_XX -> XX
-int	execute_builtins(t_info *info, const char **cmds)
+int	execute_builtin(t_info *info, const char **cmds)
 {
 	if (is_same_str("ft_echo",  cmds[0]) || is_same_str("ft_ECHO",  cmds[0]))
 		return (ft_echo(info, cmds));

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/12 18:26:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 17:40:17 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ int	close_fd_for_child(int pipe_fd[2])
 {
 	if (close(pipe_fd[READ]))
 		return (perror_and_return_int("close", EXIT_FAILURE));
-	if (close(STDOUT_FILENO))
-		return (perror_and_return_int("close", EXIT_FAILURE));
+//	if (close(STDOUT_FILENO))
+//		return (perror_and_return_int("close", EXIT_FAILURE));
 	if (dup2(pipe_fd[WRITE], STDOUT_FILENO) < 0)
 		return (perror_and_return_int("dup2", EXIT_FAILURE));
 	if (close(pipe_fd[WRITE]) < 0)
@@ -85,8 +85,8 @@ int	close_fd_for_parent(int pipe_fd[2])
 {
 	if (close(pipe_fd[WRITE]))
 		return (perror_and_return_int("close", EXIT_FAILURE));
-	if (close(STDIN_FILENO))
-		return (perror_and_return_int("close", EXIT_FAILURE));
+//	if (close(STDIN_FILENO))
+//		return (perror_and_return_int("close", EXIT_FAILURE));
 	if (dup2(pipe_fd[READ], STDIN_FILENO) < 0)
 		return (perror_and_return_int("dup2", EXIT_FAILURE));
 	if (close(pipe_fd[READ]) < 0)
@@ -130,25 +130,24 @@ int	handle_fd_for_redirection(t_redirect_info *r_info)
 // cmd1 | cmd2 |..|cmdn-1| cmdn
 // childn   ...    child2  child1
 //   out->in  ->       out->in
-int execute_pipe_recursion(t_tree *node, t_info *info)//tmp
+int execute_pipe_recursion(t_tree *node, t_info *info, int pipe_fd[2])
 {
 //	extern char	**environ;// env更新必要？envが必要なcommandが実行されなければexecve(hoge, hoge, NULL)で良い getenvくらい？
 	pid_t		pid;
-	int			pipe_fd[2];
 
 	if (!node || !node->cmds)
 		exit (EXIT_FAILURE);
 
 	if (node->prev && node->prev->exe_type == E_LEAF_COMMAND)
 	{
-		pipe(pipe_fd);
+//		pipe(pipe_fd);
 		pid = fork();
 		if (pid == CHILD_PROCESS)
 		{
 			// child : execute LEFT commands
 			if (close_fd_for_child(pipe_fd))
 				exit (EXIT_FAILURE);
-			execute_pipe_recursion(node->prev, info);
+			execute_pipe_recursion(node->prev, info, pipe_fd);
 			exit (CMD_NOT_FOUND);
 		}
 		// parent : execute RIGHT commands
@@ -164,7 +163,7 @@ int execute_pipe_recursion(t_tree *node, t_info *info)//tmp
 
 	// execute builtins
 	if (is_builtins((const char **)node->cmds))
-		exit (execute_builtins(info, (const char **)node->cmds));//exitしないとblocking
+		exit (execute_builtin(info, (const char **) node->cmds));//exitしないとblocking
 
 	// execute other commands
 	if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
@@ -190,7 +189,7 @@ int execute_handler()
 }
 */
 
-int	is_node_shell_and_builtins(t_tree *node)
+int	is_execute_only_builtin(t_tree *node)
 {
 	return (node && node->exe_type == E_NODE_NO_PIPE && node->next \
  && node->next->cmds && is_builtins((const char **)node->next->cmds));
@@ -294,7 +293,7 @@ int execute_pipe_loop(t_tree *root, t_info *info)
 
 			// execute builtins
 			if (is_builtins((const char **)node->cmds))
-				exit (execute_builtins(info, (const char **)node->cmds));//exitしないとblocking
+				exit (execute_builtin(info, (const char **) node->cmds));//exitしないとblocking
 
 			// execute other commands
 			if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
@@ -414,7 +413,7 @@ int execute_pipe_loop_reverse(t_tree *root, t_info *info)
 
 			// execute builtins
 			if (is_builtins((const char **)node->cmds))
-				exit (execute_builtins(info, (const char **)node->cmds));//exitしないとblocking
+				exit (execute_builtin(info, (const char **) node->cmds));//exitしないとblocking
 
 			// execute other commands
 			if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
@@ -455,11 +454,113 @@ int execute_pipe_loop_reverse(t_tree *root, t_info *info)
 	return (WEXITSTATUS(status));
 }
 
+void	ft_execve(t_tree *node, t_info *info)
+{
+	// parent : execute RIGHT commands
+	debug_print_2d_arr(node->cmds, "cmds");
+
+	if (handle_fd_for_redirection(node->redirect_info) == FAILURE)
+		exit (EXIT_FAILURE);
+
+	// execute builtins
+	if (is_builtins((const char **)node->cmds))
+		exit (execute_builtin(info, (const char **) node->cmds));//exitしないとblocking
+
+	// execute other commands
+	if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
+		execve(node->cmds[0], node->cmds, NULL);
+	else
+		ft_execvp(node->cmds[0], node->cmds, get_env_value(PATH, info->env_list));
+	dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);//TODO:stderr
+	exit (CMD_NOT_FOUND);
+}
 
 
 
+// 23/1/13
+// cmd0   |   cmd1   |   cmd2   |...|   cmdn
+//     [pipe]      [pipe]         [pipe]
+//
 
+// Main             ↓ stdin
+//   |-- fork --> cmd0
+//   |             ||pipe
+//   |-- fork --> cmd1
+//   |             ||pipe
+//   |-- fork --> cmd2
+//   |             ||pipe
+//   |-- fork --> cmd3
+//                  ↓ stdout
 
+void init_pipe(int **pipe)
+{
+	if (!pipe || !*pipe)
+		return ;
+	*pipe[READ] = STDIN_FILENO;
+	*pipe[WRITE] = STDOUT_FILENO;
+}
+
+int execute_pipe_line(t_info *info, t_tree *cmd_leaf_head)
+{
+	int				pipe_now_fd[2];
+	int 			pipe_old_fd[2];
+	t_tree			*node;
+	int				status;
+
+	if (!info || !cmd_leaf_head)
+		return (FAILURE);
+	node = cmd_leaf_head;
+	pipe_old_fd[READ] = STDIN_FILENO;
+	pipe_old_fd[WRITE] = -1;
+
+	dprintf(STDERR_FILENO, "execute_pipe_line\n");
+	while (node)
+	{
+		pipe(pipe_now_fd);
+
+		node->pid = fork();
+		if (node->pid == 0)
+		{
+			if (pipe_old_fd[WRITE] >= 0)
+			{
+				close(pipe_old_fd[WRITE]);
+				dup2(pipe_old_fd[READ], STDIN_FILENO);
+				close(pipe_old_fd[READ]);
+			}
+			if (node->next)
+			{
+				close(pipe_now_fd[READ]);
+				dup2(pipe_now_fd[WRITE], STDOUT_FILENO);
+				close(pipe_now_fd[WRITE]);
+			}
+
+			ft_execve(node, info);
+			exit (CMD_NOT_FOUND);
+		}
+		if (pipe_old_fd[WRITE] >= 0)
+		{
+			close(pipe_old_fd[READ]);
+			close(pipe_old_fd[WRITE]);
+		}
+		pipe_old_fd[READ] = pipe_now_fd[READ];
+		pipe_old_fd[WRITE] = pipe_now_fd[WRITE];
+
+		node = node->next;
+	}
+	dup2(pipe_old_fd[READ], STDIN_FILENO);
+	close(pipe_old_fd[READ]);
+	close(pipe_old_fd[WRITE]);
+	close(pipe_now_fd[READ]);
+	close(pipe_now_fd[WRITE]);
+
+	node = cmd_leaf_head;
+	while (node)
+	{
+		waitpid(node->pid, &status, 0);
+		node = node->next;
+	}
+	return (WEXITSTATUS(status));
+}
 
 
 // rootから連結nodeを見ていき、各redirect_infoに応じたfd操作を実施
@@ -469,58 +570,45 @@ int execute_pipe_loop_reverse(t_tree *root, t_info *info)
 int	execute_command_line(t_info *info)
 {
 	pid_t	pid;
-	t_tree	*end_of_pipe_leaf;
 	int		status;
+	t_tree	*node;
 
-	//type=shell(no pipe, only one command)
-	//  cd     -> must NOT fork to reflect working dir and ft_builtins doesn't matter
-	//  others -> must fork     to exit execute process
 	if (!info || !info->tree_root || !info->tree_root->next)
 		return (EXIT_FAILURE);
 
 	if (execute_redirect(&info->tree_root) == FAILURE)
 		return (EXIT_FAILURE);
 
-	// shell(do not pipe) && builtins
-	if (is_node_shell_and_builtins(info->tree_root->next))
-		return (execute_builtins(info, (const char **)info->tree_root->next->next->cmds));
+	if (is_execute_only_builtin(info->tree_root->next))
+		return (execute_builtin(info, (const char **) info->tree_root->next->next->cmds));
 
-//	return (execute_pipe_loop(info->tree_root, info));
-//	return (execute_pipe_loop_reverse(info->tree_root, info));
+	node = info->tree_root;
+	while (node && node->exe_type != E_LEAF_COMMAND)
+		node = node->next;
+	if (!node)
+		return (FAILURE);
 
-
-	// pipe
+//	int	pipe_fd[2];
+//	pipe(pipe_fd);
 	pid = fork();
-	if (pid < 0)
-		return (perror_and_return_int("fork", EXIT_FAILURE));
-	end_of_pipe_leaf = get_last_node(info->tree_root->next);
+	status = 0;
 	if (pid == CHILD_PROCESS)
 	{
-//		return (execute_pipe_loop(info->tree_root, info));
-		execute_pipe_recursion(end_of_pipe_leaf, info);
-//		exit (0);
+		status = execute_pipe_line(info, node);
+		exit (0);
 	}
+
+//	close(pipe_fd[READ]);
+//	close(pipe_fd[WRITE]);
+
 	//TODO: check wait operation
 	//childの終了を待ってからゾンビプロセスを全て回収
 	waitpid(pid, &status, 0);
-
-	while (wait(NULL) > 0);
-
-/*
-	size_t	i;
-	i = 0;
-//	while (wait(NULL) > 0)
-//		i++;
-	while (i < get_tree_size(info->tree_root->next))
-	{
-//		waitpid(-1, &status, 0);
-		wait(NULL);
-		i++;
-	}
-*/
-
-	dprintf(STDERR_FILENO, "status:%d\n", WEXITSTATUS(status));
+//	while (wait(NULL) > 0);
+//	dprintf(STDERR_FILENO, "status:%d\n", WEXITSTATUS(status));
 //	waitpid(pid, &status, 0);
-	return (WEXITSTATUS(status));
+
+	dprintf(STDERR_FILENO, "status:%d\n", status);
+	return (status);
 }
 

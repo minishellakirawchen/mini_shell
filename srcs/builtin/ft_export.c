@@ -6,11 +6,31 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 22:19:14 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 22:26:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int error_invalid_key(char **key, size_t idx, const char *cmd)
+{
+	if (idx == 0)
+	{
+		dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
+		return (FAILURE);
+	}
+	dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
+	free_1d_array_ret_nullptr((void **)key);
+	return (FAILURE);
+}
+
+static int error_malloc_key_or_value(char **key, char **value)
+{
+	perror("malloc");
+	free_1d_array_ret_nullptr((void **)key);
+	free_1d_array_ret_nullptr((void **)value);
+	return (EXIT_FAILURE);
+}
 
 int	get_export_param(const char *cmd, char **key, char **value, t_export_type *type)
 {
@@ -23,10 +43,7 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 	if (!cmd[idx])
 		return (FAILURE);
 	if (idx == 0)
-	{
-		dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
-		return (FAILURE);
-	}
+		return (error_invalid_key(NULL, idx, cmd));
 	*type = E_VAR_CREATE;
 	key_len = idx;
 	if (cmd[idx - 1] == '+')
@@ -36,19 +53,10 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 	}
 	*key = ft_substr(cmd, 0, key_len);
 	if (!is_name((char *)key))
-	{
-		dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
-		free_1d_array_ret_nullptr((void **)key);
-		return (FAILURE);
-	}
+		return (error_invalid_key(key, idx, cmd));
 	*value = ft_substr(cmd, idx + 1, ft_strlen_ns(cmd) - idx);
 	if (!*key || !*value)
-	{
-		perror("malloc");
-		free_1d_array_ret_nullptr((void **)key);
-		free_1d_array_ret_nullptr((void **)value);
-		return (EXIT_FAILURE);
-	}
+		return (error_malloc_key_or_value(key, value));
 	return (SUCCESS);
 }
 
@@ -64,23 +72,14 @@ int ft_export(t_info *info, const char **cmds)
 		return (EXIT_FAILURE);
 	if (get_export_param(cmds[1], &key, &value, &type) == FAILURE)
 		return (EXIT_FAILURE); //TODO: key only, bash returns 0
-	/*
-	printf("key:%s,value:%s, cmd:%s, flag:", key, value, cmds[1]);
-	if (type == E_VAR_CREATE)
-		printf("NEW\n");
-	else
-		printf("ADD\n");
-	*/
 	if (!get_env_value(key, info->env_list))
 		ret = add_env_elem_to_list(&info->env_list, key, value);
 	else if (type == E_VAR_CREATE)
 		ret = overwrite_env_value(&info->env_list, key, value);
 	else
 		ret = append_env_value(&info->env_list, key, value);
-
 	if (ret == FAILURE)
 		return (1);//TODO: exit?
-
 //	printf("key:%s,get_value:%s\n", key, get_env_value(key, info->env_list));
 	free_1d_array_ret_nullptr((void **)&key);
 	free_1d_array_ret_nullptr((void **)&value);

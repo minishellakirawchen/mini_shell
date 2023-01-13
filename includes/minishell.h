@@ -198,10 +198,10 @@ struct s_token // for bonus
 
 struct s_tree
 {
-	t_exe_type		exe_type;
 	char 			**cmds;
-	pid_t			pid;			//TODO: init
 	t_redirect_info	*redirect_info;
+	t_exe_type		exe_type;
+	pid_t			pid;
 	t_tree			*prev;
 	t_tree			*next;
 };

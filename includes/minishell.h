@@ -85,6 +85,8 @@
 
 # define ALPHABET_CNT			26
 
+# define PPID				"PPID"
+
 /* ---------------- */
 /*  typedef struct  */
 /* ---------------- */
@@ -262,7 +264,7 @@ bool	is_builtins(const char **cmds);
 int		execute_builtins(t_info *info, const char **cmds);
 
 /* execute_redirect.c */
-int		handle_fd_for_redirection(t_redirect_info *redirect_info);
+int		handle_fd_for_redirection(t_redirect_info *r_info);
 int		openfile_and_heredoc_for_redirect(t_tree **root);
 int		execute_redirect(t_tree **root);
 

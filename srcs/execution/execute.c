@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 12:35:13 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/12 18:26:23 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 		path = get_execute_path(splitted_paths[idx], file);
 		if (!path)
 			return (perror_and_return_int("malloc", EXIT_FAILURE));
+//		dprintf(STDERR_FILENO, "cmdpath:%s\n", path);
 		execve(path, cmds, NULL);
 		free(path);
 		idx++;
@@ -94,32 +95,32 @@ int	close_fd_for_parent(int pipe_fd[2])
 }
 
 // if redirect in/out/here_doc, handle fds
-int	handle_fd_for_redirection(t_redirect_info *redirect_info)
+int	handle_fd_for_redirection(t_redirect_info *r_info)
 {
-	if (!redirect_info)
+	int	fd;
+
+	if (!r_info)
 		return (FAILURE);
-	if (redirect_info->ouput_to == E_REDIRECT_OUT || redirect_info->ouput_to == E_REDIRECT_APPEND)
+	if (r_info->input_from == E_STDIN && r_info->ouput_to == E_STDOUT)
+		return (SUCCESS);
+	if (r_info->ouput_to == E_REDIRECT_OUT || r_info->ouput_to == E_REDIRECT_APPEND)
 	{
-		if (dup2(redirect_info->r_fd[R_FD_OUTFILE], STDOUT_FILENO) < 0)
+		if (dup2(r_info->r_fd[R_FD_OUTFILE], STDOUT_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->r_fd[R_FD_OUTFILE]) < 0)
+		if (close(r_info->r_fd[R_FD_OUTFILE]) < 0)
 			return (perror_and_return_int("close", FAILURE));
 	}
-	if (redirect_info->input_from == E_REDIRECT_IN)
+	if (r_info->input_from == E_REDIRECT_IN || r_info->input_from == E_HERE_DOC)
 	{
-		if (dup2(redirect_info->r_fd[R_FD_INFILE], STDIN_FILENO) < 0)
+		fd = R_FD_INFILE;
+		if (r_info->input_from == E_HERE_DOC)
+			fd = R_FD_HEREDOC;
+		if (dup2(r_info->r_fd[fd], STDIN_FILENO) < 0)
 			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->r_fd[R_FD_INFILE]) < 0)
+		if (close(r_info->r_fd[fd]) < 0)
 			return (perror_and_return_int("close", FAILURE));
-	}
-	else if (redirect_info->input_from == E_HERE_DOC)
-	{
-		if (dup2(redirect_info->r_fd[R_FD_HEREDOC], STDIN_FILENO) < 0)
-			return (perror_and_return_int("dup2", FAILURE));
-		if (close(redirect_info->r_fd[R_FD_HEREDOC]) < 0)
-			return (perror_and_return_int("close", FAILURE));
-//		printf("handler heredoc_file:%s\n", redirect_info->heredoc_file);
-		if (unlink(redirect_info->heredoc_file) < 0)
+//		printf("handler heredoc_file:%s\n", r_info->heredoc_file);
+		if (r_info->input_from == E_HERE_DOC && unlink(r_info->heredoc_file) < 0)
 			return (perror_and_return_int("unlink", FAILURE));
 	}
 	return (SUCCESS);
@@ -129,48 +130,52 @@ int	handle_fd_for_redirection(t_redirect_info *redirect_info)
 // cmd1 | cmd2 |..|cmdn-1| cmdn
 // childn   ...    child2  child1
 //   out->in  ->       out->in
-int execute_pipe_recursion(t_tree *right_elem, t_info *info)//tmp
+int execute_pipe_recursion(t_tree *node, t_info *info)//tmp
 {
 //	extern char	**environ;// env更新必要？envが必要なcommandが実行されなければexecve(hoge, hoge, NULL)で良い getenvくらい？
 	pid_t		pid;
 	int			pipe_fd[2];
 
-	if (!right_elem || !right_elem->cmds)
-		return (EXIT_FAILURE);
+	if (!node || !node->cmds)
+		exit (EXIT_FAILURE);
 
-	// if redirect in/out/here_doc, handle fds
-
-	if (right_elem->prev && right_elem->prev->exe_type == E_LEAF_COMMAND)
+	if (node->prev && node->prev->exe_type == E_LEAF_COMMAND)
 	{
 		pipe(pipe_fd);
 		pid = fork();
 		if (pid == CHILD_PROCESS)
 		{
+			// child : execute LEFT commands
 			if (close_fd_for_child(pipe_fd))
 				exit (EXIT_FAILURE);
-			// child : execute LEFT commands
-			execute_pipe_recursion(right_elem->prev, info);
+			execute_pipe_recursion(node->prev, info);
+			exit (CMD_NOT_FOUND);
 		}
+		// parent : execute RIGHT commands
 		if (close_fd_for_parent(pipe_fd))
 			exit (EXIT_FAILURE);
 	}
-//	debug_print_2d_arr(right_elem->cmds, "cmds");
-	if (handle_fd_for_redirection(right_elem->redirect_info) == FAILURE)
-		exit (EXIT_FAILURE);
 
 	// parent : execute RIGHT commands
+	debug_print_2d_arr(node->cmds, "cmds");
+
+	if (handle_fd_for_redirection(node->redirect_info) == FAILURE)
+		exit (EXIT_FAILURE);
+
 	// execute builtins
-	if (is_builtins((const char **)right_elem->cmds))
-		exit (execute_builtins(info, (const char **)right_elem->cmds));//exitしないとblocking
+	if (is_builtins((const char **)node->cmds))
+		exit (execute_builtins(info, (const char **)node->cmds));//exitしないとblocking
 
 	// execute other commands
-	if (right_elem->cmds[0] && (right_elem->cmds[0][0] == '/' || right_elem->cmds[0][0] == '.'))
-		execve(right_elem->cmds[0], right_elem->cmds, NULL);
+	if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
+		execve(node->cmds[0], node->cmds, NULL);
 	else
-		ft_execvp(right_elem->cmds[0], right_elem->cmds, get_env_value(PATH, info->env_list));
-	printf("command not found: %s\n", right_elem->cmds[0]);
+		ft_execvp(node->cmds[0], node->cmds, get_env_value(PATH, info->env_list));
+	dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);//TODO:stderr
 	exit (CMD_NOT_FOUND);
 }
+
+
 
 // TODO: implement handler (Bonus part)
 // nodeを辿りながらflagに応じた実行をしていく
@@ -191,6 +196,272 @@ int	is_node_shell_and_builtins(t_tree *node)
  && node->next->cmds && is_builtins((const char **)node->next->cmds));
 }
 
+// cat | ls; lsが先に終了する(exit)のでcatの入力を待ってくれないと仮定
+// grep a | lsでも終了してしまう
+// cat, grep単独だと入力待ちになる
+// 兄弟プロセスとしてexecを生成すると、解決する？
+
+void	control_fds(size_t idx, int ***pipe_fds, t_tree *next)
+{
+	if (idx == 0)
+	{
+		close((*pipe_fds)[idx][READ]);
+		dup2((*pipe_fds)[idx][WRITE], STDOUT_FILENO);
+		close((*pipe_fds)[idx][WRITE]);
+	}
+	else if (next == NULL)
+	{
+		close((*pipe_fds)[idx - 1][WRITE]);
+		dup2((*pipe_fds)[idx - 1][READ], STDIN_FILENO);
+		close((*pipe_fds)[idx - 1][READ]);
+	}
+	else
+	{
+		close((*pipe_fds)[idx - 1][WRITE]);
+		dup2((*pipe_fds)[idx - 1][READ], STDIN_FILENO);
+		close((*pipe_fds)[idx - 1][READ]);
+
+		close((*pipe_fds)[idx][READ]);
+		dup2((*pipe_fds)[idx][WRITE], STDOUT_FILENO);
+		close((*pipe_fds)[idx][WRITE]);
+	}
+}
+
+// idx   0           1           2
+// echo hello | cat Makefile | hoge
+//         [pipe]          [pipe]
+//     out->    ->in    out->   ->in
+
+// childで実行, parentで回収？
+//        idx   0               1           2
+//       echo hello    | cat Makefile | hoge
+// child     v stdout     ^ in
+//         [pipe] w/r     ^
+// parent    v stdin      ^
+//           --------------
+
+int execute_pipe_loop(t_tree *root, t_info *info)
+{
+	t_tree			*node;
+	const size_t	node_cnt = get_tree_size(root);
+	int				pipe_fds[node_cnt][2];
+	pid_t			pids[node_cnt];
+	size_t			idx;
+	size_t			i;
+	int				status;
+
+	node = root;
+	while (node->exe_type != E_LEAF_COMMAND)
+		node = node->next;
+	idx = 0;
+	while (node)
+	{
+		if (node->next)
+			pipe(pipe_fds[idx]);
+		pids[idx] = fork();
+		if (pids[idx] == 0) // child
+		{
+			// read from pipe
+			if (node->next)
+			{
+				if (idx > 0)
+				{
+					if (close(pipe_fds[idx - 1][WRITE]) < 0)
+						perror("close");
+					if (close(STDIN_FILENO) < 0)
+						perror("close");
+					if (dup2(pipe_fds[idx - 1][READ], STDIN_FILENO) < 0)
+						perror("dup2");
+					if (close(pipe_fds[idx - 1][READ]) < 0)
+						perror("close");
+				}
+				// write to pipe
+				if (close(pipe_fds[idx][READ]) < 0)
+					perror("close");
+				if (close(STDOUT_FILENO) < 0)
+					perror("close");
+				if (dup2(pipe_fds[idx][WRITE], STDOUT_FILENO) < 0)
+					perror("dup2");
+				if (close(pipe_fds[idx][WRITE]) < 0)
+					perror("close");
+			}
+//			control_fds(idx, (int ***)&pipe_fds, node->next);
+			debug_print_2d_arr(node->cmds, "cmds");
+
+			// redirection
+			if (handle_fd_for_redirection(node->redirect_info) == FAILURE)
+				exit (EXIT_FAILURE);
+
+			// execute builtins
+			if (is_builtins((const char **)node->cmds))
+				exit (execute_builtins(info, (const char **)node->cmds));//exitしないとblocking
+
+			// execute other commands
+			if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
+				execve(node->cmds[0], node->cmds, NULL);
+			else
+				ft_execvp(node->cmds[0], node->cmds, get_env_value(PATH, info->env_list));
+			dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);//TODO:stderr
+			return (0);
+			exit (CMD_NOT_FOUND);
+		}
+		if (node->next)
+		{
+			if (close(pipe_fds[idx][WRITE]) < 0)
+				perror("close");
+			if (close(STDIN_FILENO) < 0)
+				perror("close");
+			if (dup2(pipe_fds[idx][READ], STDIN_FILENO) < 0)
+				perror("dup2");
+			if (close(pipe_fds[idx][READ]) < 0)
+				perror("close");
+		}
+//		close(pipe_fds[idx][READ]);
+//		if (idx > 0)
+//		{
+//			close(pipe_fds[idx - 1][WRITE]);
+//			close(pipe_fds[idx - 1][READ]);
+//		}
+
+		node = node->next;
+		idx++;
+	}
+	i = 0;
+	while (i < idx)
+	{
+		waitpid(pids[i++], &status, 0);
+//		wait(NULL);
+//		i++;
+	}
+	return (WEXITSTATUS(status));
+}
+
+
+
+int execute_pipe_loop_reverse(t_tree *root, t_info *info)
+{
+	t_tree			*node;
+	const size_t	node_cnt = get_tree_size(root);
+	int				pipe_fds[node_cnt][2];
+	pid_t			pids[node_cnt];
+	size_t			idx;
+	size_t			i;
+	int				status;
+
+	node = root;
+	while (node->next)
+		node = node->next;
+
+	// idx  n    n-1             0
+	//   cmd0 <- cmd1 <- .., <- cmdn 再起的に実行していく
+	idx = 0;
+	dprintf(STDERR_FILENO, "1\n");
+
+	// pipeを作っておく
+	while (node->prev->exe_type == E_LEAF_COMMAND)
+	{
+		if (pipe(pipe_fds[idx]) < 0)
+			perror("pipe");
+		node = node->prev;
+	}
+
+	node = root;
+	while (node->next)
+		node = node->next;
+	while (node->exe_type == E_LEAF_COMMAND)
+	{
+		pids[idx] = fork();
+		dprintf(STDERR_FILENO, "2 pid:%d\n", pids[idx]);
+		if (pids[idx] == 0) // child
+		{
+			// read from pipe
+//			if (node->prev)
+//			{
+//				close(pipe_fds[idx + 1][WRITE]);
+//				close(STDIN_FILENO);
+//				dup2(pipe_fds[idx + 1][READ], STDIN_FILENO);
+//				close(pipe_fds[idx + 1][READ]);
+//			}
+			if (node->prev->exe_type == E_LEAF_COMMAND)
+			{
+				if (close(pipe_fds[idx + 1][WRITE]) < 0)
+					perror("close");
+				if (close(STDIN_FILENO) < 0)
+					perror("close");
+				if (dup2(pipe_fds[idx + 1][READ], STDIN_FILENO) < 0)
+					perror("dup2");
+				if (close(pipe_fds[idx][READ]) < 0)
+					perror("close");
+
+				if (close(pipe_fds[idx][READ]) < 0)
+					perror("close");
+				if (close(STDOUT_FILENO) < 0)
+					perror("close");
+				if (dup2(pipe_fds[idx][WRITE], STDOUT_FILENO) < 0)
+					perror("dup2");
+				if (close(pipe_fds[idx][WRITE]) < 0)
+					perror("close");
+			}
+			dprintf(STDERR_FILENO, "3 cmd:%s\n", node->cmds[0]);
+
+//			control_fds(idx, (int ***)&pipe_fds, node->next);
+			debug_print_2d_arr(node->cmds, "cmds");
+
+
+			// redirection
+			if (handle_fd_for_redirection(node->redirect_info) == FAILURE)
+				exit (EXIT_FAILURE);
+
+			// execute builtins
+			if (is_builtins((const char **)node->cmds))
+				exit (execute_builtins(info, (const char **)node->cmds));//exitしないとblocking
+
+			// execute other commands
+			if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
+				execve(node->cmds[0], node->cmds, NULL);
+			else
+				ft_execvp(node->cmds[0], node->cmds, get_env_value(PATH, info->env_list));
+			dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);//TODO:stderr
+			exit (CMD_NOT_FOUND);
+		}
+		if (node->prev->exe_type == E_LEAF_COMMAND)
+		{
+			if (close(pipe_fds[idx][WRITE]) < 0)
+				perror("close");
+			if (close(STDIN_FILENO) < 0)
+				perror("close");
+			if (dup2(pipe_fds[idx][READ], STDIN_FILENO) < 0)
+				perror("dup2");
+			if (close(pipe_fds[idx][READ]) < 0)
+				perror("close");
+		}
+//		close(pipe_fds[idx][READ]);
+//		if (idx > 0)
+//		{
+//			close(pipe_fds[idx - 1][WRITE]);
+//			close(pipe_fds[idx - 1][READ]);
+//		}
+
+		node = node->prev;
+		idx++;
+	}
+	i = 0;
+	while (i < idx)
+	{
+		waitpid(pids[i++], &status, 0);
+//		wait(NULL);
+//		i++;
+	}
+	return (WEXITSTATUS(status));
+}
+
+
+
+
+
+
+
+
 // rootから連結nodeを見ていき、各redirect_infoに応じたfd操作を実施
 // open成功ならばupdate
 // here_docも前から実行
@@ -199,7 +470,6 @@ int	execute_command_line(t_info *info)
 {
 	pid_t	pid;
 	t_tree	*end_of_pipe_leaf;
-	size_t	i;
 	int		status;
 
 	//type=shell(no pipe, only one command)
@@ -215,16 +485,42 @@ int	execute_command_line(t_info *info)
 	if (is_node_shell_and_builtins(info->tree_root->next))
 		return (execute_builtins(info, (const char **)info->tree_root->next->next->cmds));
 
+//	return (execute_pipe_loop(info->tree_root, info));
+//	return (execute_pipe_loop_reverse(info->tree_root, info));
+
+
 	// pipe
 	pid = fork();
 	if (pid < 0)
 		return (perror_and_return_int("fork", EXIT_FAILURE));
 	end_of_pipe_leaf = get_last_node(info->tree_root->next);
 	if (pid == CHILD_PROCESS)
+	{
+//		return (execute_pipe_loop(info->tree_root, info));
 		execute_pipe_recursion(end_of_pipe_leaf, info);
+//		exit (0);
+	}
 	//TODO: check wait operation
+	//childの終了を待ってからゾンビプロセスを全て回収
+	waitpid(pid, &status, 0);
+
+	while (wait(NULL) > 0);
+
+/*
+	size_t	i;
 	i = 0;
-	while (i++ < get_tree_size(info->tree_root->next) + 1)
-		wait(&status);
+//	while (wait(NULL) > 0)
+//		i++;
+	while (i < get_tree_size(info->tree_root->next))
+	{
+//		waitpid(-1, &status, 0);
+		wait(NULL);
+		i++;
+	}
+*/
+
+	dprintf(STDERR_FILENO, "status:%d\n", WEXITSTATUS(status));
+//	waitpid(pid, &status, 0);
 	return (WEXITSTATUS(status));
 }
+

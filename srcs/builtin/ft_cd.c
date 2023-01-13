@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 19:09:04 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 22:11:37 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 	free_1d_array_ret_nullptr((void **)&trimmed_move_to); // memcpy in strlcat
 	return (new_path);
 }
+
+// TODO: check permission denied
 
 int ft_cd(t_info *info, const char **cmds)
 {

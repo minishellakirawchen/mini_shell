@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 22:45:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 22:19:14 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,7 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 		return (FAILURE);
 	if (idx == 0)
 	{
-		//TODO: make ft_fprintf or like func use ft_putstr_fd
-		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-		ft_putstr_fd((char *)cmd, STDERR_FILENO);
-		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
+		dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
 		return (FAILURE);
 	}
 	*type = E_VAR_CREATE;
@@ -38,6 +35,12 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 		key_len--;
 	}
 	*key = ft_substr(cmd, 0, key_len);
+	if (!is_name((char *)key))
+	{
+		dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
+		free_1d_array_ret_nullptr((void **)key);
+		return (FAILURE);
+	}
 	*value = ft_substr(cmd, idx + 1, ft_strlen_ns(cmd) - idx);
 	if (!*key || !*value)
 	{
@@ -48,12 +51,6 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 	}
 	return (SUCCESS);
 }
-
-
-// TODO: input "key=value" -> separate to key, value
-//             "key+=value"
-
-// TODO: is name=value ??
 
 // input: {export, key=value, hoge, hoge, ..., NULL}
 int ft_export(t_info *info, const char **cmds)

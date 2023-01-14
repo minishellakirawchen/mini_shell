@@ -91,6 +91,19 @@ bash-3.2$
 * 使用可能関数(memo)
   * signal
   * sigaction
+    * `int sigaction(int signo, const struct sigaction *act, struct sigaction *oact)`
+    * 成功ならば0, エラーならば-1
+    * int signo: 動作を調べたり変更したいsignalの番号
+    * actがnullptrでなければ動作を変更する
+    * oactがnullptrでなければ、システムはこのシグナルに対する直前の動作を返す
+  ```c
+  struct sigaction
+  {
+	void        (*sa_handler)();    //シグナルハンドラのアドレス、あるいはSIG_IGN, SIG_DFL
+    sigset_t    sa_mask;         //ブロックすべきsignalの追加
+    int         sa_flags;        //シグナルのオプション
+  };
+  ```
   * sigemptyset
     * `int sigemptyset(sigset_t *set, int signo)`
     * 成功ならば0, エラーならば-1
@@ -109,7 +122,7 @@ bash-3.2$
 * 
 
 
-
+q
 <br>
 <br>
 

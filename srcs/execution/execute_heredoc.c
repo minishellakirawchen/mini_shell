@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 09:31:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 10:21:22 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/14 18:25:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	execute_heredoc(int fd, const char *delimiter)
 		ft_putstr_fd("> ", STDOUT_FILENO);
 		line = get_next_line(STDIN_FILENO, true);
 		if (!line)
-			return (FAILURE);
+			return (SUCCESS);
 		if (is_delimiter(line, delimiter))
 			break ;
 		ft_putstr_fd(line, fd);//TODO:expansion

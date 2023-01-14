@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 20:21:44 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/14 12:29:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@
 # define ALPHABET_CNT			26
 
 # define PPID				"PPID"
+
+# define min(a, b)	((a) <= (b) ? (a) : (b))
+# define max(a, b)	((a) >= (b) ? (a) : (b))
 
 /* ---------------- */
 /*  typedef struct  */

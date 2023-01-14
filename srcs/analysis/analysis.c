@@ -53,6 +53,10 @@ int	valid_input(char **pipe_splitted_input)
 // 2nd try   :: pipe in subshell				, like: $> (cat Makefile | grep a)
 // 3rd try   :: subshell in pipeline			, like: $> cat Makefile | (cd /bin) | echo hello
 // 4th try   :: pipe in subshell in pipeline	, like: $> cat Makefile | (echo hello | grep h) | ls -l
+
+//22/Jan/14th
+//TODO: $> echo "hello"world hoge -> helloworld hoge
+// DONOT split by "'?
 int	analysis(t_info *info, char *readline_input)
 {
 	if (!info)

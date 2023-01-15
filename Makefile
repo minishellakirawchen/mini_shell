@@ -72,15 +72,16 @@ LIBGNL				= $(LIBGNL_DIR)/libgnl.a
 LIBFT_PRINTF_DIR	= $(LIB_DIR)/libftprintf
 LIBFT_PRINTF		= $(LIBFT_PRINTF_DIR)/libftprintf.a
 
-LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR)
+READLINE_DIR		= $(shell brew --prefix readline)/lib
 
-READLINE			= -L$(shell brew --prefix readline)/lib -lreadline
+LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR) $(READLINE_DIR)
 
-LFLAGS				= $(addprefix -L, $(LIBS_DIR)) $(READLINE)
+LFLAGS				= $(addprefix -L, $(LIBS_DIR)) -lreadline
 LIBS				= $(LIBFT) $(LIBGNL) $(LIBFT_PRINTF)
 
 # IFLAGS
-INCLUDES_DIR = ./includes
+INCLUDES_DIR = ./includes \
+				$(shell brew --prefix readline)/include
 IFLAGS = $(addprefix -I, $(INCLUDES_DIR))
 
 # RULES

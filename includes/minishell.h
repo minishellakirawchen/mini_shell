@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 09:33:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 11:17:22 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <limits.h>
 # include <fcntl.h>
 # include <signal.h>
+# include <stdio.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -87,8 +88,7 @@
 
 # define ALPHABET_CNT			26
 
-# define PROMPT				"minishell$ "
-
+# define PROMPT				"minishell $> "
 
 # define min(a, b)	((a) <= (b) ? (a) : (b))
 # define max(a, b)	((a) >= (b) ? (a) : (b))
@@ -287,7 +287,7 @@ int		execute_heredoc(int fd, const char *delimiter);
 // expansion.c
 int		expansion(t_info *info);
 int		arrange_command_line(t_info *info);
-char	**create_arranged_cmds_controller(char **src, const char *options);
+char	**arrange_cmd_opton(char **src, const char *options);
 
 // expand_variable.c
 int		is_name(const char *str);

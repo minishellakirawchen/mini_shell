@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 13:56:37 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 23:57:44 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 10:35:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	ft_echo(t_info *info, const char **cmds)
 
 	if (!info || !cmds || !cmds[0])
 		return (FAILURE); //TODO: exit?
-	arranged_cmds = create_arranged_cmds_controller((char **)cmds, STR_CMD_ECHO_OPTIONS);
+	arranged_cmds = arrange_cmd_opton((char **) cmds, STR_CMD_ECHO_OPTIONS);
 //	debug_print_2d_arr(arranged_cmds, "arranged");
 	if (!arranged_cmds)
 		return (FAILURE);

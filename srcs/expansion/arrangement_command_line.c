@@ -189,7 +189,7 @@ char	**create_arranged_cmds(char **src, ssize_t option_str_cnt, int *cnt_arr)
 	return (arranged_cmds);
 }
 
-char **create_arranged_cmds_controller(char **src, const char *options)
+char **arrange_cmd_opton(char **src, const char *options)
 {
 	char			**arranged_cmds;
 	int				*option_cnt_arr;
@@ -227,7 +227,7 @@ int	arrange_command_line(t_info *info)
 	{
 		if (node->exe_type == E_LEAF_COMMAND)
 		{
-			node->cmds = create_arranged_cmds_controller(node->cmds, STR_CMD_ECHO_OPTIONS);
+			node->cmds = arrange_cmd_opton(node->cmds, STR_CMD_ECHO_OPTIONS);
 			if (!node->cmds)
 				return (FAILURE);
 		}

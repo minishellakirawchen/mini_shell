@@ -6,27 +6,11 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 11:16:42 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 17:22:55 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int sig_flg;
-
-void	sig_handler_for_prompt_loop(int signo)
-{
-	if (signo == SIGINT)
-	{
-		sig_flg = SIGINT;
-		printf("SIGINT: test newline, flg:%d\n", sig_flg);
-	}
-	if (signo == SIGQUIT)
-	{
-		sig_flg = SIGQUIT;
-		printf("SIGQUIT: test quit, flg:%d\n", sig_flg);
-	}
-}
 
 void	init_input(t_info **info)
 {
@@ -38,43 +22,32 @@ void	init_input(t_info **info)
 	(*info)->tree_root = NULL;
 }
 
-void sigint_handler(int signo)
+void signal_in_prompt(void)
 {
-	if (signo == SIGINT)
-	{
-		printf("\n"); // Move to NL
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
+	struct	sigaction	sigaction_sigint;
+	struct	sigaction	sigaction_sigquit;
 
-sigfunc	*signal_act(int signo, sigfunc *func)
-{
-	struct sigaction	act;
-	struct sigaction	oact;
+	ft_memset(&sigaction_sigint, 0, sizeof(sigaction_sigint));
+	sigaction_sigint.sa_handler = signal_handler_in_prompt;
+	sigaction_sigint.sa_flags = 0;
 
-	act.sa_handler = func;
-	sigemptyset(&act.sa_mask);
-	act.sa_flags = 0;
-	if (sigaction(signo, &act, &oact) < 0)
-		return (SIG_ERR);
-	return (oact.sa_handler);
+	ft_memset(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
+	sigaction_sigquit.sa_handler = SIG_IGN;
+	sigaction_sigquit.sa_flags = 0;
+
+
+	if (signal_act(SIGINT, signal_handler_in_prompt) == SIG_ERR)
+		perror("sigaction");
+	if (signal_act(SIGQUIT, signal_handler_in_prompt) == SIG_ERR)
+		perror("sigaction");
 }
 
 int	prompt_loop(t_info	*info)
 {
-	int		exit_status;
-	char	*input_line;
-	struct	sigaction sa_sigint;
+	int					exit_status;
+	char				*input_line;
 
-	ft_memset(&sa_sigint, 0, sizeof(sa_sigint));
-	sa_sigint.sa_handler = sigint_handler;
-	sa_sigint.sa_flags = 0;
-
-	if (signal(SIGINT, sigint_handler) == SIG_ERR)
-		perror("sigaction");
-
+	signal_in_prompt();
 	while (true)
 	{
 		input_line = readline(PROMPT);

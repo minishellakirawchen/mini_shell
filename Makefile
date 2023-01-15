@@ -51,6 +51,7 @@ SRC		= main.c \
 		  helper/debug_print.c \
 		  helper/env_list.c \
 		  helper/is_same_str.c \
+		  signal/signal.c \
 
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))

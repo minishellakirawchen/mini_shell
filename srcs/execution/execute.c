@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/14 19:29:35 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 17:01:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,39 +63,6 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 	return (CMD_NOT_FOUND);
 }
 
-// cmd1                |            cmd2
-// child                            parent
-// stdout->[->write   pipe  read->]->stdin
-//
-/*
-int	close_fd_for_child(int pipe_fd[2])
-{
-	if (close(pipe_fd[READ]))
-		return (perror_and_return_int("close", EXIT_FAILURE));
-//	if (close(STDOUT_FILENO))
-//		return (perror_and_return_int("close", EXIT_FAILURE));
-	if (dup2(pipe_fd[WRITE], STDOUT_FILENO) < 0)
-		return (perror_and_return_int("dup2", EXIT_FAILURE));
-	if (close(pipe_fd[WRITE]) < 0)
-		return (perror_and_return_int("close", EXIT_FAILURE));
-	return (SUCCESS);
-}
-
-int	close_fd_for_parent(int pipe_fd[2])
-{
-	if (close(pipe_fd[WRITE]))
-		return (perror_and_return_int("close", EXIT_FAILURE));
-//	if (close(STDIN_FILENO))
-//		return (perror_and_return_int("close", EXIT_FAILURE));
-	if (dup2(pipe_fd[READ], STDIN_FILENO) < 0)
-		return (perror_and_return_int("dup2", EXIT_FAILURE));
-	if (close(pipe_fd[READ]) < 0)
-		return (perror_and_return_int("close", EXIT_FAILURE));
-	return (SUCCESS);
-}
-*/
-// if redirect in/out/here_doc, handle fds
-
 int	handle_fd_for_redirection(t_redirect_info *r_info)
 {
 	int	fd;
@@ -126,70 +93,6 @@ int	handle_fd_for_redirection(t_redirect_info *r_info)
 	}
 	return (SUCCESS);
 }
-
-//  <- Prev             next ->
-// cmd1 | cmd2 |..|cmdn-1| cmdn
-// childn   ...    child2  child1
-//   out->in  ->       out->in
-/*
-int execute_pipe_recursion(t_tree *node, t_info *info, int pipe_fd[2])
-{
-//	extern char	**environ;// env更新必要？envが必要なcommandが実行されなければexecve(hoge, hoge, NULL)で良い getenvくらい？
-	pid_t		pid;
-
-	if (!node || !node->cmds)
-		exit (EXIT_FAILURE);
-
-	if (node->prev && node->prev->exe_type == E_LEAF_COMMAND)
-	{
-//		pipe(pipe_fd);
-		pid = fork();
-		if (pid == CHILD_PROCESS)
-		{
-			// child : execute LEFT commands
-			if (close_fd_for_child(pipe_fd))
-				exit (EXIT_FAILURE);
-			execute_pipe_recursion(node->prev, info, pipe_fd);
-			exit (CMD_NOT_FOUND);
-		}
-		// parent : execute RIGHT commands
-		if (close_fd_for_parent(pipe_fd))
-			exit (EXIT_FAILURE);
-	}
-
-	// parent : execute RIGHT commands
-	debug_print_2d_arr(node->cmds, "cmds");
-
-	if (handle_fd_for_redirection(node->redirect_info) == FAILURE)
-		exit (EXIT_FAILURE);
-
-	// execute builtins
-	if (is_builtins((const char **)node->cmds))
-		exit (execute_builtin(info, (const char **) node->cmds));//exitしないとblocking
-
-	// execute other commands
-	if (node->cmds[0] && (node->cmds[0][0] == '/' || node->cmds[0][0] == '.'))
-		execve(node->cmds[0], node->cmds, NULL);
-	else
-		ft_execvp(node->cmds[0], node->cmds, get_env_value(PATH, info->env_list));
-	dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);//TODO:stderr
-	exit (CMD_NOT_FOUND);
-}
-*/
-
-
-// TODO: implement handler (Bonus part)
-// nodeを辿りながらflagに応じた実行をしていく
-// node中にflagがあった場合、内部でhandlerを実行することで、実行順の整合性が取れる（はず）
-/*
-int execute_handler()
-{
-	if pipe -> exec_pipe
-	if subshell -> exec_subshell
-	if and -> exec_and
-	if or -> exec_or
-}
-*/
 
 int	is_execute_only_builtin(t_tree *node)
 {
@@ -280,7 +183,7 @@ int	wait_and_get_last_status(t_tree *cmd_leaf_head)
 	return (WEXITSTATUS(status));
 }
 
-int	execute_child(t_info *info, t_tree *node, int new_fd[2], int old_fd[2])
+int	execute_command_in_child(t_info *info, t_tree *node, int new_fd[2], int old_fd[2])
 {
 	if (old_fd[WRITE] != -1)
 	{
@@ -315,7 +218,7 @@ bool	is_fork_failure(pid_t pid)
 	return (pid < 0);
 }
 
-int	execute_parent(int new_fd[2], int old_fd[2])
+int	handle_fds_in_parent(int new_fd[2], int old_fd[2])
 {
 	if (old_fd[WRITE] != -1)
 		if (close(old_fd[READ]) || close(old_fd[WRITE]))
@@ -324,29 +227,20 @@ int	execute_parent(int new_fd[2], int old_fd[2])
 	return (SUCCESS);
 }
 
-int sig_flg;
-
-void	sig_handler(int signo)
+int execute_pipe_iterative(t_info *info, t_tree *cmd_leaf_head)
 {
-	if (signo == SIGINT)
-	{
-		sig_flg = SIGINT;
-		printf("SIGINT: test newline, flg:%d\n", sig_flg);
-	}
-	if (signo == SIGQUIT)
-	{
-		sig_flg = SIGQUIT;
-		printf("SIGQUIT: test quit, flg:%d\n", sig_flg);
-	}
-}
+	int					new_pipe_fd[2];
+	int 				old_pipe_fd[2];
+	t_tree				*node;
+	int					exit_status;
+	struct	sigaction	sa;
 
+	ft_memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = signal_handler_in_execution;
+	sa.sa_flags = 0;
 
-int execute_pipe_line(t_info *info, t_tree *cmd_leaf_head)
-{
-	int				new_pipe_fd[2];
-	int 			old_pipe_fd[2];
-	t_tree			*node;
-	int				exit_status;
+	if (signal_act(SIGQUIT, signal_handler_in_execution) == SIG_ERR)
+		perror("sigaction");
 
 	if (!info || !cmd_leaf_head)
 		return (FAILURE);
@@ -354,24 +248,15 @@ int execute_pipe_line(t_info *info, t_tree *cmd_leaf_head)
 	init_pipe(old_pipe_fd, new_pipe_fd);
 	while (node)
 	{
-		sig_flg = 0;
-
 		pipe(new_pipe_fd);
 		node->pid = fork();
 		if (is_fork_failure(node->pid))
 			perror_and_return_int("fork", FAILURE);
 		if (is_child_process(node->pid))
-			exit (execute_child(info, node, new_pipe_fd, old_pipe_fd));
+			exit (execute_command_in_child(info, node, new_pipe_fd, old_pipe_fd));
 		if (is_parent_process(node->pid))
-			if (execute_parent(new_pipe_fd, old_pipe_fd) == FAILURE)
+			if (handle_fds_in_parent(new_pipe_fd, old_pipe_fd) == FAILURE)
 				return (FAILURE);
-		if (signal(SIGQUIT, sig_handler) == SIG_ERR)
-			perror("signal");
-		if (sig_flg == SIGQUIT)
-		{
-			dprintf(STDERR_FILENO, "^\\Quit: 3\n");
-			exit (EXIT_SIGQUIT);
-		}
 		node = node->next;
 	}
 	if (close(new_pipe_fd[READ]) < 0 || close(new_pipe_fd[WRITE]) < 0)
@@ -404,7 +289,7 @@ int	execute_command_line(t_info *info)
 	pid = fork();
 	if (pid == CHILD_PROCESS)
 	{
-		status = execute_pipe_line(info, node);
+		status = execute_pipe_iterative(info, node);
 		exit (status);
 	}
 	waitpid(pid, &status, 0);

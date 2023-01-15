@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 11:17:22 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 16:55:47 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,6 +224,7 @@ struct s_minishell_info
 
 typedef void sigfunc(int);
 
+
 /* ------- */
 /*  input  */
 /* ------- */
@@ -264,6 +265,7 @@ t_redirect_info	*get_redirection_info(const char **cmds);
 int		create_tree(t_info **info);
 size_t	count_pipe(char **cmds);
 
+
 /* ----------- */
 /*  execution  */
 /* ----------- */
@@ -281,6 +283,8 @@ int		execute_redirect(t_tree **root);
 
 /* execute_heredoc.c */
 int		execute_heredoc(int fd, const char *delimiter);
+
+
 /* ----------- */
 /*  expansion  */
 /* ----------- */
@@ -320,6 +324,15 @@ int		ft_env(t_info *info, const char **cmds);
 int		ft_exit(t_info *info, const char **cmds);
 /* builtin helper.c */
 //char	*get_current_path(void);
+
+
+/* -------- */
+/*  signal  */
+/* -------- */
+// signal.c
+sigfunc	*signal_act(int signo, sigfunc *func);
+void	signal_handler_in_prompt(int signo);
+void	signal_handler_in_execution(int signo);
 
 
 /* -------- */

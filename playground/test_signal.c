@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 10:27:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 17:17:42 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,18 @@ void sigint_handler(int signo)
 {
 	if (signo == SIGINT)
 	{
-		printf("\n"); // Move to NL
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+//		printf("\n"); // Move to NL
+//		rl_on_new_line();
+//		rl_replace_line("", 0);
+//		rl_redisplay();
 		sigint_cnt++;
+		printf("sigint_cnt:%d\n", sigint_cnt);
 	}
+	if (signo == SIGQUIT)
+		printf("^\\Quit\n");
 }
 
-Sigfunc *signal(int signo, Sigfunc *func)
+Sigfunc *signal_act(int signo, Sigfunc *func)
 {
 	struct sigaction	act, oact;
 
@@ -62,12 +65,25 @@ int main(void)
 	sa_sigint.sa_handler = sigint_handler;
 	sa_sigint.sa_flags = 0;
 
-	if (signal(SIGINT, sigint_handler) == SIG_ERR)
+	if (signal_act(SIGINT, sigint_handler) == SIG_ERR)
 		perror("sigaction");
 
+	if (signal_act(SIGQUIT, sigint_handler) == SIG_ERR)
+		perror("sigaction");
+
+	sigint_cnt = 0;
 	printf("1. sigint_cnt:%d\n", sigint_cnt);
-	while (true)
+	while (sigint_cnt <= 10)
 	{
+		/* pause中だとquitが有効になる */
+		/*
+		printf("sleep start\n");
+		sleep(10);
+		printf("sleep end\n");
+		pause();
+		*/
+
+		/* 入力待ちだとquitが効かない */
 		line = readline("input $> ");
 		if (!line)
 		{

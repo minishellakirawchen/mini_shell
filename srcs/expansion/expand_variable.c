@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:06:06 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 20:20:40 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 17:41:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,32 +375,16 @@ int	expansion(t_info *info)
 			//    -> {"echo", "hello", "0", "piyopiyoUSERNAME", NULL}
 			while (node->cmds[idx])
 			{
-//				printf(" %2zu:[%s]", idx, node->cmds[idx]);
-//				printf("isneeded:%d\n", is_expand_needed(node->cmds[idx]));
 				if (is_expand_needed(node->cmds[idx]))
 				{
 					if (expand_variable_in_str(info, &node->cmds[idx]) == FAILURE)
 						return (FAILURE);
-//					printf("->[%s]", node->cmds[idx]);
 				}
-//				printf("\n");
 				idx++;
 			}
 		}
 		node = node->next;
 	}
-
-	debug_print_stack(info->tree_root, "check tree after expansion");
-
+//	debug_print_stack(info->tree_root, "check tree after expansion");
 	return (SUCCESS);
 }
-
-
-
-
-
-
-
-
-
-

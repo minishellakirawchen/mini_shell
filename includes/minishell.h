@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 16:55:47 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 18:07:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 # define MINISHELL_H
 
 # include <errno.h>
-# include <string.h>
-# include <limits.h>
 # include <fcntl.h>
+# include <limits.h>
 # include <signal.h>
 # include <stdio.h>
+# include <string.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -240,10 +240,10 @@ void	sig_handler(int signo);
 
 
 /* ---------- */
-/*  analysis  */
+/*  analyze_input  */
 /* ---------- */
-// analysis.c
-int		analysis(t_info *info, char *readline_input); // tmp
+// analyze_input.c
+int		analyze_input(t_info *info, char *readline_input); // tmp
 //int		add_redirect_param(t_tree **node);
 
 // pipe_split.c
@@ -278,11 +278,30 @@ int		execute_builtin(t_info *info, const char **cmds);
 
 /* execute_redirect.c */
 int		handle_fd_for_redirection(t_redirect_info *r_info);
-int		openfile_and_heredoc_for_redirect(t_tree **root);
 int		execute_redirect(t_tree **root);
 
 /* execute_heredoc.c */
 int		execute_heredoc(int fd, const char *delimiter);
+
+/* execute_pipe_iterative.c */
+int		execute_pipe_iterative(t_info *info, t_tree *cmd_leaf_head);
+
+/* ft_execve.c */
+void	ft_execve(t_tree *node, t_info *info);
+int		is_execute_only_builtin(t_tree *node);
+
+/* ft_execvp.c */
+int		ft_execvp(char *file, char **cmds, char *env_paths);
+
+/* fork_wait_helpers.c */
+bool	is_child_process(pid_t pid);
+bool	is_parent_process(pid_t pid);
+bool	is_fork_failure(pid_t pid);
+
+/* handle_filedes */
+void	init_pipe_fd(int old_pipe_fd[2], int new_pipe_fd[2]);
+int		handle_fd_for_redirection(t_redirect_info *r_info);
+void	copy_fd_new_to_old(int old_pipe_fd[2], const int new_pipe_fd[2]);
 
 
 /* ----------- */
@@ -333,6 +352,7 @@ int		ft_exit(t_info *info, const char **cmds);
 sigfunc	*signal_act(int signo, sigfunc *func);
 void	signal_handler_in_prompt(int signo);
 void	signal_handler_in_execution(int signo);
+void	signal_handler_in_execute_pipe(void);
 
 
 /* -------- */

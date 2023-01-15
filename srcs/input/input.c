@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 17:22:55 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 17:42:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void signal_in_prompt(void)
 	sigaction_sigquit.sa_handler = SIG_IGN;
 	sigaction_sigquit.sa_flags = 0;
 
-
 	if (signal_act(SIGINT, signal_handler_in_prompt) == SIG_ERR)
 		perror("sigaction");
 	if (signal_act(SIGQUIT, signal_handler_in_prompt) == SIG_ERR)
@@ -44,8 +43,8 @@ void signal_in_prompt(void)
 
 int	prompt_loop(t_info	*info)
 {
-	int					exit_status;
-	char				*input_line;
+	int		exit_status;
+	char	*input_line;
 
 	signal_in_prompt();
 	while (true)
@@ -54,19 +53,18 @@ int	prompt_loop(t_info	*info)
 		if (!input_line)
 		{
 			exit_status = EXIT_SUCCESS;
-			ft_printf("exit");
+			ft_printf("exit\n");
 			break ;
 		}
-		//TODO: is necessary clear history?
-		printf("input            :[%s]\n", input_line);
-		analysis(info, input_line);//TODO cmd op重複も解析、削除するか？
+		add_history(input_line);
+//		printf("input            :[%s]\n", input_line);
+		analyze_input(info, input_line);
 		expansion(info);
 //		printf("[#DEGUG] vvvvv Execution vvvvv\n"); // tmp
 		exit_status = execute_command_line(info);
 		info->exit_status = exit_status;
 //		printf("[#DEGUG] ^^^^^ Execution ^^^^^\n"); // tmp
-		dprintf(STDERR_FILENO, "[#DEBUG]exit status:%d\n", info->exit_status);
-		add_history(input_line);//tmp
+//		dprintf(STDERR_FILENO, "[#DEBUG]exit status:%d\n", info->exit_status);
 		free(input_line);
 		if (info->is_exit)
 			break ;

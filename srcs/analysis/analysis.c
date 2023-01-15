@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 18:42:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 18:12:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	valid_input(char **pipe_splitted_input)
 //22/Jan/14th
 //TODO: $> echo "hello"world hoge -> helloworld hoge
 // DONOT split by "'?
-int	analysis(t_info *info, char *readline_input)
+int	analyze_input(t_info *info, char *readline_input)
 {
 	if (!info)
 		return (FAILURE);
@@ -77,8 +77,7 @@ int	analysis(t_info *info, char *readline_input)
 		free_2d_array_ret_nullptr((void ***)&info->splitted_cmds);
 		return (SYNTAX_ERROR);
 	}
-	debug_print_2d_arr(info->splitted_cmds, "pipe_splitted    ");
-
+//	debug_print_2d_arr(info->splitted_cmds, "pipe_splitted    ");
 
 	// split redirect sign
 	info->splitted_cmds = split_redirect_and_word_controller((const char **)info->splitted_cmds);
@@ -113,12 +112,7 @@ int	analysis(t_info *info, char *readline_input)
 	//                             cmd2 = {"cmd21", "cmd22", "cmd23",.., NULL}    execve("echo", {"echo", "hello", "world", NULL}, NULL)
 	//
 //	printf("#print tree\n");
-	debug_print_stack(info->tree_root, "check tree");
-
-//	add_command_leaf_to_node(&pipe_node, info->readline_input); //input: tmp
-	// if fail -> all free, by tree_clear
-
-	// BFS的な実装で入れ子でも順番に展開していける？
+//	debug_print_stack(info->tree_root, "check tree");
 
 	return (SUCCESS);
 }

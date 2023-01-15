@@ -20,7 +20,7 @@
 //
 // $>echo hello world -> $> hello world
 //
-// $xxx->expand by analysis and expansion part
+// $xxx->expand by analyze_input and expansion part
 // echo just print it
 
 static void	print_echo(const char **str, bool is_nl)

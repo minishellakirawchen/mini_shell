@@ -37,6 +37,11 @@ SRC		= main.c \
 		  execution/execute_builtin.c \
 		  execution/execute_redirect.c \
 		  execution/execute_heredoc.c \
+		  execution/fork_wait_helpers.c \
+		  execution/handle_filedes.c \
+		  execution/ft_execve.c \
+		  execution/ft_execvp.c \
+		  execution/execute_pipe_iterative.c \
 		  exit/exit.c \
 		  builtin/ft_echo.c \
 		  builtin/ft_cd.c \

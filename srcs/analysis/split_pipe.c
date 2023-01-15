@@ -139,6 +139,7 @@ static char	**split_pipe_and_word(const char *src, size_t size)
 	size_t	head_idx;
 	size_t	word_size;
 
+	errno = 0;
 	splitted_cmds = (char **)ft_calloc(sizeof(char *), size + 1);
 	if (!splitted_cmds)
 		return ((char **) perror_and_return_nullptr("malloc"));

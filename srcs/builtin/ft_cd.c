@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 22:11:37 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:17:17 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 	char	*new_path;
 	char 	*trimmed_move_to;
 
+	errno = 0;
 	if (move_to_len == 0)
 		return (current_path);
 	if (move_to[0] == '/')
@@ -46,6 +47,7 @@ int ft_cd(t_info *info, const char **cmds)
 	char 	*move_to;
 	char 	*current_path;
 
+	errno = 0;
 	if (!info || !cmds)
 		return (EXIT_FAILURE); //TODO: exit?
 	if (get_2d_array_size((const char **)cmds) == 1)
@@ -62,7 +64,7 @@ int ft_cd(t_info *info, const char **cmds)
 	free_1d_array_ret_nullptr((void **)&new_path);
 	if (chdir_ret < 0)
 	{
-		ft_printf("cd: no such file or directory: %s\n", move_to);//TODO: STDERROR or make fprintf
+		ft_dprintf(STDERR_FILENO, "cd: no such file or directory: %s\n", move_to);
 		return (CHDIR_FAILURE);
 	}
 	current_path = getcwd(NULL, 0);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:24 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 09:39:29 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:28:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ int ft_exit(t_info *info, const char **cmds)
 
 	if (!info)
 		return (FAILURE);
-	ft_putendl_fd("exit", STDERR_FILENO);
+	ft_dprintf(STDERR_FILENO, "exit");
 	if (argc > 2)
 	{
-		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
+		ft_dprintf(STDERR_FILENO, "minishell: exit: too many arguments");
 		return (EXIT_TOO_MANY_ARGS);
 	}
 	exit_status = EXIT_SUCCESS;
@@ -64,7 +64,7 @@ int ft_exit(t_info *info, const char **cmds)
 		exit_status = (int)(ft_strtoll((char *)cmds[1], &is_strtoll_success) % 256);
 		if (!is_strtoll_success)
 		{
-			dprintf(STDERR_FILENO, "minishell: exit: %s: numeric argument required", (char *)cmds[1]);
+			ft_dprintf(STDERR_FILENO, "minishell: exit: %s: numeric argument required", (char *)cmds[1]);
 			exit (EXIT_NUMERIC_ARGS_REQUIRED);
 		}
 	}

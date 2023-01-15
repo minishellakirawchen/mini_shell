@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 17:47:11 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 18:00:02 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:42:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	handle_fd_for_redirection(t_redirect_info *r_info)
 		return (FAILURE);
 	if (r_info->input_from == E_STDIN && r_info->ouput_to == E_STDOUT)
 		return (SUCCESS);
+	errno = 0;
 	if (r_info->ouput_to == E_REDIRECT_OUT || r_info->ouput_to == E_REDIRECT_APPEND)
 	{
 		if (dup2(r_info->r_fd[R_FD_OUTFILE], STDOUT_FILENO) < 0)

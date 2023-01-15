@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 17:42:40 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:51:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,13 @@ void signal_in_prompt(void)
 	struct	sigaction	sigaction_sigint;
 	struct	sigaction	sigaction_sigquit;
 
+	errno = 0;
 	ft_memset(&sigaction_sigint, 0, sizeof(sigaction_sigint));
 	sigaction_sigint.sa_handler = signal_handler_in_prompt;
 	sigaction_sigint.sa_flags = 0;
-
 	ft_memset(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
 	sigaction_sigquit.sa_handler = SIG_IGN;
 	sigaction_sigquit.sa_flags = 0;
-
 	if (signal_act(SIGINT, signal_handler_in_prompt) == SIG_ERR)
 		perror("sigaction");
 	if (signal_act(SIGQUIT, signal_handler_in_prompt) == SIG_ERR)
@@ -46,6 +45,7 @@ int	prompt_loop(t_info	*info)
 	int		exit_status;
 	char	*input_line;
 
+	errno = 0;
 	signal_in_prompt();
 	while (true)
 	{
@@ -65,7 +65,7 @@ int	prompt_loop(t_info	*info)
 		info->exit_status = exit_status;
 //		printf("[#DEGUG] ^^^^^ Execution ^^^^^\n"); // tmp
 //		dprintf(STDERR_FILENO, "[#DEBUG]exit status:%d\n", info->exit_status);
-		free(input_line);
+		free_1d_array_ret_nullptr((void **)&input_line);
 		if (info->is_exit)
 			break ;
 		init_input(&info);

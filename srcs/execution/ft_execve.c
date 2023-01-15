@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 17:51:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 17:57:32 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:42:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,6 @@ void	ft_execve(t_tree *node, t_info *info)
 		execve(node->cmds[0], node->cmds, NULL);
 	else
 		ft_execvp(node->cmds[0], node->cmds, get_env_value(PATH, info->env_list));
-	dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);//TODO:stderr
+	ft_dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);
 	exit (CMD_NOT_FOUND);
 }

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 18:52:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 17:38:08 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:52:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ void	signal_handler_in_execute_pipe(void)
 {
 	struct	sigaction	sigaction_sigquit;
 
+	errno = 0;
 	ft_memset(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
 	sigaction_sigquit.sa_handler = signal_handler_in_execution;
 	sigaction_sigquit.sa_flags = 0;
-
 	if (signal_act(SIGQUIT, signal_handler_in_execution) == SIG_ERR)
 		perror("sigaction");
 }

@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 22:06:48 by takira            #+#    #+#             */
-/*   Updated: 2022/11/15 22:17:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 20:20:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	.get_flag(char *fmt, t_printf_info *info)
+void	get_flag(char *fmt, t_printf_info *info)
 {
 	const char		*flags = "-+ #0";
 

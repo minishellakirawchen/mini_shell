@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:19 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 19:08:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:27:22 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,6 @@ int ft_env(t_info *info, const char **cmds)
 		return (1); //TODO: exit?
 	ft_lstiter(info->env_list, print_key_value);
 	if (cmds[1])
-		ft_putendl_fd("minishell: env : Unknown options", STDERR_FILENO);
+		ft_dprintf(STDERR_FILENO, "minishell: env : Unknown options");
 	return (0);
 }

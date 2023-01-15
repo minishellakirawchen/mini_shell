@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 22:26:48 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:29:30 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ static int error_invalid_key(char **key, size_t idx, const char *cmd)
 {
 	if (idx == 0)
 	{
-		dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
+		ft_dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
 		return (FAILURE);
 	}
-	dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
+	ft_dprintf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", (char *)cmd);
 	free_1d_array_ret_nullptr((void **)key);
 	return (FAILURE);
 }
@@ -38,6 +38,7 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 	size_t	key_len;
 
 	idx = 0;
+	errno = 0;
 	while (cmd[idx] && cmd[idx] != '=')
 		idx++;
 	if (!cmd[idx])

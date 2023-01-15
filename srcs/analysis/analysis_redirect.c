@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 08:39:12 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 15:13:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:15:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ char **update_files(char **current_files, const char *add_file)
 	size_t	update_size;
 	size_t	idx;
 
+	errno = 0;
 	update_size = 0;
 	while (current_files && current_files[update_size])
 		update_size++;
@@ -130,6 +131,7 @@ void	*free_redirect_info(t_redirect_info **info)
 
 int	set_redirect_in(t_redirect_info **info, const char *infile)
 {
+	errno = 0;
 	(*info)->input_from = E_REDIRECT_IN;
 	(*info)->infiles = update_files((*info)->infiles, infile);
 	if (!(*info)->infiles)
@@ -142,6 +144,7 @@ int	set_redirect_in(t_redirect_info **info, const char *infile)
 
 int	set_redirect_heredoc(t_redirect_info **info, const char *delimiter)
 {
+	errno = 0;
 	(*info)->input_from = E_HERE_DOC;
 	(*info)->heredoc_delims = update_files((*info)->heredoc_delims, delimiter);
 	if (!(*info)->heredoc_delims)
@@ -156,6 +159,7 @@ int	set_redirect_heredoc(t_redirect_info **info, const char *delimiter)
 
 int	set_redirect_out(t_redirect_info **info, const char *outfile)
 {
+	errno = 0;
 	(*info)->ouput_to = E_REDIRECT_OUT;
 	(*info)->outfiles = update_files((*info)->outfiles, outfile);
 	if (!(*info)->outfiles)
@@ -169,6 +173,7 @@ int	set_redirect_out(t_redirect_info **info, const char *outfile)
 //TODO: appendはoutでoverwriteできる？
 int	set_redirect_append(t_redirect_info **info, const char *outfile)
 {
+	errno = 0;
 	(*info)->ouput_to = E_REDIRECT_APPEND;
 	(*info)->outfiles = update_files((*info)->outfiles, outfile);
 	if (!(*info)->outfiles)
@@ -184,6 +189,7 @@ t_redirect_info	*get_redirection_info(const char **cmds)
 	size_t			idx;
 	t_redirect_info	*info;
 
+	errno = 0;
 	info = (t_redirect_info *)malloc(sizeof(t_redirect_info));
 	if (!info)
 		return (perror_and_return_nullptr("malloc"));

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 18:12:15 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:12:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	valid_input(char **pipe_splitted_input)
 				is_error = true;
 			if (is_error)
 			{
-				printf("minishell: syntax error near unexpected token `%s'\n", pipe_splitted_input[idx]);// TODO:STDERROR
+				ft_dprintf(STDERR_FILENO, "minishell: syntax error near unexpected token `%s'\n", pipe_splitted_input[idx]);
 				return (FAILURE);
 			}
 		}
@@ -61,7 +61,7 @@ int	analyze_input(t_info *info, char *readline_input)
 {
 	if (!info)
 		return (FAILURE);
-
+	errno = 0;
 	// split input by before or after of '|'
 	// * input [echo hello |grep a| echo "hello | world" >out]
 	// * split {"echo", "hello", "|", "grep", "a", "|", "echo", "hello", "|", "world", ">out", NULL}

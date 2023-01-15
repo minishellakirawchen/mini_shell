@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/08 18:26:48 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 15:12:10 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:16:33 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ static int	split_src_with_redirect_sign(char ***dest, const char *src, size_t *j
 	size_t	word_size;
 
 	head_idx = 0;
+	errno = 0;
 	while (src[head_idx])
 	{
 		word_size = minsize(get_split_idx_by_chr(&src[head_idx], CHR_REDIRECT_IN), \
@@ -59,6 +60,7 @@ static char	**split_redirect_and_word(const char **cmds_src, size_t size)
 	size_t	i;
 	size_t	j;
 
+	errno = 0;
 	splitted_cmds = (char **)ft_calloc(sizeof(char *), size + 1);
 	if (!splitted_cmds)
 		return ((char **) perror_and_return_nullptr("malloc"));

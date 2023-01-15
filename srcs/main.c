@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 11:18:07 by wchen             #+#    #+#             */
-/*   Updated: 2023/01/14 19:12:01 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:52:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static t_info	*init_params(void)
 {
 	t_info	*info;
 
+	errno = 0;
 	info = (t_info *)malloc(sizeof(t_info));
 	if (!info)
 	{

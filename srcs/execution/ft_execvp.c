@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 17:53:01 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 17:53:49 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:42:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ static char	*get_execute_path(char *path, char *file)
 	const size_t	path_len = ft_strlen_ns(path);
 	const size_t	file_len = ft_strlen_ns(file);
 
+	errno = 0;
 	len = path_len + file_len;
 	if (path_len > 0 && path[path_len - 1] != '/')
 		len++;
@@ -44,6 +45,7 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 	size_t		idx;
 	char 		*path;
 
+	errno = 0;
 	splitted_paths = ft_split(env_paths, CHA_PATH_DELIM);
 	if (!splitted_paths)
 		return (perror_and_return_int("malloc", EXIT_FAILURE));

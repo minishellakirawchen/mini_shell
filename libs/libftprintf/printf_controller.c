@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 14:52:04 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:01:52 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:38:02 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,26 +69,26 @@ static ssize_t	print_fmt(char *fmt, t_printf_info *info, va_list *p)
 
 int	printf_controller(t_printf_info *info, const char *fmt, ...)
 {
-	va_list			ptr;
-	ssize_t			print_bytes;
-	ssize_t			sum_print_bytes;
+	va_list	ptr;
+	ssize_t	print_bytes;
+	ssize_t	sum_bytes;
 
 	if (!fmt || !info)
 		return (-1);
 	va_start(ptr, fmt);
-	while (fmt[info->fmt_idx] && errno == 0 && sum_print_bytes >= 0)
+	while (fmt[info->fmt_idx] && errno == 0 && sum_bytes >= 0)
 	{
 		while (fmt[info->fmt_idx] != '%' && fmt[info->fmt_idx] && errno == 0)
-			sum_print_bytes += ft_putchar_for_printf(fmt[info->fmt_idx++], info->fd);
+			sum_bytes += ft_putchar_for_printf(fmt[info->fmt_idx++], info->fd);
 		if (!fmt[info->fmt_idx])
 			break ;
 		info->fmt_idx++;
 		print_bytes = print_fmt((char *)fmt, info, &ptr);
-		sum_print_bytes += print_bytes;
-		if (errno != 0 || print_bytes == -1 || sum_print_bytes > INT_MAX)
-			sum_print_bytes = -1;
+		sum_bytes += print_bytes;
+		if (errno != 0 || print_bytes == -1 || sum_bytes > INT_MAX)
+			sum_bytes = -1;
 		info->fmt_idx++;
 	}
 	va_end(ptr);
-	return ((int)sum_print_bytes);
+	return ((int)sum_bytes);
 }

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 10:13:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/06 20:03:59 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:39:37 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,20 +35,12 @@ static char	**free_array(char **array)
 	return (NULL);
 }
 
-// update ?
-// while delim i++
-// while !delim i++
-//   if set -> while set i++
-
-// delim-'\0' : not count
-// !delim-'\0': count
 static size_t	get_strs_size(const char *str, char delim, char set)
 {
 	size_t	size;
 	size_t	i;
 	bool	is_include_str;
 
-//	printf("# get_strs_size  str:[%s]\n", str);
 	size = 0;
 	i = 0;
 	while (str[i])
@@ -56,12 +48,10 @@ static size_t	get_strs_size(const char *str, char delim, char set)
 		is_include_str = false;
 		while (str[i] && str[i] == delim)
 			i++;
-//		printf("1. after while(delim)         : i:%zu, str[i]:%c\n", i, str[i]);
 		if (str[i] && str[i] != delim)
 			is_include_str = true;
 		while (str[i] && str[i] != delim && str[i] != set)
 			i++;
-//		printf("2. after while(!delim && !set): i:%zu, str[i]:%c\n", i, str[i]);
 		if (str[i] && str[i] == set)
 		{
 			i++;
@@ -70,24 +60,14 @@ static size_t	get_strs_size(const char *str, char delim, char set)
 			if (str[i] && str[i] == set)
 				i++;
 		}
-//		printf("3. if(set)                    : i:%zu, str[i]:%c\n", i, str[i]);
 		if (str[i] == delim && is_include_str)
 		{
 			size++;
 			is_include_str = false;
-//			printf("# str[i]==delim  i:%zu, str[i]:[%c], size:%zu\n", i, str[i], size);
 		}
-//		printf("4. before i++                 : i:%zu, str[i]:%c\n", i, str[i]);
-//		if (str[i])
-//			i++;
-//		printf("5. after i++                  : i:%zu, str[i]:%c\n\n", i, str[i]);
 	}
 	if (is_include_str)
-	{
 		size++;
-//		printf("6. !str[i] && is_include_str  : i:%zu, str[i]:%c\n\n", i, str[i]);
-	}
-//	printf("# size:%zu\n\n", size);
 	return (size);
 }
 
@@ -110,8 +90,6 @@ static size_t	get_substr_size(const char *str, char delim, char set, size_t head
 		}
 		if (str[head + size] && str[head + size] == delim)
 			return (size);
-//		if (str[head + size])
-//			size++;
 	}
 	return (size);
 }
@@ -138,7 +116,6 @@ static char	**get_split_strs(char ***strs, const char *str, char delim, char set
 			break ;
 		size = get_substr_size(str, delim, set, head_idx);
 		(*strs)[i] = ft_substr(str, head_idx, size);
-//		printf("substr:%s\n", (*strs)[i]);
 		if (!(*strs)[i])
 			return (free_array(*strs));
 		i++;

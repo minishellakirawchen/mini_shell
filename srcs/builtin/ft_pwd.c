@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:01 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:30:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:49:27 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,14 @@ char *get_current_path(void)
 	return (path);
 }
 */
-int ft_pwd(t_info *info)
+
+int	ft_pwd(t_info *info)
 {
 	char	*current_path;
 
 	errno = 0;
 	if (!info)
 		return (1); //TODO: exit?
-//	current_path = get_current_path();
 	current_path = getcwd(NULL, 0);
 	if (errno != 0)
 		return (perror_and_return_int("malloc", FAILURE));

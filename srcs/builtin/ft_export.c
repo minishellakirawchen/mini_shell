@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:29:30 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:47:16 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int error_invalid_key(char **key, size_t idx, const char *cmd)
+static int	error_invalid_key(char **key, size_t idx, const char *cmd)
 {
 	if (idx == 0)
 	{
@@ -24,7 +24,7 @@ static int error_invalid_key(char **key, size_t idx, const char *cmd)
 	return (FAILURE);
 }
 
-static int error_malloc_key_or_value(char **key, char **value)
+static int	error_malloc_key_or_value(char **key, char **value)
 {
 	perror("malloc");
 	free_1d_array_ret_nullptr((void **)key);
@@ -62,7 +62,7 @@ int	get_export_param(const char *cmd, char **key, char **value, t_export_type *t
 }
 
 // input: {export, key=value, hoge, hoge, ..., NULL}
-int ft_export(t_info *info, const char **cmds)
+int	ft_export(t_info *info, const char **cmds)
 {
 	char			*key;
 	char			*value;

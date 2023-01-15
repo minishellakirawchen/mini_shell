@@ -6,12 +6,13 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 11:18:07 by wchen             #+#    #+#             */
-/*   Updated: 2023/01/15 19:52:36 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:57:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
+//if env_list==NULL -> operate with env=NULL
 static t_info	*init_params(void)
 {
 	t_info	*info;
@@ -23,9 +24,8 @@ static t_info	*init_params(void)
 		perror("malloc");
 		free_and_return_no(NULL, EXIT_FAILURE);
 	}
-	// init params
 	info->exit_status = EXIT_SUCCESS;
-	info->env_list = get_env_list();//if env_list==NULL -> operate with env=NULL
+	info->env_list = get_env_list();
 	info->tree_root = NULL;
 	info->pid = getpid();
 	info->is_exit = false;
@@ -34,15 +34,15 @@ static t_info	*init_params(void)
 
 static void	display_ascii_art(void)
 {
-	ft_printf("           _       _      _          _ _ \n"
-			  " _ __ ___ (_)_ __ (_)___ | |__   ___| | |\n"
-			  "| '_ ` _ \\| | '_ \\| / __|| '_ \\ / _ \\ | |\n"
-			  "| | | | | | | | | | \\__ \\| | | |  __/ | |\n"
-			  "|_| |_| |_|_|_| |_|_|___/|_| |_|\\___|_|_|\n"
-			  "                        By: takira, wchen\n");
+	ft_printf("           _       _      _          _ _ \n" \
+	" _ __ ___ (_)_ __ (_)___ | |__   ___| | |\n" \
+	"| '_ ` _ \\| | '_ \\| / __|| '_ \\ / _ \\ | |\n" \
+	"| | | | | | | | | | \\__ \\| | | |  __/ | |\n" \
+	"|_| |_| |_|_|_| |_|_|___/|_| |_|\\___|_|_|\n" \
+	"                        By: takira, wchen\n");
 }
 
-int main(void)
+int	main(void)
 {
 	t_info	*info;
 	int		exit_status;

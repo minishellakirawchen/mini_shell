@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:17:17 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:54:05 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 static char	*get_chdir_path(char *current_path, char *move_to)
 {
-	size_t	current_len = ft_strlen_ns(current_path);
-	size_t	move_to_len = ft_strlen_ns(move_to);
-	char	*new_path;
-	char 	*trimmed_move_to;
+	const size_t	current_len = ft_strlen_ns(current_path);
+	size_t			move_to_len;
+	char			*new_path;
+	char 			*trimmed_move_to;
 
 	errno = 0;
+	move_to_len = ft_strlen_ns(move_to);
 	if (move_to_len == 0)
 		return (current_path);
 	if (move_to[0] == '/')
@@ -39,8 +40,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 }
 
 // TODO: check permission denied
-
-int ft_cd(t_info *info, const char **cmds)
+int	ft_cd(t_info *info, const char **cmds)
 {
 	int		chdir_ret;
 	char 	*new_path;

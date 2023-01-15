@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 21:11:40 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 22:06:23 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:40:59 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static bool	is_less_than_ll(long long before_x10, long long add, long long sign)
 	return (true);
 }
 
-static int get_sign_and_increment_ptr(char *num, size_t *idx)
+static int	get_sign_and_increment_ptr(char *num, size_t *idx)
 {
 	long long	sign;
 
@@ -66,7 +66,7 @@ long long	ft_strtoll(char *num, bool *is_success)
 		{
 			llnum = llnum * 10 + (long long)(num[idx] - '0');
 			idx++;
-			continue;
+			continue ;
 		}
 		if (sign > 0)
 			return (LONG_LONG_MAX);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 08:36:40 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 15:30:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 22:09:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static size_t	get_split_set_size(const char *str,  const char *set);
 // char **split {"|",echo,hello,|,cat,Makefile,||,echo "foo | bar",|, NULL}
 
 /* Function */
-char **split_pipe_and_word_controller(const char *readline_input)
+char	**split_pipe_and_word_controller(const char *readline_input)
 {
 	char	**splitted_cmds;
 	size_t	size;

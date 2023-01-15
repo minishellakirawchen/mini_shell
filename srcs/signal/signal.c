@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 18:52:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:52:07 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 22:38:16 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ sigfunc	*signal_act(int signo, sigfunc *func)
 	return (oact.sa_handler);
 }
 
-void signal_handler_in_prompt(int signo)
+void	signal_handler_in_prompt(int signo)
 {
 	if (signo == SIGINT)
 	{
@@ -36,7 +36,7 @@ void signal_handler_in_prompt(int signo)
 	}
 }
 
-void signal_handler_in_execution(int signo)
+void	signal_handler_in_execution(int signo)
 {
 	if (signo == SIGQUIT)
 	{
@@ -46,12 +46,30 @@ void signal_handler_in_execution(int signo)
 	}
 }
 
-void	signal_handler_in_execute_pipe(void)
+void	init_signal_in_prompt(void)
 {
+	struct	sigaction	sigaction_sigint;
 	struct	sigaction	sigaction_sigquit;
 
 	errno = 0;
-	ft_memset(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
+	ft_memset_ns(&sigaction_sigint, 0, sizeof(sigaction_sigint));
+	sigaction_sigint.sa_handler = signal_handler_in_prompt;
+	sigaction_sigint.sa_flags = 0;
+	ft_memset_ns(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
+	sigaction_sigquit.sa_handler = SIG_IGN;
+	sigaction_sigquit.sa_flags = 0;
+	if (signal_act(SIGINT, signal_handler_in_prompt) == SIG_ERR)
+		perror("sigaction");
+	if (signal_act(SIGQUIT, signal_handler_in_prompt) == SIG_ERR)
+		perror("sigaction");
+}
+
+void	init_signal_in_execute_pipe(void)
+{
+	struct sigaction	sigaction_sigquit;
+
+	errno = 0;
+	ft_memset_ns(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
 	sigaction_sigquit.sa_handler = signal_handler_in_execution;
 	sigaction_sigquit.sa_flags = 0;
 	if (signal_act(SIGQUIT, signal_handler_in_execution) == SIG_ERR)

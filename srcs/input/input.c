@@ -22,31 +22,13 @@ void	init_input(t_info **info)
 	(*info)->tree_root = NULL;
 }
 
-void signal_in_prompt(void)
-{
-	struct	sigaction	sigaction_sigint;
-	struct	sigaction	sigaction_sigquit;
-
-	errno = 0;
-	ft_memset(&sigaction_sigint, 0, sizeof(sigaction_sigint));
-	sigaction_sigint.sa_handler = signal_handler_in_prompt;
-	sigaction_sigint.sa_flags = 0;
-	ft_memset(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
-	sigaction_sigquit.sa_handler = SIG_IGN;
-	sigaction_sigquit.sa_flags = 0;
-	if (signal_act(SIGINT, signal_handler_in_prompt) == SIG_ERR)
-		perror("sigaction");
-	if (signal_act(SIGQUIT, signal_handler_in_prompt) == SIG_ERR)
-		perror("sigaction");
-}
-
 int	prompt_loop(t_info	*info)
 {
 	int		exit_status;
 	char	*input_line;
 
 	errno = 0;
-	signal_in_prompt();
+	init_signal_in_prompt();
 	while (true)
 	{
 		input_line = readline(PROMPT);

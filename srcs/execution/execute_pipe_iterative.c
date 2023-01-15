@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 17:58:06 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 20:18:21 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 22:08:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int execute_pipe_iterative(t_info *info, t_tree *cmd_leaf_head)
 	t_tree	*node;
 	int		exit_status;
 
-	signal_handler_in_execute_pipe();
+	init_signal_in_execute_pipe();
 	if (!info || !cmd_leaf_head)
 		return (FAILURE);
 	node = cmd_leaf_head;

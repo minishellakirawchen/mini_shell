@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:24 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:28:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:48:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@
 // exit 9223372036854775807 -> 255
 // exit 9223372036854775808 -> bash: exit: 9223372036854775808: numeric argument required
 
-int ft_exit(t_info *info, const char **cmds)
+int	ft_exit(t_info *info, const char **cmds)
 {
-	int		exit_status;
-	bool	is_strtoll_success;
-	size_t	argc = get_2d_array_size(cmds);
+	int				exit_status;
+	bool			is_strtoll_success;
+	const size_t	argc = get_2d_array_size(cmds);
 
 	if (!info)
 		return (FAILURE);

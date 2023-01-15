@@ -6,13 +6,13 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 18:18:38 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 18:51:10 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 21:38:25 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static t_printf_info *init_info(int fd)
+static t_printf_info	*init_info(int fd)
 {
 	t_printf_info	*info;
 

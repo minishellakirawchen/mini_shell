@@ -85,10 +85,12 @@ LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR) $(READLINE_DIR)
 LFLAGS				= $(addprefix -L, $(LIBS_DIR)) -lreadline
 LIBS				= $(LIBFT) $(LIBGNL) $(LIBFT_PRINTF)
 
+
 # IFLAGS
-INCLUDES_DIR = ./includes \
-				$(shell brew --prefix readline)/include
-IFLAGS = $(addprefix -I, $(INCLUDES_DIR))
+INCLUDES_DIR	= ./includes
+INCLUDES		= $(INCLUDES_DIR) $(shell brew --prefix readline)/include
+IFLAGS			= $(addprefix -I, $(INCLUDES))
+
 
 # RULES
 $(NAME)	: $(OBJS)
@@ -117,6 +119,10 @@ fclean : clean
 
 re : fclean all
 
-.PHONY: all clean fclean re
+norm :
+	norminette -v
+	norminette $(SRC_DIR) $(LIBS_DIR) $(INCLUDE_DIR)
+
+.PHONY: all clean fclean re norm
 
 -include	$(DEPS)

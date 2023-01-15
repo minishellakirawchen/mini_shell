@@ -352,7 +352,8 @@ int		ft_exit(t_info *info, const char **cmds);
 sigfunc	*signal_act(int signo, sigfunc *func);
 void	signal_handler_in_prompt(int signo);
 void	signal_handler_in_execution(int signo);
-void	signal_handler_in_execute_pipe(void);
+void	init_signal_in_execute_pipe(void);
+void	init_signal_in_prompt(void);
 
 
 /* -------- */

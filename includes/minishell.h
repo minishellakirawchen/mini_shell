@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/14 12:29:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 09:33:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <string.h>
 # include <limits.h>
 # include <fcntl.h>
+# include <signal.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -44,6 +45,7 @@
 # define EXIT_TOO_MANY_ARGS			1
 # define FILE_OPEN_ERROR			1
 # define CMD_NOT_FOUND				1
+# define EXIT_SIGQUIT				131
 # define EXIT_NUMERIC_ARGS_REQUIRED	255
 # define SYNTAX_ERROR				258
 
@@ -85,7 +87,8 @@
 
 # define ALPHABET_CNT			26
 
-# define PPID				"PPID"
+# define PROMPT				"minishell$ "
+
 
 # define min(a, b)	((a) <= (b) ? (a) : (b))
 # define max(a, b)	((a) >= (b) ? (a) : (b))
@@ -216,8 +219,10 @@ struct s_minishell_info
 	char	**splitted_cmds;
 	t_tree	*tree_root;
 	int		pid; // use getpid()
+	bool	is_exit;
 };
 
+typedef void sigfunc(int);
 
 /* ------- */
 /*  input  */
@@ -229,6 +234,8 @@ char	*get_env_value(const char *search_key, t_list *env_list_head);
 int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
+
+void	sig_handler(int signo);
 
 
 /* ---------- */

@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 11:18:07 by wchen             #+#    #+#             */
-/*   Updated: 2023/01/13 10:52:51 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/14 19:12:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static t_info	*init_params(void)
 	info->env_list = get_env_list();//if env_list==NULL -> operate with env=NULL
 	info->tree_root = NULL;
 	info->pid = getpid();
+	info->is_exit = false;
 	return (info);
 }
 

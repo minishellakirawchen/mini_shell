@@ -73,7 +73,10 @@ LIBFT_PRINTF_DIR	= $(LIB_DIR)/libftprintf
 LIBFT_PRINTF		= $(LIBFT_PRINTF_DIR)/libftprintf.a
 
 LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR)
-LFLAGS				= $(addprefix -L, $(LIBS_DIR)) -lreadline
+
+READLINE			= -L$(shell brew --prefix readline)/lib -lreadline
+
+LFLAGS				= $(addprefix -L, $(LIBS_DIR)) $(READLINE)
 LIBS				= $(LIBFT) $(LIBGNL) $(LIBFT_PRINTF)
 
 # IFLAGS

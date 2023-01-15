@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 22:10:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/14 19:29:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,6 +324,23 @@ int	execute_parent(int new_fd[2], int old_fd[2])
 	return (SUCCESS);
 }
 
+int sig_flg;
+
+void	sig_handler(int signo)
+{
+	if (signo == SIGINT)
+	{
+		sig_flg = SIGINT;
+		printf("SIGINT: test newline, flg:%d\n", sig_flg);
+	}
+	if (signo == SIGQUIT)
+	{
+		sig_flg = SIGQUIT;
+		printf("SIGQUIT: test quit, flg:%d\n", sig_flg);
+	}
+}
+
+
 int execute_pipe_line(t_info *info, t_tree *cmd_leaf_head)
 {
 	int				new_pipe_fd[2];
@@ -337,6 +354,8 @@ int execute_pipe_line(t_info *info, t_tree *cmd_leaf_head)
 	init_pipe(old_pipe_fd, new_pipe_fd);
 	while (node)
 	{
+		sig_flg = 0;
+
 		pipe(new_pipe_fd);
 		node->pid = fork();
 		if (is_fork_failure(node->pid))
@@ -346,6 +365,13 @@ int execute_pipe_line(t_info *info, t_tree *cmd_leaf_head)
 		if (is_parent_process(node->pid))
 			if (execute_parent(new_pipe_fd, old_pipe_fd) == FAILURE)
 				return (FAILURE);
+		if (signal(SIGQUIT, sig_handler) == SIG_ERR)
+			perror("signal");
+		if (sig_flg == SIGQUIT)
+		{
+			dprintf(STDERR_FILENO, "^\\Quit: 3\n");
+			exit (EXIT_SIGQUIT);
+		}
 		node = node->next;
 	}
 	if (close(new_pipe_fd[READ]) < 0 || close(new_pipe_fd[WRITE]) < 0)

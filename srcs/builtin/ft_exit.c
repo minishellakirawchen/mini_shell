@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:24 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 22:07:34 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 09:39:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ int ft_exit(t_info *info, const char **cmds)
 	bool	is_strtoll_success;
 	size_t	argc = get_2d_array_size(cmds);
 
+	if (!info)
+		return (FAILURE);
 	ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc > 2)
 	{
@@ -57,8 +59,6 @@ int ft_exit(t_info *info, const char **cmds)
 		return (EXIT_TOO_MANY_ARGS);
 	}
 	exit_status = EXIT_SUCCESS;
-	if (info)
-		exit_status = info->exit_status;
 	if (argc == 2)
 	{
 		exit_status = (int)(ft_strtoll((char *)cmds[1], &is_strtoll_success) % 256);
@@ -67,8 +67,8 @@ int ft_exit(t_info *info, const char **cmds)
 			dprintf(STDERR_FILENO, "minishell: exit: %s: numeric argument required", (char *)cmds[1]);
 			exit (EXIT_NUMERIC_ARGS_REQUIRED);
 		}
-		exit_status %= 256;
 	}
-	free_info(&info);
-	exit(exit_status % 256);
+	info->is_exit = true;
+	exit_status %= 256;
+	exit(exit_status);
 }

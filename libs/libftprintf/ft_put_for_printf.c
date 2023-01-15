@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 10:15:31 by takira            #+#    #+#             */
-/*   Updated: 2022/11/15 10:15:32 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 18:58:13 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,13 @@ ssize_t	ft_putstr_for_printf(char *s, int fd)
 		return (0);
 	while (*s)
 	{
+		errno = 0;
 		put_bytes += ft_putchar_for_printf(*s++, fd);
 		if (errno != 0)
+		{
+			perror("write");
 			return (-1);
+		}
 		if (put_bytes > INT_MAX)
 			return (-1);
 	}

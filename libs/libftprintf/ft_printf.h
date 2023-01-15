@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 12:03:20 by takira            #+#    #+#             */
-/*   Updated: 2022/11/15 09:33:22 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 18:49:41 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,13 @@ typedef struct s_pritnf_info
 	size_t		num_padlen;
 	size_t		num_preclen;
 	char		*num_head_chr;
+	int			fd;
 }				t_printf_info;
 
 int		ft_printf(const char *fmt, ...);
+int		ft_dprintf(int fd, const char *fmt, ...);
+
+int		printf_controller(t_printf_info *info, const char *fmt, ...);
 int		get_width(char *fmt, t_printf_info *info, va_list *p);
 int		get_prec(char *fmt, t_printf_info *info, va_list *p);
 int		valid_info4fmt(char c, t_printf_info *info);

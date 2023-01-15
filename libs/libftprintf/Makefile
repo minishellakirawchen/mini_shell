@@ -16,9 +16,10 @@ CFLAGS		= -Wall -Wextra -Werror
 
 NAME		= libftprintf.a
 
-SRCS		= printf_utils.c\
+SRCS		= ft_printf.c\
+            printf_controller.c\
+			printf_utils.c\
 			ft_put_for_printf.c\
-			ft_printf.c\
 			compare_size.c\
 			input_printf_format.c\
 			vaild_info_for_each_fmt.c\

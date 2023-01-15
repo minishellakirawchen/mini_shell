@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 16:17:23 by takira            #+#    #+#             */
-/*   Updated: 2022/10/27 16:17:28 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:00:50 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,18 @@ ssize_t	print_c(char chr, t_printf_info info)
 	size_t	printsize;
 
 	ret_bytes = 0;
-	printsize = maxsize(info.width_siz, 1);
+	printsize = maxsize(info.width_siz, info.fd);
 	if (printsize == 1)
-		return (ft_putchar_for_printf(chr, 1));
+		return (ft_putchar_for_printf(chr, info.fd));
 	if (info.flag_left && errno == 0)
 	{
-		ret_bytes += ft_putchar_for_printf(chr, 1);
+		ret_bytes += ft_putchar_for_printf(chr, info.fd);
 		printsize--;
 	}
 	while (printsize-- > !info.flag_left && errno == 0)
-		ret_bytes += ft_putchar_for_printf(' ', 1);
+		ret_bytes += ft_putchar_for_printf(' ', info.fd);
 	if (!info.flag_left && errno == 0)
-		ret_bytes += ft_putchar_for_printf(chr, 1);
+		ret_bytes += ft_putchar_for_printf(chr, info.fd);
 	return (ret_bytes);
 }
 
@@ -52,13 +52,13 @@ ssize_t	print_s(char *str, t_printf_info info)
 		padlen = printsize - strlen;
 	if (info.flag_left)
 		while (strlen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf(*str++, 1);
+			ret_bytes += ft_putchar_for_printf(*str++, info.fd);
 	if (padlen)
 		while (padlen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf(' ', 1);
+			ret_bytes += ft_putchar_for_printf(' ', info.fd);
 	if (!info.flag_left)
 		while (strlen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf(*str++, 1);
+			ret_bytes += ft_putchar_for_printf(*str++, info.fd);
 	return (ret_bytes);
 }
 
@@ -71,19 +71,19 @@ ssize_t	print_percent(t_printf_info info)
 	ret_bytes = 0;
 	if ((info.flag_left || !info.width_siz) && info.flag_zero_pad)
 		info.flag_zero_pad = 0;
-	printsize = maxsize(info.width_siz, 1);
+	printsize = maxsize(info.width_siz, info.fd);
 	if (printsize == 1 && errno == 0)
-		return (ft_putchar_for_printf('%', 1));
+		return (ft_putchar_for_printf('%', info.fd));
 	padlen = printsize - 1;
 	if (info.flag_left && errno == 0)
-		ret_bytes += ft_putchar_for_printf('%', 1);
+		ret_bytes += ft_putchar_for_printf('%', info.fd);
 	if (info.flag_zero_pad)
 		while (padlen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf('0', 1);
+			ret_bytes += ft_putchar_for_printf('0', info.fd);
 	else
 		while (padlen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf(' ', 1);
+			ret_bytes += ft_putchar_for_printf(' ', info.fd);
 	if (!info.flag_left && errno == 0)
-		ret_bytes += ft_putchar_for_printf('%', 1);
+		ret_bytes += ft_putchar_for_printf('%', info.fd);
 	return (ret_bytes);
 }

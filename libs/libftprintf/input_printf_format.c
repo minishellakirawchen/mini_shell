@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void	get_flag(char *fmt, t_printf_info *info)
+void	.get_flag(char *fmt, t_printf_info *info)
 {
 	const char		*flags = "-+ #0";
 

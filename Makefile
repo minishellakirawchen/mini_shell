@@ -70,10 +70,9 @@ DEPS	= $(SRC:%.c=%.d)
 # LFLAGS
 LIBFT_DIR			= ./libs
 LIBFT				= $(LIBFT_DIR)/libft.a
-
 READLINE_DIR		= $(shell brew --prefix readline)/lib
 
-LIBS_DIR			= $(LIBFT_DIR)
+LIBS_DIR			= $(LIBFT_DIR) $(READLINE_DIR)
 
 LFLAGS				= $(addprefix -L, $(LIBS_DIR)) -lreadline
 LIBS				= $(LIBFT)

@@ -70,12 +70,14 @@ LIBFT_SRC	= ft_strlen.c \
 			  ft_lstclear.c \
 			  ft_lstiter.c \
 			  ft_lstmap.c \
-			  ft_math.c
+			  ft_math.c \
+			  ft_strtoll.c
 
 GNL_SRC		= get_next_line.c \
               get_next_line_utils.c
 
 PRINTF_SRC	= ft_printf.c \
+			  printf_controller.c \
 			  printf_utils.c \
 			  ft_put_for_printf.c \
 			  input_printf_format.c \

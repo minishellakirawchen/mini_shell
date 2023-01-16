@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 18:07:12 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 11:09:27 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-# include "../libs/include/libft.h"
-# include "./../libs/libgnl/get_next_line.h"
-# include "./../libs/libftprintf/ft_printf.h"
+# include "./../libs/include/libft.h"
 
 /* func return value */
 # define SUCCESS	0

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 10:46:22 by takira            #+#    #+#             */
-/*   Updated: 2023/01/16 10:59:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 11:10:48 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,6 @@ char		*ft_strjoin(char const *s1, char const *s2);
 char		*ft_strdup(const char *s1);
 char		*ft_strdup_ns(const char *s1);
 char		*ft_strtrim(char const *s1, char const *set);
-char		*ft_itoa(int n);
-char		*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 
 char		**ft_split(char const *s, char c);
 char		**ft_split_set(char const *s, char delim, char set);
@@ -88,6 +86,7 @@ void		ft_striteri(char *s, void (*f)(unsigned int, char*));
 /* itoa atoi */
 char		*ft_itoa(int n);
 int			ft_atoi(const char *str, bool *is_success);
+long long	ft_strtoll(char *num, bool *is_success);
 
 /* put */
 ssize_t		ft_putchar_fd(char c, int fd);
@@ -99,6 +98,7 @@ void		ft_putnbr_fd(int n, int fd);
 void		ft_bzero(void *s, size_t n);
 int			ft_memcmp(const void *s1, const void *s2, size_t n);
 void		*ft_memset(void *s, int c, size_t n);
+void		*ft_memset_ns(void *s, int c, size_t n);
 void		*ft_memchr(const void *s, int c, size_t n);
 void		*ft_memcpy(void *dst, const void *src, size_t n);
 void		*ft_memmove(void *dst, const void *src, size_t len);
@@ -116,7 +116,6 @@ void		ft_lstclear(t_list **lst, void (*del)(void *));
 void		ft_lstiter(t_list *lst, void (*f)(void *));
 
 int			ft_lstsize(t_list *lst);
-long long	ft_strtoll(char *num, bool *is_success);
 
 /* math */
 size_t		minsize(size_t a, size_t b);

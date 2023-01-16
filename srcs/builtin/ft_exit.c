@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:31:24 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 19:08:15 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 09:39:29 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,21 @@
 // 1
 
 // cmds = {exit, foo, bar, .., NULL}
+
+// exit 2147483647 -> 255
+// exit 2147483648 -> 0
+
+// exit 9223372036854775807 -> 255
+// exit 9223372036854775808 -> bash: exit: 9223372036854775808: numeric argument required
+
 int ft_exit(t_info *info, const char **cmds)
 {
 	int		exit_status;
-	bool	is_atoi_success;
+	bool	is_strtoll_success;
 	size_t	argc = get_2d_array_size(cmds);
 
+	if (!info)
+		return (FAILURE);
 	ft_putendl_fd("exit", STDERR_FILENO);
 	if (argc > 2)
 	{
@@ -50,21 +59,16 @@ int ft_exit(t_info *info, const char **cmds)
 		return (EXIT_TOO_MANY_ARGS);
 	}
 	exit_status = EXIT_SUCCESS;
-	if (info)
-		exit_status = info->exit_status;
 	if (argc == 2)
 	{
-		exit_status = ft_atoi(cmds[1], &is_atoi_success);
-		if (!is_atoi_success)
+		exit_status = (int)(ft_strtoll((char *)cmds[1], &is_strtoll_success) % 256);
+		if (!is_strtoll_success)
 		{
-			ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-			ft_putstr_fd((char *)cmds[1], STDERR_FILENO);
-			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+			dprintf(STDERR_FILENO, "minishell: exit: %s: numeric argument required", (char *)cmds[1]);
 			exit (EXIT_NUMERIC_ARGS_REQUIRED);
 		}
-		exit_status %= 255;
 	}
-	free_info(&info);
-	exit_status = 10;
+	info->is_exit = true;
+	exit_status %= 256;
 	exit(exit_status);
 }

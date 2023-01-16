@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:30:52 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 19:09:04 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 22:11:37 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 		return (move_to);
 	trimmed_move_to = ft_strtrim(move_to, "/"); // /bin + hoge/ -> /bin + hoge
 	if (!trimmed_move_to)
-		return ((char *)perror_and_ret_nullptr("malloc"));
+		return ((char *) perror_and_return_nullptr("malloc"));
 	move_to_len = ft_strlen_ns(trimmed_move_to);
 	new_path = (char *)ft_calloc(sizeof(char), current_len + move_to_len + 2);
 	if (!new_path)
@@ -36,6 +36,8 @@ static char	*get_chdir_path(char *current_path, char *move_to)
 	free_1d_array_ret_nullptr((void **)&trimmed_move_to); // memcpy in strlcat
 	return (new_path);
 }
+
+// TODO: check permission denied
 
 int ft_cd(t_info *info, const char **cmds)
 {

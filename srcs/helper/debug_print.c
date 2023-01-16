@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 09:21:33 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 13:25:34 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/12 12:45:18 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,49 +20,49 @@ void debug_print_2d_arr(char **arr, char *str)
 		return ;
 	i = 0;
 	if (str)
-		ft_printf("%s:", str);
-	ft_printf("{");
+		dprintf(STDERR_FILENO, "%s:", str);
+	dprintf(STDERR_FILENO, "{");
 	while (arr[i])
 	{
-		ft_printf("\"%s\"", arr[i++]);
+		dprintf(STDERR_FILENO, "\"%s\"", arr[i++]);
 		if (arr[i])
-			ft_printf(", ");
+			dprintf(STDERR_FILENO, ", ");
 	}
-	ft_printf("}\n");
+	dprintf(STDERR_FILENO, "}\n");
 }
 
 void	debug_print_stack(t_tree *root, char *str)
 {
 	t_tree		*tree;
 
-	ft_printf("\n");
+	dprintf(STDERR_FILENO, "\n");
 	if (str)
-		ft_printf("#DEBUG[print_stack : %s]\n", str);
+		dprintf(STDERR_FILENO, "#DEBUG[print_stack : %s]\n", str);
 	tree = root;
 	while (tree)
 	{
 		if (tree->exe_type == E_NODE_ROOT)
 		{
-			ft_printf(" [root]\n");
-			ft_printf("  |    \n");
+			dprintf(STDERR_FILENO, " [root]\n");
+			dprintf(STDERR_FILENO, "  |    \n");
 		}
 		else if (tree->exe_type == E_NODE_PIPE)
 		{
-			ft_printf(" [pipe]\n");
-			ft_printf("  |    \n");
+			dprintf(STDERR_FILENO, " [pipe]\n");
+			dprintf(STDERR_FILENO, "  |    \n");
 		}
-		else if (tree->exe_type == E_NODE_SHELL)
+		else if (tree->exe_type == E_NODE_NO_PIPE)
 		{
-			ft_printf(" [shell]\n");
-			ft_printf("  |    \n");
+			dprintf(STDERR_FILENO, " [shell]\n");
+			dprintf(STDERR_FILENO, "  |    \n");
 		}
 		else if (tree->exe_type == E_LEAF_COMMAND)
 		{
-			ft_printf(" [cmd]--");
+			dprintf(STDERR_FILENO, " [cmd]--");
 			debug_print_2d_arr(tree->cmds, NULL);
 		}
 		tree = tree->next;
 	}
-	ft_printf("\n");
+	dprintf(STDERR_FILENO, "\n");
 }
 

@@ -6,6 +6,157 @@ $> minishell > hogehoge          -> input=[hogehoge]
 $> minishell > "playground   "   -> input=["playground   "]
 $> minishell > "hello " ' world '-> input=["hello " ' world ']
 ```
+# Signal
+[X] でXを入力
+
+### ^C
+```shell
+bash$ [^C]
+bash$
+#newline
+
+bash$ hoge[^C]
+bash$
+#hogeを残し何もせずnewline
+
+bash$ sleep 10
+[^C]
+^C
+bash$
+# sleep10->改行待機状態で^Cを送信すると^Cが表示されてnewline
+
+
+bash-3.2$ cat /</< end #/はesc
+/> [^C]
+bash-3.2$ 
+# heredoc中に^C送信するとheredoc中断してnewline
+# cat << end > out でもoutは生成されない
+# $?=1
+
+bash-3.2$ cat \<\< end
+\> 
+\> aa
+\> cc[^C]
+\> 
+bash-3.2$ 
+# $?=1
+
+```
+* 割り込みキーが生成するシグナル
+* フォアグラウンドプロセスグループの全てのプロセスに対して送られる
+
+<br>
+<br>
+
+### ^D
+```shell
+bash$ [^D]
+bash$ exit
+#status 1でexitされる
+
+bash$ hoge[^D]
+#文字+^Dはアラームが鳴るだけ
+
+bash$ sleep 10
+[^D]
+^D #sleep中のみ, おそらくsleep解除後に入力される文字列
+bash$ exit
+# sleep10->改行待機状態で^Dを送信するとsleep中に^Dが表示されて、sleep終了後にexit(1)
+
+
+bash-3.2$ cat \<\< end
+\> [^D]bash-3.2$ 
+
+bash-3.2$ cat \<\< end
+\> aa
+\> bb
+\> cc[^D] # ^Dは受け付けない(alert)
+
+bash-3.2$ cat \<\< end \> out
+\> aa
+\> bb
+\> cc
+\> [^D]bash-3.2$ cat out
+aa
+bb
+cc
+bash-3.2$ 
+# ^D=EOF TODO:heredoc
+
+
+```
+
+### signal関数
+
+* 使用可能関数(memo)
+  * signal
+  * sigaction
+    * `int sigaction(int signo, const struct sigaction *act, struct sigaction *oact)`
+    * 成功ならば0, エラーならば-1
+    * int signo: 動作を調べたり変更したいsignalの番号
+    * actがnullptrでなければ動作を変更する
+    * oactがnullptrでなければ、システムはこのシグナルに対する直前の動作を返す
+  ```c
+  struct sigaction
+  {
+	void        (*sa_handler)();    //シグナルハンドラのアドレス、あるいはSIG_IGN, SIG_DFL
+    sigset_t    sa_mask;         //ブロックすべきsignalの追加
+    int         sa_flags;        //シグナルのオプション
+  };
+  ```
+  * sigemptyset
+    * `int sigemptyset(sigset_t *set, int signo)`
+    * 成功ならば0, エラーならば-1
+    * 複数のシグナル（シグナルhの集合）を収めるデータ型sigset_tを操作する関数
+    * setが指すシグナルの集合を空に初期化する
+    * アプリケーションでは各シグナルの集合に対してそれを使用する前にsigemptysetかsigfillsetを呼ぶ必要がある
+    * Cの初期化が特定のシステムでシグナルの集合にも適用されると保証できないためである
+  * sigaddset
+    * `int sigaddset(sigset_t *set, int signo)`
+    * 成功ならば0, エラーならば-1
+    * 複数のシグナル（シグナルhの集合）を収めるデータ型sigset_tを操作する関数
+    * シグナルの集合を初期化した後、集合に特定のシグナルを追加したり削除できる
+    * sigaddsetは既知の集合に1つのシグナルを追加する
+    * 引数にシグナルの集合のアドレスを渡す
+  * kill
+* 
+
+
+q
+<br>
+<br>
+
+### ^\
+```shell
+bash$ [^\]
+#何も起きない
+
+bash$ [hoge^\]
+#何も起きない
+
+bash$ sleep 10
+[^\]
+^\Quit: 3
+bash$
+# $?=131
+
+bash-3.2$ cat \<\< end
+\> aa
+\> bb
+\> cc[^\] # 何も起きない
+
+```
+* Quit key
+* 端末ドライバが生成するシグナル
+* フォアグラウンドプロセスグループの全てのプロセスに対してこのシグナルが送られる
+* SIGINTのようにフォアグラウンドプロセスグループを終了させるだけでなくcoreファイルも生成する
+* 
+
+
+
+
+<br>
+<br>
 
 # Expansion
 ### わかっていない・曖昧なこと
@@ -20,7 +171,107 @@ $> minishell > "hello " ' world '-> input=["hello " ' world ']
 * name=value
 * value is optional
 * variable parameter : ^$[_a-zA-z][_a-zA-z0-9]
-* 
+
+* $'\string'
+  * a: alert
+  * b: backspace
+  * e: escape character ??
+  * f: form feed ??
+  * n: new line
+  * r: carriage return
+  * t: horizontal tab
+  * v: vertical tab
+  * \: backslash
+  * ': single quote
+  * nnn: octal value nnn 1-3digits
+  * xHH: hexadecimal value HH 1-2digits
+  * cx: control-x character
+
+
+````c
+bash-3.2$ export test=echo
+bash-3.2$ $test hello           //hello
+bash-3.2$ $test -n hello        //hellobash-3.2$ $test hello
+bash-3.2$ "$test" hello         //hello
+bash-3.2$ echo "$test" hello    //echo hello
+bash-3.2$ "$test" -n hello      //hellobash-3.2$
+
+bash-3.2$ export test2=ech
+bash-3.2$ $test2 hello           //bash: ech: command not found
+bash-3.2$ $test2 o hello         //bash: ech: command not found
+bash-3.2$ "$test2"o hello       //hello
+bash-3.2$ "$test2"o -n hello    //hellobash-3.2$ 
+
+bash-3.2$ test=ch
+bash-3.2$ echo $test            //ch
+bash-3.2$ echo e$test o         //ech o
+bash-3.2$ echo e $test o        //e ch o
+bash-3.2$ echo e"$test"o        //echo
+bash-3.2$ echo e"$test"o hello  //echo hello
+bash-3.2$ e"$test"o hello       //hello
+bash-3.2$ e"$test"o -n hello    //hellobash-3.2$ 
+
+bash-3.2$ echo $test1 $test2 $test3                   //TEST1 TEST2 TEST3
+bash-3.2$ echo $test1$test2$test3                     //TEST1TEST2TEST3
+bash-3.2$ echo "$test1" '$test2' "$test3"             //TEST1 $test2 TEST3 *''は展開されない
+bash-3.2$ echo "$test1"'$test2'"$test3"               //TEST1$test2TEST3
+bash-3.2$ echo "hoge$test1"'hoge$test2'"hoge$test3"   //hogeTEST1hoge$test2hogeTEST3
+bash-3.2$ echo "hoge$test1" 'hoge$test2 '"hoge$test3" // hogeTEST1 hoge$test2 hogeTEST3
+bash-3.2$ echo "hello" world"goodbye" 'good'morning   //hello worldgoodbye goodmorning
+
+bash-3.2$ echo test$test1       //testTEST1
+bash-3.2$ echo test $test1      //test TEST1
+
+bash-3.2$ echo 'test "$test1"'  //test "$test1"
+bash-3.2$ echo "test '$test1'"  //test 'TEST1
+
+bash-3.2$ cat << end
+> $test     //ch
+> "$test"   //"ch"
+> e$testo   //e
+> e$test o  //ech o
+> e"$test"o //e"ch"o
+> end
+
+bash-3.2$ cat << end
+> "$test1"  //"TEST1"
+> '$test1'  //'TEST1'
+> end
+
+
+// echoとhere_docで展開後の""の有無が変わる...?
+// 展開方法の差異はexpansion後のarrange partで実行しようか...
+// echo, here_docで''内部の展開がそもそも異なる どうする...??
+
+// here_docはhere_doc実行時にheredoc用のexpansionを実行しよう
+// TODO: heredoc vs others かどうかをチェックする
+// 展開に関係ありそうな部分は、echo, export, unset, cd?
+
+
+bash-3.2$ testpath1=.
+bash-3.2$ echo $testpath1         //.
+bash-3.2$ pwd                     // /Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell/minishell
+bash-3.2$ cd $testpath1 && pwd    // /Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell/minishell
+bash-3.2$ cd .$testpath1 && pwd   // /Users/akira/Documents/Programming/CLionProjects/42/42cursus/03_minishell
+bash-3.2$ cd ."$testpath1" && pwd // /Users/akira/Documents/Programming/CLionProjects/42/42cursus
+bash-3.2$ cd .'$testpath1'        // bash: cd: .$testpath1: No such file or directory
+// cd はechoと同じ
+
+
+
+````
+
+
+## arrange command option
+```c
+
+bash-3.2$ echo -h test //-h test
+bash-3.2$ echo -nnn-n-n test //-nnn-n-n test
+bash-3.2$ echo -nnn -n-n test
+
+
+
+```
 
 <br>
 <br>

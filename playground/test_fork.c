@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/04 18:32:45 by takira            #+#    #+#             */
-/*   Updated: 2023/01/05 14:45:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/13 10:28:08 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	main(void)
 {
 	/* fork cd, touch playground 22/Jan/5th */
+	/*
 	int param = 0;
 	char *cd_cmd[10] = {"cd", NULL};
 	char *touch_cmd[10] = {"touch", "testfile", NULL};
@@ -34,6 +35,8 @@ int	main(void)
 	printf("parent pwd\n");
 	char *path = getcwd(NULL, 0);
 	printf("path: %s\n", path);
+	*/
+
 
 //	int pid_t = fork();
 //	if (pid_t == 0)

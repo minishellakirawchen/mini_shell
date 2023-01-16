@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 10:47:05 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 18:07:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define MINISHELL_H
 
 # include <errno.h>
-# include <string.h>
-# include <limits.h>
 # include <fcntl.h>
+# include <limits.h>
+# include <signal.h>
+# include <stdio.h>
+# include <string.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -32,9 +34,9 @@
 /* fd */
 # define READ			0
 # define WRITE			1
-# define FD_IDX_INFILE	0
-# define FD_IDX_OUTFILE	1
-# define FD_IDX_HEREDOC	2
+# define R_FD_INFILE	0
+# define R_FD_OUTFILE	1
+# define R_FD_HEREDOC	2
 
 /* pid */
 # define CHILD_PROCESS	0
@@ -43,33 +45,53 @@
 # define CHDIR_FAILURE				1
 # define EXIT_TOO_MANY_ARGS			1
 # define FILE_OPEN_ERROR			1
-# define CMD_NOT_FOUND				127
+# define CMD_NOT_FOUND				1
+# define EXIT_SIGQUIT				131
 # define EXIT_NUMERIC_ARGS_REQUIRED	255
 # define SYNTAX_ERROR				258
 
 /* string */
-# define	PATH				"PATH"
-# define	PWD					"PWD"
+# define PATH	"PATH"
+# define PWD	"PWD"
 
-# define 	PATH_DELIMITER		':'
-# define	ISSPACE				"\t\n\v\f\r "
-# define	SET_CHR				"\"'"
-# define	REDIRECT_IN			"<"
-# define	REDIRECT_OUT		">"
-# define	REDIRECT_HEREDOC	"<<"
-# define	REDIRECT_APPEND		">>"
+# define HEREDOC_TMP_FILE	".heredoc_tmp"
 
-# define	CHR_REDIRECT_IN		'<'
-# define	CHR_REDIRECT_OUT	'>'
-# define	CHR_PIPE	'|'
+# define ISSPACE_CHARS		"\t\n\v\f\r "
+# define SET_CHARS			"\"'"
 
-# define 	STR_PIPE			"|"
-# define 	STR_AND				"&&"
-# define 	STR_OR				"||"
-# define 	STR_SEMICOLON		";"
+# define CONTROL_OPERATORS	"|&;()"
 
-# define	HEREDOC_TMP_FILE	".here_doc_tmp"
+# define REDIRECT_IN		"<"
+# define REDIRECT_OUT		">"
+# define REDIRECT_HEREDOC	"<<"
+# define REDIRECT_APPEND	">>"
 
+# define CHR_REDIRECT_IN	'<'
+# define CHR_REDIRECT_OUT	'>'
+
+# define CHR_DOLLAR			'$'
+# define CHR_QUESTION		'?'
+
+# define CHR_SINGLE_QUOTE	'\''
+
+
+# define CHA_PATH_DELIM		':'
+
+# define CHR_PIPE			'|'
+# define STR_PIPE			"|"
+# define STR_AND			"&&"
+# define STR_OR				"||"
+# define STR_SEMICOLON		";"
+
+# define CHR_CMD_OPTION_FLG		'-'
+# define STR_CMD_ECHO_OPTIONS	"n"
+
+# define ALPHABET_CNT			26
+
+# define PROMPT				"minishell $> "
+
+# define min(a, b)	((a) <= (b) ? (a) : (b))
+# define max(a, b)	((a) >= (b) ? (a) : (b))
 
 /* ---------------- */
 /*  typedef struct  */
@@ -111,7 +133,7 @@ enum e_exe_type
 	E_NODE_OR,
 	E_NODE_SUBSHELL,
 	E_NODE_PIPE,
-	E_NODE_SHELL,
+	E_NODE_NO_PIPE,
 	E_LEAF_COMMAND,
 };
 
@@ -161,7 +183,7 @@ struct s_redirect_info
 	t_output_to		ouput_to;
 	char 			**infiles;
 	char 			**outfiles;
-	char			**here_doc_limiters;
+	char			**heredoc_delims;
 	char 			*heredoc_file;
 	int				r_fd[3]; //in,out,heredoc
 };
@@ -182,12 +204,10 @@ struct s_token // for bonus
 
 struct s_tree
 {
-	t_exe_type		exe_type;
-
 	char 			**cmds;
-
 	t_redirect_info	*redirect_info;
-
+	t_exe_type		exe_type;
+	pid_t			pid;
 	t_tree			*prev;
 	t_tree			*next;
 };
@@ -198,7 +218,11 @@ struct s_minishell_info
 	t_list	*env_list;
 	char	**splitted_cmds;
 	t_tree	*tree_root;
+	int		pid; // use getpid()
+	bool	is_exit;
 };
+
+typedef void sigfunc(int);
 
 
 /* ------- */
@@ -207,24 +231,23 @@ struct s_minishell_info
 // input.c
 int		prompt_loop(t_info *info);
 t_list	*get_env_list(void);
-char	*get_env_value(char *search_key, t_list *env_list_head);
+char	*get_env_value(const char *search_key, t_list *env_list_head);
 int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
 
+void	sig_handler(int signo);
+
 
 /* ---------- */
-/*  analysis  */
+/*  analyze_input  */
 /* ---------- */
-// analysis.c
-int		analysis(t_info *info, char *readline_input); // tmp
+// analyze_input.c
+int		analyze_input(t_info *info, char *readline_input); // tmp
 //int		add_redirect_param(t_tree **node);
 
 // pipe_split.c
 char	**split_pipe_and_word_controller(const char *readline_input);
-
-// pipe_split_helper.c
-
 
 // redirection_split.c
 char	**split_redirect_and_word_controller(const char **cmds);
@@ -242,6 +265,7 @@ t_redirect_info	*get_redirection_info(const char **cmds);
 int		create_tree(t_info **info);
 size_t	count_pipe(char **cmds);
 
+
 /* ----------- */
 /*  execution  */
 /* ----------- */
@@ -250,19 +274,46 @@ int		execute_command_line(t_info *info);
 
 /* execute_builtin */
 bool	is_builtins(const char **cmds);
-int		execute_builtins(t_info *info, const char **cmds);
+int		execute_builtin(t_info *info, const char **cmds);
 
 /* execute_redirect.c */
-int		handle_fd_for_redirection(t_redirect_info *redirect_info);
-int		openfile_and_heredoc_for_redirect(t_tree **root);
+int		handle_fd_for_redirection(t_redirect_info *r_info);
+int		execute_redirect(t_tree **root);
 
 /* execute_heredoc.c */
 int		execute_heredoc(int fd, const char *delimiter);
+
+/* execute_pipe_iterative.c */
+int		execute_pipe_iterative(t_info *info, t_tree *cmd_leaf_head);
+
+/* ft_execve.c */
+void	ft_execve(t_tree *node, t_info *info);
+int		is_execute_only_builtin(t_tree *node);
+
+/* ft_execvp.c */
+int		ft_execvp(char *file, char **cmds, char *env_paths);
+
+/* fork_wait_helpers.c */
+bool	is_child_process(pid_t pid);
+bool	is_parent_process(pid_t pid);
+bool	is_fork_failure(pid_t pid);
+
+/* handle_filedes */
+void	init_pipe_fd(int old_pipe_fd[2], int new_pipe_fd[2]);
+int		handle_fd_for_redirection(t_redirect_info *r_info);
+void	copy_fd_new_to_old(int old_pipe_fd[2], const int new_pipe_fd[2]);
+
+
 /* ----------- */
 /*  expansion  */
 /* ----------- */
 // expansion.c
-int		expand_variable(void); // tmp
+int		expansion(t_info *info);
+int		arrange_command_line(t_info *info);
+char	**arrange_cmd_opton(char **src, const char *options);
+
+// expand_variable.c
+int		is_name(const char *str);
 
 
 /* ------ */
@@ -273,7 +324,7 @@ void	free_info(t_info **info);
 int		free_and_return_no(t_info **info, int exit_status);
 char	**free_array(char **array);
 int		perror_and_return_int(char *err, int ret_value);
-void	*perror_and_ret_nullptr(char *err);
+void	*perror_and_return_nullptr(char *err);
 void	*free_2d_array_ret_nullptr(void ***array);
 void	*free_1d_array_ret_nullptr(void **array);
 void	*free_1d_2d_array_ret_nullptr(void **array1d, void ***array2d);
@@ -292,6 +343,16 @@ int		ft_env(t_info *info, const char **cmds);
 int		ft_exit(t_info *info, const char **cmds);
 /* builtin helper.c */
 //char	*get_current_path(void);
+
+
+/* -------- */
+/*  signal  */
+/* -------- */
+// signal.c
+sigfunc	*signal_act(int signo, sigfunc *func);
+void	signal_handler_in_prompt(int signo);
+void	signal_handler_in_execution(int signo);
+void	signal_handler_in_execute_pipe(void);
 
 
 /* -------- */
@@ -322,7 +383,7 @@ int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
 int		append_env_value(t_list **list_head, char *search_key, char *append_value);
-char	*get_env_value(char *search_key, t_list *env_list_head);
+char	*get_env_value(const char *search_key, t_list *env_list_head);
 
 // is_same_str.c
 int		is_same_str(const char *str1, const char *str2);

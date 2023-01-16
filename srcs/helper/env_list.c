@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 12:25:02 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:57:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 15:24:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 // search key-value pairs
 // if there is a key matches search key, return its value
 // if not found, return NULL
-char *get_env_value(char *search_key, t_list *env_list_head)
+char *get_env_value(const char *search_key, t_list *env_list_head)
 {
 	const size_t	search_key_len = ft_strlen_ns(search_key);
 	t_env_elem		*elem;
 
 	if (search_key_len == 0)
-		return (NULL);
+		return ("");
 	while (env_list_head)
 	{
 		elem = env_list_head->content;
@@ -30,7 +30,7 @@ char *get_env_value(char *search_key, t_list *env_list_head)
 			return (elem->value);
 		env_list_head = env_list_head->next;
 	}
-	return (NULL);
+	return ("");
 }
 
 // key-value

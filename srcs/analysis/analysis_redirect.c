@@ -91,7 +91,7 @@ char **update_files(char **current_files, const char *add_file)
 	{
 		free_2d_array_ret_nullptr((void ***)&current_files);
 		free_1d_array_ret_nullptr((void **)&add_file);
-		return ((char **)perror_and_ret_nullptr("malloc"));
+		return ((char **) perror_and_return_nullptr("malloc"));
 	}
 	idx = 0;
 	while (current_files && current_files[idx])
@@ -102,7 +102,7 @@ char **update_files(char **current_files, const char *add_file)
 			free_2d_array_ret_nullptr((void ***)&current_files);
 			free_2d_array_ret_nullptr((void ***)&new_files);
 			free_1d_array_ret_nullptr((void **)&add_file);
-			return ((char **)perror_and_ret_nullptr("malloc"));
+			return ((char **) perror_and_return_nullptr("malloc"));
 		}
 		idx++;
 	}
@@ -112,7 +112,7 @@ char **update_files(char **current_files, const char *add_file)
 		free_2d_array_ret_nullptr((void ***)&current_files);
 		free_2d_array_ret_nullptr((void ***)&new_files);
 		free_1d_array_ret_nullptr((void **)&add_file);
-		return ((char **)perror_and_ret_nullptr("malloc"));
+		return ((char **) perror_and_return_nullptr("malloc"));
 	}
 	free_2d_array_ret_nullptr((void ***)&current_files);
 	return (new_files);
@@ -124,7 +124,7 @@ void	*free_redirect_info(t_redirect_info **info)
 		return (NULL);
 	free_2d_array_ret_nullptr((void ***)&(*info)->infiles);
 	free_2d_array_ret_nullptr((void ***)&(*info)->outfiles);
-	free_2d_array_ret_nullptr((void ***)&(*info)->here_doc_limiters);
+	free_2d_array_ret_nullptr((void ***)&(*info)->heredoc_delims);
 	return (NULL);
 }
 
@@ -143,8 +143,8 @@ int	set_redirect_in(t_redirect_info **info, const char *infile)
 int	set_redirect_heredoc(t_redirect_info **info, const char *delimiter)
 {
 	(*info)->input_from = E_HERE_DOC;
-	(*info)->here_doc_limiters = update_files((*info)->here_doc_limiters, delimiter);
-	if (!(*info)->here_doc_limiters)
+	(*info)->heredoc_delims = update_files((*info)->heredoc_delims, delimiter);
+	if (!(*info)->heredoc_delims)
 	{
 		free_redirect_info(&(*info));
 		return (perror_and_return_int("malloc", FAILURE));
@@ -186,12 +186,12 @@ t_redirect_info	*get_redirection_info(const char **cmds)
 
 	info = (t_redirect_info *)malloc(sizeof(t_redirect_info));
 	if (!info)
-		return (perror_and_ret_nullptr("malloc"));
+		return (perror_and_return_nullptr("malloc"));
 	info->input_from = E_STDOUT;
 	info->ouput_to = E_STDIN;
 	info->infiles = NULL;
 	info->outfiles = NULL;
-	info->here_doc_limiters = NULL;
+	info->heredoc_delims = NULL;
 	info->heredoc_file = NULL;
 	idx = 0;
 	while (cmds[idx])

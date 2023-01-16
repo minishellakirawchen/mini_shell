@@ -1,18 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalpha.c                                       :+:      :+:    :+:   */
+/*   test_eof.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/17 10:33:17 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 21:33:29 by takira           ###   ########.fr       */
+/*   Created: 2023/01/14 18:15:55 by takira            #+#    #+#             */
+/*   Updated: 2023/01/14 18:25:06 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "test.h"
+# include <readline/readline.h>
 
-int	ft_isalpha(int c)
+int main(void)
 {
-	return (ft_isupper(c) || ft_islower(c));
+	char *line;
+	printf("EOF c:%c, d:%d, x:%x\n", EOF, EOF, EOF);
+
+	while (true)
+	{
+		line = readline(">");
+		printf("input:%s\n", line);
+		if (!line)
+		{
+			printf("NULL break\n"); //<- EOFはNULL break
+			break ;
+		}
+		if (line[0] == EOF)
+		{
+			printf("EOF break\n");
+			break ;
+		}
+	}
+	return (0);
 }

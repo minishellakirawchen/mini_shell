@@ -1,18 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalpha.c                                       :+:      :+:    :+:   */
+/*   fork_wait_helpers.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/17 10:33:17 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 21:33:29 by takira           ###   ########.fr       */
+/*   Created: 2023/01/15 17:44:26 by takira            #+#    #+#             */
+/*   Updated: 2023/01/15 17:44:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-int	ft_isalpha(int c)
+bool	is_child_process(pid_t pid)
 {
-	return (ft_isupper(c) || ft_islower(c));
+	return (pid == CHILD_PROCESS);
 }
+
+bool	is_parent_process(pid_t pid)
+{
+	return (pid > 0);
+}
+
+bool	is_fork_failure(pid_t pid)
+{
+	return (pid < 0);
+}
+

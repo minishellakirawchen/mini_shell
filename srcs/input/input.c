@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 15:15:58 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 17:42:40 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,38 +22,53 @@ void	init_input(t_info **info)
 	(*info)->tree_root = NULL;
 }
 
+void signal_in_prompt(void)
+{
+	struct	sigaction	sigaction_sigint;
+	struct	sigaction	sigaction_sigquit;
+
+	ft_memset(&sigaction_sigint, 0, sizeof(sigaction_sigint));
+	sigaction_sigint.sa_handler = signal_handler_in_prompt;
+	sigaction_sigint.sa_flags = 0;
+
+	ft_memset(&sigaction_sigquit, 0, sizeof(sigaction_sigquit));
+	sigaction_sigquit.sa_handler = SIG_IGN;
+	sigaction_sigquit.sa_flags = 0;
+
+	if (signal_act(SIGINT, signal_handler_in_prompt) == SIG_ERR)
+		perror("sigaction");
+	if (signal_act(SIGQUIT, signal_handler_in_prompt) == SIG_ERR)
+		perror("sigaction");
+}
+
 int	prompt_loop(t_info	*info)
 {
 	int		exit_status;
 	char	*input_line;
 
+	signal_in_prompt();
 	while (true)
 	{
-		input_line = readline("minishell $> ");
+		input_line = readline(PROMPT);
 		if (!input_line)
+		{
+			exit_status = EXIT_SUCCESS;
+			ft_printf("exit\n");
 			break ;
-
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		// if (input signal == ^C)
-		//		print "^C" and not add history
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		/* Maybe unnecessary, "clear" clear prompt on default */
-		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
-		//		rewrite prompt
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-
-		analysis(info, input_line);
-		expand_variable();
-
-		printf(" vvvvv Execution vvvvv\n");
+		}
+		add_history(input_line);
+//		printf("input            :[%s]\n", input_line);
+		analyze_input(info, input_line);
+		expansion(info);
+//		printf("[#DEGUG] vvvvv Execution vvvvv\n"); // tmp
 		exit_status = execute_command_line(info);
-		printf(" ^^^^^ Execution ^^^^^\n");
-
-		add_history(input_line);//where?
-		init_input(&info);
+		info->exit_status = exit_status;
+//		printf("[#DEGUG] ^^^^^ Execution ^^^^^\n"); // tmp
+//		dprintf(STDERR_FILENO, "[#DEBUG]exit status:%d\n", info->exit_status);
 		free(input_line);
+		if (info->is_exit)
+			break ;
+		init_input(&info);
 	}
 	return (exit_status);
 }

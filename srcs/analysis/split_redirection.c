@@ -61,7 +61,7 @@ static char	**split_redirect_and_word(const char **cmds_src, size_t size)
 
 	splitted_cmds = (char **)ft_calloc(sizeof(char *), size + 1);
 	if (!splitted_cmds)
-		return ((char **) perror_and_ret_nullptr("malloc"));
+		return ((char **) perror_and_return_nullptr("malloc"));
 	i = 0;
 	j = 0;
 	while (cmds_src[i])

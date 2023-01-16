@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 13:56:37 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 19:08:45 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 10:35:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 //
 // $>echo hello world -> $> hello world
 //
-// $xxx->expand by analysis and expansion part
+// $xxx->expand by analyze_input and expansion part
 // echo just print it
 
 static void	print_echo(const char **str, bool is_nl)
@@ -38,6 +38,7 @@ static void	print_echo(const char **str, bool is_nl)
 		ft_printf("\n");
 }
 
+// option -n を整形する
 int	ft_echo(t_info *info, const char **cmds)
 {
 	const char	*nl_flg;
@@ -45,10 +46,15 @@ int	ft_echo(t_info *info, const char **cmds)
 	size_t		i;
 	bool		is_nl;
 	int			strcmp_res;
+	char 		**arranged_cmds;
 
 	if (!info || !cmds || !cmds[0])
-		return (1); //TODO: exit?
-	nl_flg = cmds[1];
+		return (FAILURE); //TODO: exit?
+	arranged_cmds = arrange_cmd_opton((char **) cmds, STR_CMD_ECHO_OPTIONS);
+//	debug_print_2d_arr(arranged_cmds, "arranged");
+	if (!arranged_cmds)
+		return (FAILURE);
+	nl_flg = arranged_cmds[1];
 	next_echo_chr_len = ft_strlen_ns(nl_flg);
 	i = 1;
 	is_nl = true;
@@ -58,6 +64,7 @@ int	ft_echo(t_info *info, const char **cmds)
 		i++;
 		is_nl = false;
 	}
-	print_echo(&cmds[i], is_nl);
+	print_echo((const char **)&arranged_cmds[i], is_nl);
+	free_2d_array_ret_nullptr((void ***)&arranged_cmds);
 	return (0);
 }

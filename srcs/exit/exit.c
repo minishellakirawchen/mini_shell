@@ -80,7 +80,7 @@ int	perror_and_return_int(char *err, int ret_value)
 	return (ret_value);
 }
 
-void	*perror_and_ret_nullptr(char *err)
+void	*perror_and_return_nullptr(char *err)
 {
 	perror(err);
 	return (NULL);

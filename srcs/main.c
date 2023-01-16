@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/01 11:18:07 by wchen             #+#    #+#             */
-/*   Updated: 2023/01/10 09:57:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/14 19:12:01 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,13 @@ static t_info	*init_params(void)
 	// init params
 	info->exit_status = EXIT_SUCCESS;
 	info->env_list = get_env_list();//if env_list==NULL -> operate with env=NULL
-
 	info->tree_root = NULL;
+	info->pid = getpid();
+	info->is_exit = false;
 	return (info);
 }
 
-static void	display_minishell(void)
+static void	display_ascii_art(void)
 {
 	ft_printf("           _       _      _          _ _ \n"
 			  " _ __ ___ (_)_ __ (_)___ | |__   ___| | |\n"
@@ -45,7 +46,7 @@ int main(void)
 	t_info	*info;
 	int		exit_status;
 
-	display_minishell();
+	display_ascii_art();
 	info = init_params();
 	exit_status = prompt_loop(info);
 	free_info(&info);

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 18:58:03 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 22:14:03 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:50:37 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ char	**update_cmds(const char **cmds)
 	size_t	src_idx;
 	char	**update_cmds;
 
+	errno = 0;
 	size = get_update_cmds_size(cmds);
 	if (!cmds || size < 0)
 		return (NULL);
@@ -95,6 +96,7 @@ t_tree	*create_tree_node(t_exe_type type, const char **cmds)
 {
 	t_tree		*new_node;
 
+	errno = 0;
 	new_node = (t_tree *)malloc(sizeof(t_tree));
 	if (!new_node)
 		return (perror_and_return_nullptr("malloc"));
@@ -119,6 +121,6 @@ t_tree	*create_tree_node(t_exe_type type, const char **cmds)
 		free_1d_array_ret_nullptr((void **)&new_node);
 		return (NULL);
 	}
-	debug_print_2d_arr(new_node->cmds, "update cmds      ");
+//	debug_print_2d_arr(new_node->cmds, "update cmds      ");
 	return (new_node);
 }

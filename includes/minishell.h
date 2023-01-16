@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:00:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 23:48:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 18:07:12 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define MINISHELL_H
 
 # include <errno.h>
-# include <string.h>
-# include <limits.h>
 # include <fcntl.h>
+# include <limits.h>
+# include <signal.h>
+# include <stdio.h>
+# include <string.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -44,6 +46,7 @@
 # define EXIT_TOO_MANY_ARGS			1
 # define FILE_OPEN_ERROR			1
 # define CMD_NOT_FOUND				1
+# define EXIT_SIGQUIT				131
 # define EXIT_NUMERIC_ARGS_REQUIRED	255
 # define SYNTAX_ERROR				258
 
@@ -84,6 +87,11 @@
 # define STR_CMD_ECHO_OPTIONS	"n"
 
 # define ALPHABET_CNT			26
+
+# define PROMPT				"minishell $> "
+
+# define min(a, b)	((a) <= (b) ? (a) : (b))
+# define max(a, b)	((a) >= (b) ? (a) : (b))
 
 /* ---------------- */
 /*  typedef struct  */
@@ -196,9 +204,10 @@ struct s_token // for bonus
 
 struct s_tree
 {
-	t_exe_type		exe_type;
 	char 			**cmds;
 	t_redirect_info	*redirect_info;
+	t_exe_type		exe_type;
+	pid_t			pid;
 	t_tree			*prev;
 	t_tree			*next;
 };
@@ -210,7 +219,10 @@ struct s_minishell_info
 	char	**splitted_cmds;
 	t_tree	*tree_root;
 	int		pid; // use getpid()
+	bool	is_exit;
 };
+
+typedef void sigfunc(int);
 
 
 /* ------- */
@@ -224,12 +236,14 @@ int		add_env_elem_to_list(t_list **list_head, char *key, char *value);
 int		overwrite_env_value(t_list **list_head, char *search_key, char *value);
 int		delete_env_elem(t_list **list_head, char *search_key);
 
+void	sig_handler(int signo);
+
 
 /* ---------- */
-/*  analysis  */
+/*  analyze_input  */
 /* ---------- */
-// analysis.c
-int		analysis(t_info *info, char *readline_input); // tmp
+// analyze_input.c
+int		analyze_input(t_info *info, char *readline_input); // tmp
 //int		add_redirect_param(t_tree **node);
 
 // pipe_split.c
@@ -251,6 +265,7 @@ t_redirect_info	*get_redirection_info(const char **cmds);
 int		create_tree(t_info **info);
 size_t	count_pipe(char **cmds);
 
+
 /* ----------- */
 /*  execution  */
 /* ----------- */
@@ -259,22 +274,46 @@ int		execute_command_line(t_info *info);
 
 /* execute_builtin */
 bool	is_builtins(const char **cmds);
-int		execute_builtins(t_info *info, const char **cmds);
+int		execute_builtin(t_info *info, const char **cmds);
 
 /* execute_redirect.c */
-int		handle_fd_for_redirection(t_redirect_info *redirect_info);
-int		openfile_and_heredoc_for_redirect(t_tree **root);
+int		handle_fd_for_redirection(t_redirect_info *r_info);
 int		execute_redirect(t_tree **root);
 
 /* execute_heredoc.c */
 int		execute_heredoc(int fd, const char *delimiter);
+
+/* execute_pipe_iterative.c */
+int		execute_pipe_iterative(t_info *info, t_tree *cmd_leaf_head);
+
+/* ft_execve.c */
+void	ft_execve(t_tree *node, t_info *info);
+int		is_execute_only_builtin(t_tree *node);
+
+/* ft_execvp.c */
+int		ft_execvp(char *file, char **cmds, char *env_paths);
+
+/* fork_wait_helpers.c */
+bool	is_child_process(pid_t pid);
+bool	is_parent_process(pid_t pid);
+bool	is_fork_failure(pid_t pid);
+
+/* handle_filedes */
+void	init_pipe_fd(int old_pipe_fd[2], int new_pipe_fd[2]);
+int		handle_fd_for_redirection(t_redirect_info *r_info);
+void	copy_fd_new_to_old(int old_pipe_fd[2], const int new_pipe_fd[2]);
+
+
 /* ----------- */
 /*  expansion  */
 /* ----------- */
 // expansion.c
 int		expansion(t_info *info);
 int		arrange_command_line(t_info *info);
-char	**create_arranged_cmds_controller(char **src, const char *options);
+char	**arrange_cmd_opton(char **src, const char *options);
+
+// expand_variable.c
+int		is_name(const char *str);
 
 
 /* ------ */
@@ -304,6 +343,17 @@ int		ft_env(t_info *info, const char **cmds);
 int		ft_exit(t_info *info, const char **cmds);
 /* builtin helper.c */
 //char	*get_current_path(void);
+
+
+/* -------- */
+/*  signal  */
+/* -------- */
+// signal.c
+sigfunc	*signal_act(int signo, sigfunc *func);
+void	signal_handler_in_prompt(int signo);
+void	signal_handler_in_execution(int signo);
+void	init_signal_in_execute_pipe(void);
+void	init_signal_in_prompt(void);
 
 
 /* -------- */

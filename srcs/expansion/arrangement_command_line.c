@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 19:15:40 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 23:58:43 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:43:13 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ char	*create_option_str(const int *cnt_arr)
 	char	*option_str;
 	size_t	size;
 
+	errno = 0;
 	size = count_option_aplhabets(cnt_arr);
 	if (size == 0)
 		return (NULL);
@@ -148,7 +149,7 @@ ssize_t	get_option_count(int **cnt_arr, const char **src, const char *options)
 	{
 		cnt++;
 		count_cmd_options(cnt_arr, src[idx]);
-		printf("is_option %s\n", src[idx]);
+		ft_printf("is_option %s\n", src[idx]);
 		idx++;
 	}
 	return (cnt);
@@ -189,7 +190,7 @@ char	**create_arranged_cmds(char **src, ssize_t option_str_cnt, int *cnt_arr)
 	return (arranged_cmds);
 }
 
-char **create_arranged_cmds_controller(char **src, const char *options)
+char **arrange_cmd_opton(char **src, const char *options)
 {
 	char			**arranged_cmds;
 	int				*option_cnt_arr;
@@ -227,7 +228,7 @@ int	arrange_command_line(t_info *info)
 	{
 		if (node->exe_type == E_LEAF_COMMAND)
 		{
-			node->cmds = create_arranged_cmds_controller(node->cmds, STR_CMD_ECHO_OPTIONS);
+			node->cmds = arrange_cmd_opton(node->cmds, STR_CMD_ECHO_OPTIONS);
 			if (!node->cmds)
 				return (FAILURE);
 		}

@@ -6,6 +6,157 @@ $> minishell > hogehoge          -> input=[hogehoge]
 $> minishell > "playground   "   -> input=["playground   "]
 $> minishell > "hello " ' world '-> input=["hello " ' world ']
 ```
+# Signal
+[X] でXを入力
+
+### ^C
+```shell
+bash$ [^C]
+bash$
+#newline
+
+bash$ hoge[^C]
+bash$
+#hogeを残し何もせずnewline
+
+bash$ sleep 10
+[^C]
+^C
+bash$
+# sleep10->改行待機状態で^Cを送信すると^Cが表示されてnewline
+
+
+bash-3.2$ cat /</< end #/はesc
+/> [^C]
+bash-3.2$ 
+# heredoc中に^C送信するとheredoc中断してnewline
+# cat << end > out でもoutは生成されない
+# $?=1
+
+bash-3.2$ cat \<\< end
+\> 
+\> aa
+\> cc[^C]
+\> 
+bash-3.2$ 
+# $?=1
+
+```
+* 割り込みキーが生成するシグナル
+* フォアグラウンドプロセスグループの全てのプロセスに対して送られる
+
+<br>
+<br>
+
+### ^D
+```shell
+bash$ [^D]
+bash$ exit
+#status 1でexitされる
+
+bash$ hoge[^D]
+#文字+^Dはアラームが鳴るだけ
+
+bash$ sleep 10
+[^D]
+^D #sleep中のみ, おそらくsleep解除後に入力される文字列
+bash$ exit
+# sleep10->改行待機状態で^Dを送信するとsleep中に^Dが表示されて、sleep終了後にexit(1)
+
+
+bash-3.2$ cat \<\< end
+\> [^D]bash-3.2$ 
+
+bash-3.2$ cat \<\< end
+\> aa
+\> bb
+\> cc[^D] # ^Dは受け付けない(alert)
+
+bash-3.2$ cat \<\< end \> out
+\> aa
+\> bb
+\> cc
+\> [^D]bash-3.2$ cat out
+aa
+bb
+cc
+bash-3.2$ 
+# ^D=EOF TODO:heredoc
+
+
+```
+
+### signal関数
+
+* 使用可能関数(memo)
+  * signal
+  * sigaction
+    * `int sigaction(int signo, const struct sigaction *act, struct sigaction *oact)`
+    * 成功ならば0, エラーならば-1
+    * int signo: 動作を調べたり変更したいsignalの番号
+    * actがnullptrでなければ動作を変更する
+    * oactがnullptrでなければ、システムはこのシグナルに対する直前の動作を返す
+  ```c
+  struct sigaction
+  {
+	void        (*sa_handler)();    //シグナルハンドラのアドレス、あるいはSIG_IGN, SIG_DFL
+    sigset_t    sa_mask;         //ブロックすべきsignalの追加
+    int         sa_flags;        //シグナルのオプション
+  };
+  ```
+  * sigemptyset
+    * `int sigemptyset(sigset_t *set, int signo)`
+    * 成功ならば0, エラーならば-1
+    * 複数のシグナル（シグナルhの集合）を収めるデータ型sigset_tを操作する関数
+    * setが指すシグナルの集合を空に初期化する
+    * アプリケーションでは各シグナルの集合に対してそれを使用する前にsigemptysetかsigfillsetを呼ぶ必要がある
+    * Cの初期化が特定のシステムでシグナルの集合にも適用されると保証できないためである
+  * sigaddset
+    * `int sigaddset(sigset_t *set, int signo)`
+    * 成功ならば0, エラーならば-1
+    * 複数のシグナル（シグナルhの集合）を収めるデータ型sigset_tを操作する関数
+    * シグナルの集合を初期化した後、集合に特定のシグナルを追加したり削除できる
+    * sigaddsetは既知の集合に1つのシグナルを追加する
+    * 引数にシグナルの集合のアドレスを渡す
+  * kill
+* 
+
+
+q
+<br>
+<br>
+
+### ^\
+```shell
+bash$ [^\]
+#何も起きない
+
+bash$ [hoge^\]
+#何も起きない
+
+bash$ sleep 10
+[^\]
+^\Quit: 3
+bash$
+# $?=131
+
+bash-3.2$ cat \<\< end
+\> aa
+\> bb
+\> cc[^\] # 何も起きない
+
+```
+* Quit key
+* 端末ドライバが生成するシグナル
+* フォアグラウンドプロセスグループの全てのプロセスに対してこのシグナルが送られる
+* SIGINTのようにフォアグラウンドプロセスグループを終了させるだけでなくcoreファイルも生成する
+* 
+
+
+
+
+<br>
+<br>
 
 # Expansion
 ### わかっていない・曖昧なこと

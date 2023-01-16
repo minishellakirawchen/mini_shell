@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 16:15:13 by takira            #+#    #+#             */
-/*   Updated: 2023/01/16 10:36:10 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 10:47:11 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,17 +80,17 @@ ssize_t	print_unsigned(unsigned long u, t_printf_info info)
 	set_preclen_and_padlen(u, &info);
 	if (!info.flag_left && info.num_padlen)
 		while (info.num_padlen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf(' ', 1);
+			ret_bytes += ft_putchar_for_printf(' ', info.fd);
 	if (info.num_head_chr && errno == 0)
-		ret_bytes += ft_putstr_for_printf(info.num_head_chr, 1);
+		ret_bytes += ft_putstr_for_printf(info.num_head_chr, info.fd);
 	if (info.num_preclen)
 		while (info.num_preclen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf('0', 1);
+			ret_bytes += ft_putchar_for_printf('0', info.fd);
 	if (!(info.prec_dot_only && u == 0) && errno == 0)
-		ret_bytes += ft_putstr_for_printf(num_str, 1);
+		ret_bytes += ft_putstr_for_printf(num_str, info.fd);
 	if (info.flag_left && info.num_padlen && errno == 0)
 		while (info.num_padlen-- && errno == 0)
-			ret_bytes += ft_putchar_for_printf(' ', 1);
+			ret_bytes += ft_putchar_for_printf(' ', info.fd);
 	free(num_str);
 	return (ret_bytes);
 }

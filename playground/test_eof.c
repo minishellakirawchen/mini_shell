@@ -1,40 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_put_for_printf.c                                :+:      :+:    :+:   */
+/*   test_eof.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/15 10:15:31 by takira            #+#    #+#             */
-/*   Updated: 2023/01/16 10:48:16 by takira           ###   ########.fr       */
+/*   Created: 2023/01/14 18:15:55 by takira            #+#    #+#             */
+/*   Updated: 2023/01/14 18:25:06 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/libft.h"
+#include "test.h"
+# include <readline/readline.h>
 
-ssize_t	ft_putchar_for_printf(char c, int fd)
+int main(void)
 {
-	return (write(fd, &c, 1));
-}
+	char *line;
+	printf("EOF c:%c, d:%d, x:%x\n", EOF, EOF, EOF);
 
-ssize_t	ft_putstr_for_printf(char *s, int fd)
-{
-	ssize_t	put_bytes;
-
-	put_bytes = 0;
-	if (s == NULL)
-		return (0);
-	while (*s)
+	while (true)
 	{
-		errno = 0;
-		put_bytes += ft_putchar_for_printf(*s++, fd);
-		if (errno != 0)
+		line = readline(">");
+		printf("input:%s\n", line);
+		if (!line)
 		{
-			perror("write");
-			return (-1);
+			printf("NULL break\n"); //<- EOFはNULL break
+			break ;
 		}
-		if (put_bytes > INT_MAX)
-			return (-1);
+		if (line[0] == EOF)
+		{
+			printf("EOF break\n");
+			break ;
+		}
 	}
-	return (put_bytes);
+	return (0);
 }

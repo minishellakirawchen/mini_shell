@@ -37,6 +37,11 @@ SRC		= main.c \
 		  execution/execute_builtin.c \
 		  execution/execute_redirect.c \
 		  execution/execute_heredoc.c \
+		  execution/fork_wait_helpers.c \
+		  execution/handle_filedes.c \
+		  execution/ft_execve.c \
+		  execution/ft_execvp.c \
+		  execution/execute_pipe_iterative.c \
 		  exit/exit.c \
 		  builtin/ft_echo.c \
 		  builtin/ft_cd.c \
@@ -51,6 +56,7 @@ SRC		= main.c \
 		  helper/debug_print.c \
 		  helper/env_list.c \
 		  helper/is_same_str.c \
+		  signal/signal.c \
 
 
 SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
@@ -72,13 +78,19 @@ LIBGNL				= $(LIBGNL_DIR)/libgnl.a
 LIBFT_PRINTF_DIR	= $(LIB_DIR)/libftprintf
 LIBFT_PRINTF		= $(LIBFT_PRINTF_DIR)/libftprintf.a
 
-LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR)
+READLINE_DIR		= $(shell brew --prefix readline)/lib
+
+LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR) $(READLINE_DIR)
+
 LFLAGS				= $(addprefix -L, $(LIBS_DIR)) -lreadline
 LIBS				= $(LIBFT) $(LIBGNL) $(LIBFT_PRINTF)
 
+
 # IFLAGS
-INCLUDES_DIR = ./includes
-IFLAGS = $(addprefix -I, $(INCLUDES_DIR))
+INCLUDES_DIR	= ./includes
+INCLUDES		= $(INCLUDES_DIR) $(shell brew --prefix readline)/include
+IFLAGS			= $(addprefix -I, $(INCLUDES))
+
 
 # RULES
 $(NAME)	: $(OBJS)
@@ -107,6 +119,10 @@ fclean : clean
 
 re : fclean all
 
-.PHONY: all clean fclean re
+norm :
+	norminette -v
+	norminette $(SRC_DIR) $(LIBS_DIR) $(INCLUDE_DIR)
+
+.PHONY: all clean fclean re norm
 
 -include	$(DEPS)

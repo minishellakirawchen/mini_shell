@@ -1,31 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   fork_wait_helpers.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/03 20:31:14 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 21:52:53 by takira           ###   ########.fr       */
+/*   Created: 2023/01/15 17:44:26 by takira            #+#    #+#             */
+/*   Updated: 2023/01/15 17:44:26 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int ft_unset(t_info *info, const char **cmds)
+bool	is_child_process(pid_t pid)
 {
-	char	*key;
-	int		ret;
-
-	if (!info || !cmds || !cmds[0] || !cmds[1])//tmp
-		return (FAILURE);
-	key = (char *)cmds[1]; //tmp
-	if (get_env_value(key, info->env_list))
-	{
-		ret = delete_env_elem(&info->env_list, key);
-		if (ret == FAILURE)
-			return (FAILURE);//TODO:exit?
-	}
-//	printf("key:%s, get_val:%s\n", key, get_env_value(key, info->env_list));
-	return (SUCCESS);
+	return (pid == CHILD_PROCESS);
 }
+
+bool	is_parent_process(pid_t pid)
+{
+	return (pid > 0);
+}
+
+bool	is_fork_failure(pid_t pid)
+{
+	return (pid < 0);
+}
+

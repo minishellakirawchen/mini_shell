@@ -6,24 +6,19 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:00:25 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 16:35:27 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:41:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /* prototype declaration */
-int do_heredoc_for_redirect(t_tree **root);
-int open_file_for_redirect(t_tree **root);
-char	*get_heredoc_tmp_filename(int cnt);
+int			do_heredoc_for_redirect(t_tree **root);
+int			open_file_for_redirect(t_tree **root);
+char		*get_heredoc_tmp_filename(int cnt);
 static int	open_file_controller(t_redirect_info **r_info);
-
-
 static int	get_fd_and_open_file(const char *filename, t_fopen_type fopen_type);
-//static int	create_heredoc_file(int *fd, const char **delimiters, char **heredoc_file, int cnt);
 static int	create_heredoc_file(t_redirect_info **r_info, int cnt);
-//static int	open_infiles(int *fd, const char **files);
-//static int	open_outfiles(int *fd, const char **files, t_output_to output_to);
 
 /* functions */
 
@@ -71,6 +66,7 @@ static int	create_heredoc_file(t_redirect_info **r_info, int cnt)
 {
 	size_t			idx;
 
+	errno = 0;
 	if (!r_info || !*r_info || !(*r_info)->heredoc_delims)
 		return (FAILURE);
 	(*r_info)->heredoc_file = get_heredoc_tmp_filename(cnt);
@@ -126,6 +122,7 @@ static int	open_files(int *fd, const char **files, t_fopen_type type)
 {
 	size_t	idx;
 
+	errno = 0;
 	if (!files)
 		return (FAILURE);
 	idx = 0;
@@ -146,6 +143,7 @@ static int	open_file_controller(t_redirect_info **r_info)
 {
 	t_fopen_type	fopen_type;
 
+	errno = 0;
 	if (!r_info || !*r_info)
 		return (FAILURE);
 	if ((*r_info)->input_from == E_REDIRECT_IN)
@@ -185,6 +183,7 @@ char	*get_heredoc_tmp_filename(int cnt)
 	size_t	tmp_len;
 	size_t	strcnt_len;
 
+	errno = 0;
 	strcnt = ft_itoa(cnt);
 	if (!strcnt)
 		return (perror_and_return_nullptr("malloc"));

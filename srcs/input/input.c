@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 23:48:00 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:51:15 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,34 +27,30 @@ int	prompt_loop(t_info	*info)
 	int		exit_status;
 	char	*input_line;
 
+	errno = 0;
+	init_signal_in_prompt();
 	while (true)
 	{
-		input_line = readline("minishell $> ");
+		input_line = readline(PROMPT);
 		if (!input_line)
+		{
+			exit_status = EXIT_SUCCESS;
+			ft_printf("exit\n");
 			break ;
-
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		// if (input signal == ^C)
-		//		print "^C" and not add history
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		/* Maybe unnecessary, "clear" clear prompt on default */
-		// if (strncmp("clear", inpuf_line, ft_strlen("clear")) == 0)
-		//		rewrite prompt
-		/*  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
-		//TODO: is necessary clear history?
-		printf("input            :[%s]\n", input_line);
-		analysis(info, input_line);//TODO cmd op重複も解析、削除するか？
+		}
+		add_history(input_line);
+//		printf("input            :[%s]\n", input_line);
+		analyze_input(info, input_line);
 		expansion(info);
-//		arrange_command_line(info);
-		printf(" vvvvv Execution vvvvv\n"); // tmp
+//		printf("[#DEGUG] vvvvv Execution vvvvv\n"); // tmp
 		exit_status = execute_command_line(info);
-		printf(" ^^^^^ Execution ^^^^^\n"); // tmp
-
-		add_history(input_line);//tmp
+		info->exit_status = exit_status;
+//		printf("[#DEGUG] ^^^^^ Execution ^^^^^\n"); // tmp
+//		dprintf(STDERR_FILENO, "[#DEBUG]exit status:%d\n", info->exit_status);
+		free_1d_array_ret_nullptr((void **)&input_line);
+		if (info->is_exit)
+			break ;
 		init_input(&info);
-		free(input_line);
 	}
 	return (exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 12:25:22 by takira            #+#    #+#             */
-/*   Updated: 2023/01/10 09:26:50 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:15:31 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ char **get_dup_cmds(char **src, size_t start_idx, size_t size)
 		i++;
 	if (i < start_idx || i < start_idx + size)
 		return (NULL);
+	errno = 0;
 	line = (char **)ft_calloc(sizeof(char *), size + 1);
 	if (!line)
 		return ((char **) perror_and_return_nullptr("malloc"));
@@ -97,7 +98,7 @@ int	create_tree(t_info **info)
 
 	if (!info || !*info || !(*info)->splitted_cmds)
 		return (FAILURE);
-
+	errno = 0;
 	// create root node
 	root_node = create_tree_node(E_NODE_ROOT, NULL);
 	if (!root_node)
@@ -123,6 +124,7 @@ int	create_tree(t_info **info)
 		// splitted_cmds = {"echo", "hello", NULL}
 		//                                     ^ size = 3
 		// cmd_line      = {"echo", "hello", NULL}
+		errno = 0;
 		size = get_pipe_idx(&(*info)->splitted_cmds[head_idx]);
 		cmd_line = get_dup_cmds((*info)->splitted_cmds, head_idx, size);
 		if (!cmd_line)

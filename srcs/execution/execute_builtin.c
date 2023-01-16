@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/07 13:47:19 by takira            #+#    #+#             */
-/*   Updated: 2023/01/09 18:58:25 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 17:57:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	is_builtins(const char **cmds)
 }
 
 // TODO: change ft_XX -> XX
-int	execute_builtins(t_info *info, const char **cmds)
+int	execute_builtin(t_info *info, const char **cmds)
 {
 	if (is_same_str("ft_echo",  cmds[0]) || is_same_str("ft_ECHO",  cmds[0]))
 		return (ft_echo(info, cmds));

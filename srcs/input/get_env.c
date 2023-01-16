@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:15:30 by takira            #+#    #+#             */
-/*   Updated: 2023/01/07 12:24:56 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:51:54 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,11 @@
 // A  :NG
 static t_env_elem	*get_env_elem(const char *environ_i)
 {
-	t_env_elem			*elem;
-	size_t				idx;
-	const size_t		len = ft_strlen_ns(environ_i);
+	t_env_elem		*elem;
+	size_t			idx;
+	const size_t	len = ft_strlen_ns(environ_i);
 
+	errno = 0;
 	if (!environ_i)
 		return (NULL);//env=NULL
 	idx = 0;
@@ -43,9 +44,9 @@ static t_env_elem	*get_env_elem(const char *environ_i)
 	if (!elem->key || !elem->value)
 	{
 		perror("malloc"); //error and exit
-		free(elem->key);
-		free(elem->value);
-		free(elem);
+		free_1d_array_ret_nullptr((void **)&elem->key);
+		free_1d_array_ret_nullptr((void **)&elem->value);
+		free_1d_array_ret_nullptr((void **)&elem);
 		return (NULL);
 	}
 	return (elem);
@@ -63,6 +64,7 @@ t_list	*get_env_list(void)
 	if (!environ)
 		return (NULL);
 	env_list_head = NULL;
+	errno = 0;
 	while (environ[idx])
 	{
 

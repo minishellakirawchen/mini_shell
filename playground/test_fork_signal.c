@@ -1,32 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_fork.c                                        :+:      :+:    :+:   */
+/*   test_fork_signal.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/04 18:32:45 by takira            #+#    #+#             */
-/*   Updated: 2023/01/13 10:28:08 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/11 22:10:08 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
+#include <signal.h>
+
+void sig_parent(int signum)
+{
+	printf("sig_parent: %d\n", signum);
+}
+
+void sig_child(int signum)
+{
+	printf("sig_child: %d\n", signum);
+}
 
 int	main(void)
 {
 	/* fork cd, touch playground 22/Jan/5th */
-	/*
-	int param = 0;
-	char *cd_cmd[10] = {"cd", NULL};
-	char *touch_cmd[10] = {"touch", "testfile", NULL};
-	char *ls_cmd[10] = {"ls", NULL};
-
+	//int param = 0;
+	//char *cd_cmd[10] = {"cd", NULL};
+	//char *touch_cmd[10] = {"touch", "testfile", NULL};
+	//char *ls_cmd[10] = {"ls", NULL};
+	char *cat[10] = {"cat", NULL};
+	signal(SIGQUIT, sig_parent);
+	pause();
 	int pid_t = fork();
 	if (pid_t == 0)
 	{
 		// child
-		printf("child cd\n");
-		execvp(cd_cmd[0], cd_cmd);
+		signal(SIGQUIT, sig_child);
+		printf("child cat\n");
+		execvp(cat[0], cat);
 		printf("child after execvp\n");// not print
 		// cd -> pwd 不明
 		exit(0);
@@ -35,8 +48,6 @@ int	main(void)
 	printf("parent pwd\n");
 	char *path = getcwd(NULL, 0);
 	printf("path: %s\n", path);
-	*/
-
 
 //	int pid_t = fork();
 //	if (pid_t == 0)

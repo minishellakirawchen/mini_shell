@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:06:06 by takira            #+#    #+#             */
-/*   Updated: 2023/01/11 16:56:41 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/15 19:45:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,7 @@ char	*get_next_envkey_in_str(const char *str)
 	size_t	tail_idx;
 	size_t	size;
 
+	errno = 0;
 	if (!str)
 		return (NULL);
 	head_idx = get_first_expand_sign_idx(str);
@@ -204,11 +205,11 @@ char	*get_key_from_start_idx(const char *str, size_t start_idx)
 	size_t	size;
 	char 	*key;
 
+	errno = 0;
 	if (!str || ft_strlen_ns(str) <= start_idx + 1)
 		return (NULL);
 	if (is_expandable_from_start_idx(str, start_idx) == false)
 		return (NULL);
-
 	size = 1;
 	if (str[start_idx + 1] != CHR_DOLLAR || str[start_idx + 1] != CHR_QUESTION) // $$ or $?
 		while (str[start_idx + size] && str[start_idx + size] != CHR_DOLLAR)
@@ -235,6 +236,7 @@ size_t	get_expand_size(t_info *info, const char *str)
 	char	*expand_value;
 	char 	*key;
 
+	errno = 0;
 	if (!str)
 		return (0);
 	size = 0;
@@ -288,6 +290,7 @@ int	expand_variable_in_str(t_info *info, char **str)
 	char 	*key;
 	char 	*value;
 
+	errno = 0;
 	if (!str || !*str)
 		return (FAILURE);
 	size = get_expand_size(info, *str);
@@ -375,32 +378,16 @@ int	expansion(t_info *info)
 			//    -> {"echo", "hello", "0", "piyopiyoUSERNAME", NULL}
 			while (node->cmds[idx])
 			{
-//				printf(" %2zu:[%s]", idx, node->cmds[idx]);
-//				printf("isneeded:%d\n", is_expand_needed(node->cmds[idx]));
 				if (is_expand_needed(node->cmds[idx]))
 				{
 					if (expand_variable_in_str(info, &node->cmds[idx]) == FAILURE)
 						return (FAILURE);
-//					printf("->[%s]", node->cmds[idx]);
 				}
-//				printf("\n");
 				idx++;
 			}
 		}
 		node = node->next;
 	}
-
-	debug_print_stack(info->tree_root, "check tree after expansion");
-
+//	debug_print_stack(info->tree_root, "check tree after expansion");
 	return (SUCCESS);
 }
-
-
-
-
-
-
-
-
-
-

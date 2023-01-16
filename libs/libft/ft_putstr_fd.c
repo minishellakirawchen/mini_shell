@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:37:09 by takira            #+#    #+#             */
-/*   Updated: 2022/11/13 18:21:18 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 10:54:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,5 +18,4 @@ void	ft_putstr_fd(char *s, int fd)
 		s = "(null)";
 	while (*s != '\0')
 		ft_putchar_fd(*s++, fd);
-	write(fd, s, ft_strlen_ns(s));
 }

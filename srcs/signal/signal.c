@@ -6,11 +6,12 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 18:52:08 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 22:38:16 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 23:36:57 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 
 sigfunc	*signal_act(int signo, sigfunc *func)
 {
@@ -40,7 +41,9 @@ void	signal_handler_in_execution(int signo)
 {
 	if (signo == SIGQUIT)
 	{
+		printf("Quit: 3\n");
 		ft_printf("Quit: 3\n");
+
 		//TODO: info->global
 		// kill(SIGINT) to all child
 	}

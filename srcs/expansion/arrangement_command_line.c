@@ -149,7 +149,7 @@ ssize_t	get_option_count(int **cnt_arr, const char **src, const char *options)
 	{
 		cnt++;
 		count_cmd_options(cnt_arr, src[idx]);
-		ft_printf("is_option %s\n", src[idx]);
+//		ft_printf("is_option %s\n", src[idx]);
 		idx++;
 	}
 	return (cnt);

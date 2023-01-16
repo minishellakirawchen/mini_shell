@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:15:30 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:51:54 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 22:28:07 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ t_list	*get_env_list(void)
 	idx = 0;
 	if (!environ)
 		return (NULL);
+//	debug_print_2d_arr(environ, "environ");
 	env_list_head = NULL;
 	errno = 0;
 	while (environ[idx])

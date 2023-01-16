@@ -15,7 +15,7 @@
 // TODO: input->handling
 // ex) exit 1   -> echo $? = 1
 // ex) exit 255 -> echo $? = 255
-// ex) exit 256 -> echo $? = 1
+// ex) exit 256 -> echo $? = 0
 // ex) exit a   -> error
 
 // bash $> exit a b

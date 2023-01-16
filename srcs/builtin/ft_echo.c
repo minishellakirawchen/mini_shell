@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 13:56:37 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 10:35:36 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 21:41:51 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ int	ft_echo(t_info *info, const char **cmds)
 		i++;
 		is_nl = false;
 	}
+	print_echo((const char **)&arranged_cmds[i], is_nl);
 	print_echo((const char **)&arranged_cmds[i], is_nl);
 	free_2d_array_ret_nullptr((void ***)&arranged_cmds);
 	return (0);

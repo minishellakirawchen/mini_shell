@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/16 11:19:39 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 20:12:46 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ int	execute_command_line(t_info *info)
 	}
 	if (is_parent_process(pid))
 	{
-		if (waitpid(pid, &status, 0) < 0)
+//		waitpid(pid, &status, 0);
+		if (waitpid(pid, &status, 0) < 0)//TODO
 			return (perror_and_return_int("waitpid", FAILURE));
 		status = WEXITSTATUS(status);
 	}

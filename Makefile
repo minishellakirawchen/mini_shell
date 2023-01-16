@@ -77,7 +77,6 @@ LIBS_DIR			= $(LIBFT_DIR) $(READLINE_DIR)
 LFLAGS				= $(addprefix -L, $(LIBS_DIR)) -lreadline
 LIBS				= $(LIBFT)
 
-
 # IFLAGS
 INCLUDES_DIR	= ./includes
 INCLUDES		= $(INCLUDES_DIR) $(shell brew --prefix readline)/include

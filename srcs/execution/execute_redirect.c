@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 20:00:25 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:41:31 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 21:26:30 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,14 @@ static int	open_file_controller(t_redirect_info **r_info)
 	errno = 0;
 	if (!r_info || !*r_info)
 		return (FAILURE);
+	if ((*r_info)->ouput_to == E_REDIRECT_OUT || (*r_info)->ouput_to == E_REDIRECT_APPEND)
+	{
+		fopen_type = e_overwrite;
+		if ((*r_info)->ouput_to == E_REDIRECT_APPEND)
+			fopen_type = e_append;
+		if (open_files(&(*r_info)->r_fd[R_FD_OUTFILE], (const char **)(*r_info)->outfiles, fopen_type) == FAILURE)
+			return (FAILURE);
+	}
 	if ((*r_info)->input_from == E_REDIRECT_IN)
 	{
 		fopen_type = e_read;
@@ -154,14 +162,6 @@ static int	open_file_controller(t_redirect_info **r_info)
 		if ((*r_info)->input_from == E_HERE_DOC)
 			if (close((*r_info)->r_fd[R_FD_INFILE]) < 0)
 				return (perror_and_return_int("close", FAILURE));
-	}
-	if ((*r_info)->ouput_to == E_REDIRECT_OUT || (*r_info)->ouput_to == E_REDIRECT_APPEND)
-	{
-		fopen_type = e_overwrite;
-		if ((*r_info)->ouput_to == E_REDIRECT_APPEND)
-			fopen_type = e_append;
-		if (open_files(&(*r_info)->r_fd[R_FD_OUTFILE], (const char **)(*r_info)->outfiles, fopen_type) == FAILURE)
-			return (FAILURE);
 	}
 	return (SUCCESS);
 }

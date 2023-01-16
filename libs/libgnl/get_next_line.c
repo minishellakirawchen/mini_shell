@@ -6,11 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 19:09:17 by takira            #+#    #+#             */
-/*   Updated: 2022/11/22 15:16:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 10:35:44 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "../include/libft.h"
 
 static char	*create_newline_frm_save(char *save, bool is_include_nl)
 {
@@ -41,16 +41,16 @@ static char	*delete_newline_in_save(char *save)
 	while (save[i] && save[i] != '\n')
 		i++;
 	if (save[i] == '\0')
-		return (ft_free(&save, NULL));
+		return (ft_free_gnl(&save, NULL));
 	new_save = (char *)malloc(sizeof(char) * (ft_strlen_gnl(save) - i + 1));
 	if (!new_save)
-		return (ft_free(&save, NULL));
+		return (ft_free_gnl(&save, NULL));
 	i++;
 	j = 0;
 	while (save[i])
 		new_save[j++] = save[i++];
 	new_save[j] = '\0';
-	ft_free(&save, NULL);
+	ft_free_gnl(&save, NULL);
 	return (new_save);
 }
 
@@ -62,21 +62,21 @@ static char	*read_file_and_save(int fd, char *save)
 
 	buf = (char *)malloc(sizeof(char) * ((size_t)BUFFER_SIZE + 1));
 	if (!buf)
-		return (ft_free(&save, NULL));
+		return (ft_free_gnl(&save, NULL));
 	read_bytes = 1;
 	nl_cnt = 0;
 	while (nl_cnt == 0 && read_bytes != 0)
 	{
 		read_bytes = read(fd, buf, BUFFER_SIZE);
 		if (read_bytes == -1)
-			return (ft_free(&buf, NULL));
+			return (ft_free_gnl(&buf, NULL));
 		buf[read_bytes] = '\0';
 		nl_cnt = cnt_chr_in_str('\n', buf);
 		save = strjoin_and_free_dst(save, buf);
 		if (!save)
 			break ;
 	}
-	ft_free(&buf, NULL);
+	ft_free_gnl(&buf, NULL);
 	return (save);
 }
 
@@ -97,6 +97,6 @@ char	*get_next_line(int fd, bool is_include_nl)
 	gnl_line = create_newline_frm_save(save_buf, is_include_nl);
 	save_buf = delete_newline_in_save(save_buf);
 	if (errno != 0)
-		return (ft_free(&save_buf, &gnl_line));
+		return (ft_free_gnl(&save_buf, &gnl_line));
 	return (gnl_line);
 }

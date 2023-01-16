@@ -6,18 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 10:38:31 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 10:13:26 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 10:38:56 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-static size_t	minsize(size_t a, size_t b)
-{
-	if (a <= b)
-		return (a);
-	return (b);
-}
+#include "../include/libft.h"
 
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../include/libft.h"
 
 static bool	is_under_long(long long before_x10_val, long long add_val, int sign)
 {

@@ -6,11 +6,11 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/29 19:09:28 by takira            #+#    #+#             */
-/*   Updated: 2023/01/03 10:02:32 by wchen            ###   ########.fr       */
+/*   Updated: 2023/01/16 10:35:35 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "../include/libft.h"
 
 size_t	ft_strlen_gnl(const char *str)
 {
@@ -58,7 +58,7 @@ size_t	ft_strlcpy_gnl(char *dst, const char *src, size_t dstsize)
 	return (ft_strlen_gnl(src));
 }
 
-void	*ft_free(char **alloc1, char **alloc2)
+void	*ft_free_gnl(char **alloc1, char **alloc2)
 {
 	if (alloc1)
 	{
@@ -90,9 +90,9 @@ char	*strjoin_and_free_dst(char *dst, char *src)
 	srclen = ft_strlen_gnl(src);
 	joined_str = (char *)malloc(sizeof(char) * (dstlen + srclen + 1));
 	if (!joined_str)
-		return (ft_free(&dst, NULL));
+		return (ft_free_gnl(&dst, NULL));
 	ft_strlcpy_gnl(joined_str, dst, dstlen + 1);
 	ft_strlcpy_gnl(&joined_str[dstlen], src, srclen + 1);
-	ft_free(&dst, NULL);
+	ft_free_gnl(&dst, NULL);
 	return (joined_str);
 }

@@ -6,10 +6,11 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/27 16:15:13 by takira            #+#    #+#             */
-/*   Updated: 2022/11/15 09:46:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 10:36:10 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_printf.h"
+
+#include "../include/libft.h"
 
 static char	*convert_u2base(unsigned long u, int base, int capitals)
 {

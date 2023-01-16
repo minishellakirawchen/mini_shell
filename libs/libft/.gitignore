@@ -1,6 +1,6 @@
 !Makefile
 !*.c
-!libft.h
+!../include/libft.h
 main.c
 a.out
 libft.a

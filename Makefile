@@ -64,26 +64,19 @@ SRCS	= $(addprefix $(SRC_DIR)/, $(SRC))
 OBJ_DIR	= ./objs
 OBJS	= $(addprefix $(OBJ_DIR)/, $(SRC:%.c=%.o))
 
-# DEPS	= $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.d))
 DEPS	= $(SRC:%.c=%.d)
 
+
 # LFLAGS
-LIB_DIR				= ./libs
-LIBFT_DIR			= $(LIB_DIR)/libft
+LIBFT_DIR			= ./libs
 LIBFT				= $(LIBFT_DIR)/libft.a
-
-LIBGNL_DIR			= $(LIB_DIR)/libgnl
-LIBGNL				= $(LIBGNL_DIR)/libgnl.a
-
-LIBFT_PRINTF_DIR	= $(LIB_DIR)/libftprintf
-LIBFT_PRINTF		= $(LIBFT_PRINTF_DIR)/libftprintf.a
 
 READLINE_DIR		= $(shell brew --prefix readline)/lib
 
-LIBS_DIR			= $(LIB_DIR) $(LIBGNL_DIR) $(LIBFT_PRINTF_DIR) $(READLINE_DIR)
+LIBS_DIR			= $(LIBFT_DIR)
 
 LFLAGS				= $(addprefix -L, $(LIBS_DIR)) -lreadline
-LIBS				= $(LIBFT) $(LIBGNL) $(LIBFT_PRINTF)
+LIBS				= $(LIBFT)
 
 
 # IFLAGS

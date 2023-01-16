@@ -4,10 +4,8 @@
 !Makefile
 !*.c
 !*.h
-!includes/**
+!includes
 !srcs
-!srcs/**
 !libs
-!libs/**
 !playground
 !*.md

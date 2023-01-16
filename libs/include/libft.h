@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/16 10:46:22 by takira            #+#    #+#             */
-/*   Updated: 2023/01/16 10:54:37 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 10:59:38 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,22 +46,22 @@ typedef struct s_list
 }					t_list;
 
 /* is */
-int		ft_isupper(int c);
-int		ft_islower(int c);
-int		ft_isalpha(int c);
-int		ft_isdigit(int c);
-int		ft_isalnum(int c);
-int		ft_isascii(int c);
-int		ft_isprint(int c);
-int		ft_isspace(char c);
+int			ft_isupper(int c);
+int			ft_islower(int c);
+int			ft_isalpha(int c);
+int			ft_isdigit(int c);
+int			ft_isalnum(int c);
+int			ft_isascii(int c);
+int			ft_isprint(int c);
+int			ft_isspace(char c);
 
 /* to */
-int		ft_toupper(int c);
-int		ft_tolower(int c);
+int			ft_toupper(int c);
+int			ft_tolower(int c);
 
 /* str */
-int		ft_strncmp(const char *s1, const char *s2, size_t n);
-int		ft_strncmp_ns(const char *s1, const char *s2, size_t n);
+int			ft_strncmp(const char *s1, const char *s2, size_t n);
+int			ft_strncmp_ns(const char *s1, const char *s2, size_t n);
 
 size_t		ft_strlen(const char *s);
 size_t		ft_strlen_ns(const char *s);
@@ -96,18 +96,18 @@ void		ft_putendl_fd(char *s, int fd);
 void		ft_putnbr_fd(int n, int fd);
 
 /* mem */
-void	ft_bzero(void *s, size_t n);
-int		ft_memcmp(const void *s1, const void *s2, size_t n);
-void	*ft_memset(void *s, int c, size_t n);
-void	*ft_memchr(const void *s, int c, size_t n);
-void	*ft_memcpy(void *dst, const void *src, size_t n);
-void	*ft_memmove(void *dst, const void *src, size_t len);
-void	*ft_calloc(size_t count, size_t size);
+void		ft_bzero(void *s, size_t n);
+int			ft_memcmp(const void *s1, const void *s2, size_t n);
+void		*ft_memset(void *s, int c, size_t n);
+void		*ft_memchr(const void *s, int c, size_t n);
+void		*ft_memcpy(void *dst, const void *src, size_t n);
+void		*ft_memmove(void *dst, const void *src, size_t len);
+void		*ft_calloc(size_t count, size_t size);
 
 /* list */
-t_list	*ft_lstnew(void *content);
-t_list	*ft_lstlast(t_list *lst);
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+t_list		*ft_lstnew(void *content);
+t_list		*ft_lstlast(t_list *lst);
+t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 void		ft_lstadd_front(t_list **lst, t_list *new);
 void		ft_lstadd_back(t_list **lst, t_list *new);
@@ -119,21 +119,20 @@ int			ft_lstsize(t_list *lst);
 long long	ft_strtoll(char *num, bool *is_success);
 
 /* math */
-size_t	minsize(size_t a, size_t b);
-size_t	maxsize(size_t a, size_t b);
-int		min_int(int a, int b);
-int		max_int(int a, int b);
+size_t		minsize(size_t a, size_t b);
+size_t		maxsize(size_t a, size_t b);
+int			min_int(int a, int b);
+int			max_int(int a, int b);
 
 /* gnl */
-char	*get_next_line(int fd, bool is_include_nl);
-char	*strjoin_and_free_dst(char *dst, char *src);
+char		*get_next_line(int fd, bool is_include_nl);
+char		*strjoin_and_free_dst(char *dst, char *src);
 
-void	*ft_free_gnl(char **alloc1, char **alloc2);
+void		*ft_free_gnl(char **alloc1, char **alloc2);
 
-size_t	ft_strlen_gnl(const char *str);
-size_t	cnt_chr_in_str(const char c, const char *str);
-size_t	ft_strlcpy_gnl(char *dst, const char *src, size_t dstsize);
-
+size_t		ft_strlen_gnl(const char *str);
+size_t		cnt_chr_in_str(const char c, const char *str);
+size_t		ft_strlcpy_gnl(char *dst, const char *src, size_t dstsize);
 
 /* printf */
 typedef struct s_pritnf_info
@@ -157,30 +156,27 @@ typedef struct s_pritnf_info
 	int			fd;
 }				t_printf_info;
 
-int		ft_printf(const char *fmt, ...);
-int		ft_dprintf(int fd, const char *fmt, ...);
+int			ft_printf(const char *fmt, ...);
+int			ft_dprintf(int fd, const char *fmt, ...);
 
-int		printf_controller(t_printf_info *info, const char *fmt, ...);
-int		get_width(char *fmt, t_printf_info *info, va_list *p);
-int		get_prec(char *fmt, t_printf_info *info, va_list *p);
-int		valid_info4fmt(char c, t_printf_info *info);
-int		ft_isdigit_pf(int c);
+int			printf_controller(t_printf_info *info, const char *fmt, ...);
+int			get_width(char *fmt, t_printf_info *info, va_list *p);
+int			get_prec(char *fmt, t_printf_info *info, va_list *p);
+int			valid_info4fmt(char c, t_printf_info *info);
+int			ft_isdigit_pf(int c);
 
-ssize_t	ft_putchar_for_printf(char c, int fd);
-ssize_t	ft_putstr_for_printf(char *s, int fd);
-ssize_t	print_c(char chr, t_printf_info info);
-ssize_t	print_s(char *str, t_printf_info info);
-ssize_t	print_percent(t_printf_info info);
-ssize_t	print_signed(int num, t_printf_info *info);
-ssize_t	print_hex(unsigned long u, t_printf_info *info, bool isupper);
-ssize_t	print_unsigned(unsigned long u, t_printf_info info);
+ssize_t		ft_putchar_for_printf(char c, int fd);
+ssize_t		ft_putstr_for_printf(char *s, int fd);
+ssize_t		print_c(char chr, t_printf_info info);
+ssize_t		print_s(char *str, t_printf_info info);
+ssize_t		print_percent(t_printf_info info);
+ssize_t		print_signed(int num, t_printf_info *info);
+ssize_t		print_hex(unsigned long u, t_printf_info *info, bool isupper);
+ssize_t		print_unsigned(unsigned long u, t_printf_info info);
 
-size_t	ft_strlen_printf(const char *s);
+size_t		ft_strlen_printf(const char *s);
 
-char	*ft_strchr_printf(const char *s, int c);
-void	get_flag(char *fmt, t_printf_info *info);
+char		*ft_strchr_printf(const char *s, int c);
+void		get_flag(char *fmt, t_printf_info *info);
 
 #endif
-=======
-#endif
->>>>>>> main:libs/libft/libft.h

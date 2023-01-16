@@ -92,7 +92,7 @@ OBJ			= $(SRCS:%.c=%.o)
 OBJS		= $(addprefix $(OBJ_DIR)/, $(OBJ))
 
 # DEPS
-DEPS		= $(OBJS:%.o=%.d)
+DEPS		= $(SRCS:%.c=%.d)
 
 # INCLUDES
 INCLUDE_DIR	= ./include

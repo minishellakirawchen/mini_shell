@@ -21,7 +21,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-# include "./../libs/libft/libft.h"
+# include "../libs/include/libft.h"
 # include "./../libs/libgnl/get_next_line.h"
 # include "./../libs/libftprintf/ft_printf.h"
 

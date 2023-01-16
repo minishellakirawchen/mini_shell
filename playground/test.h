@@ -13,7 +13,7 @@
 #include <ctype.h>
 #include <limits.h>
 
-# include "./../libs/libft/libft.h"
+# include "../libs/include/libft.h"
 # include "./../libs/libftprintf/ft_printf.h"
 
 # define READ	0

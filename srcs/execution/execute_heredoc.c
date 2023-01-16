@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 09:31:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/14 19:32:06 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 11:21:05 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	execute_heredoc(int fd, const char *delimiter)
 		return (FAILURE);
 	while (true)
 	{
-		ft_putstr_fd("> ", STDOUT_FILENO);
+		ft_dprintf(STDERR_FILENO, "> ");
 		line = get_next_line(STDIN_FILENO, true);
 		if (is_eof(line))
 			return (SUCCESS);// EOF
@@ -51,8 +51,8 @@ int	execute_heredoc(int fd, const char *delimiter)
 			free(line);
 			break ;
 		}
-		ft_putstr_fd(line, fd);//TODO:expansion
-		free(line);
+		ft_dprintf(fd, line);//TODO:expansion
+		free_1d_array_ret_nullptr((void **)&line);
 	}
 	return (SUCCESS);
 }

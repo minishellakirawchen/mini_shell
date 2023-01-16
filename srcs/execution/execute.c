@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 08:23:00 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:32:04 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 11:19:39 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int	execute_command_line(t_info *info)
 	t_tree	*node;
 
 	errno = 0;
+	status = EXIT_SUCCESS;
 	if (!info || !info->tree_root || !info->tree_root->next)
 		return (EXIT_FAILURE);
 	if (execute_redirect(&info->tree_root) == FAILURE)
@@ -34,15 +35,19 @@ int	execute_command_line(t_info *info)
 	if (!node)
 		return (FAILURE);
 	pid = fork();
-	if (pid <0)
+	if (is_fork_failure(pid))
 		return (perror_and_return_int("fork", FAILURE));
-	if (pid == CHILD_PROCESS)
+	if (is_child_process(pid))
 	{
 		status = execute_pipe_iterative(info, node);
 		exit (status);
 	}
-	waitpid(pid, &status, 0);
-	status = WEXITSTATUS(status);
+	if (is_parent_process(pid))
+	{
+		if (waitpid(pid, &status, 0) < 0)
+			return (perror_and_return_int("waitpid", FAILURE));
+		status = WEXITSTATUS(status);
+	}
 	return (status);
 }
 

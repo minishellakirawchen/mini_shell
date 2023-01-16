@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 17:53:01 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:42:24 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 13:12:09 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ int	ft_execvp(char *file, char **cmds, char *env_paths)
 		path = get_execute_path(splitted_paths[idx], file);
 		if (!path)
 			return (perror_and_return_int("malloc", EXIT_FAILURE));
-//		dprintf(STDERR_FILENO, "cmdpath:%s\n", path);
+//		dprintf(STDERR_FILENO, "debug: cmdpath:%s\n", path);
 		execve(path, cmds, NULL);
-		free(path);
+		free_1d_array_ret_nullptr((void **)&path);
 		idx++;
 	}
-	free_array(splitted_paths);
+	free_2d_array_ret_nullptr((void ***)&splitted_paths);
 	return (CMD_NOT_FOUND);
 }

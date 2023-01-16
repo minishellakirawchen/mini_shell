@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/03 20:12:53 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:12:38 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 13:12:44 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int	analyze_input(t_info *info, char *readline_input)
 	if (!info)
 		return (FAILURE);
 	errno = 0;
+
 	// split input by before or after of '|'
 	// * input [echo hello |grep a| echo "hello | world" >out]
 	// * split {"echo", "hello", "|", "grep", "a", "|", "echo", "hello", "|", "world", ">out", NULL}

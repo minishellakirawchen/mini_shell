@@ -6,7 +6,7 @@
 /*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/02 21:49:54 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:51:15 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 13:12:24 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	prompt_loop(t_info	*info)
 		if (!input_line)
 		{
 			exit_status = EXIT_SUCCESS;
-			ft_printf("exit\n");
+			ft_dprintf(STDERR_FILENO, "exit\n");
 			break ;
 		}
 		add_history(input_line);

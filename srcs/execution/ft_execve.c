@@ -6,7 +6,7 @@
 /*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 17:51:26 by takira            #+#    #+#             */
-/*   Updated: 2023/01/15 19:42:11 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/16 13:11:36 by takira           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,13 @@ int	is_execute_only_builtin(t_tree *node)
 // 兄弟プロセスとしてexecを生成すると、解決する？
 void	ft_execve(t_tree *node, t_info *info)
 {
+//	const char	*cmd;
+
+	if (!node || !node->cmds || !info)
+		exit (FAILURE);
+//	cmd = node->cmds[0];
 	// parent : execute RIGHT commands
 //	debug_print_2d_arr(node->cmds, "cmds");
-
 	if (handle_fd_for_redirection(node->redirect_info) == FAILURE)
 		exit (EXIT_FAILURE);
 
@@ -40,5 +44,6 @@ void	ft_execve(t_tree *node, t_info *info)
 	else
 		ft_execvp(node->cmds[0], node->cmds, get_env_value(PATH, info->env_list));
 	ft_dprintf(STDERR_FILENO, "command not found: %s\n", node->cmds[0]);
+//	ft_dprintf(STDERR_FILENO, "command not found: %s\n", cmd);
 	exit (CMD_NOT_FOUND);
 }

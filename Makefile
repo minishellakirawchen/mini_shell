@@ -88,8 +88,6 @@ IFLAGS			= $(addprefix -I, $(INCLUDES))
 # RULES
 $(NAME)	: $(OBJS)
 	@make -C $(LIBFT_DIR)
-	@make -C $(LIBGNL_DIR)
-	@make -C $(LIBFT_PRINTF_DIR)
 	$(CC) $(CFLAGS) $(IFLAGS) $(LFLAGS) $(LIBS) $(OBJS) -o $@
 
 $(OBJ_DIR)/%.o: %.c
@@ -101,14 +99,10 @@ all	: $(NAME)
 clean :
 	rm -rf $(OBJ_DIR)
 	@make clean -C $(LIBFT_DIR)
-	@make clean -C $(LIBGNL_DIR)
-	@make clean -C $(LIBFT_PRINTF_DIR)
 
 fclean : clean
 	rm -f $(NAME)
 	@make fclean -C $(LIBFT_DIR)
-	@make fclean -C $(LIBGNL_DIR)
-	@make fclean -C $(LIBFT_PRINTF_DIR)
 
 re : fclean all
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: takira <takira@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: wchen <wchen@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 20:20:39 by takira            #+#    #+#             */
-/*   Updated: 2023/01/14 12:14:45 by takira           ###   ########.fr       */
+/*   Updated: 2023/01/17 22:24:44 by wchen            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 #include <signal.h>
 
 # include "../libs/include/libft.h"
-# include "./../libs/libftprintf/ft_printf.h"
+//# include "./../libs/libftprintf/ft_printf.h"
 
 # define READ	0
 # define WRITE	1
